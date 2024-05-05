@@ -1,16 +1,16 @@
 {
   "name": "hitting-the-fan",
   "version": "1.0.0",
-  "description": "",
+  "description": "What do you do when shit hits the fan?",
   "main": "server.ts",
   "scripts": {
     "dev": "nodemon server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "MIT"
-}  "dependencies": {
+  "author": "Bo Tembunkiart <botbunk@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2"
   }
