@@ -2,6 +2,8 @@ import express from "express";
 import httpLogger from "pino-http";
 import logger from "./lib/util/logger";
 
+import flashcardsRoute from "./routes/flashcards";
+
 const app = express();
 const port = 3000;
 
@@ -56,3 +58,5 @@ app.get("/", (_, res) => {
 app.listen(port, () => {
   console.log("Server is running on port 3000");
 });
+
+app.use("/api/flashcards", flashcardsRoute);
