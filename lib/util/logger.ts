@@ -1,6 +1,6 @@
-import pino, { LoggerOptions } from "pino";
+import pino, { LoggerOptions } from 'pino'
 
-import { LogLevel } from "@/lib/constants/logLevels";
+import { LogLevel } from '@/lib/constants/logLevels'
 
 //
 // Log Level
@@ -17,7 +17,7 @@ import { LogLevel } from "@/lib/constants/logLevels";
 //   ? DEFAULT_LOG_LEVEL_LOCAL
 //   : DEFAULT_LOG_LEVEL_PROD;
 
-const logLevel = LogLevel.DEBUG;
+const logLevel = LogLevel.DEBUG
 
 //
 // Transport
@@ -29,13 +29,13 @@ const logLevel = LogLevel.DEBUG;
 // };
 
 const LOCAL_TRANSPORT = {
-  target: "pino-pretty",
+  target: 'pino-pretty',
   options: {
     colorize: true,
   },
-};
+}
 
-const transport = LOCAL_TRANSPORT;
+const transport = LOCAL_TRANSPORT
 
 //
 // Logger
@@ -44,8 +44,8 @@ const transport = LOCAL_TRANSPORT;
 const options: LoggerOptions = {
   level: logLevel,
   transport,
-};
+}
 
-const logger = pino(options);
+const logger = pino(options)
 
-export default logger;
+export default logger
