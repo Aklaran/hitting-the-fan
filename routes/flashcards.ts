@@ -4,20 +4,21 @@ import { z } from 'zod'
 
 const flashcardsRoute: Router = express.Router()
 
-type Flashcard = {
-  id: number
-  question: string
-  answer: string
-}
+const flashcardSchema = z.object({
+  id: z.number().int().positive().min(1),
+  question: z.string({ required_error: 'Question is required.' }),
+  answer: z.string({ required_error: 'Answer is required.' }),
+})
+
+const createFlashcardSchema = flashcardSchema.omit({ id: true })
+
+type Flashcard = z.infer<typeof flashcardSchema>
 
 const fakeFlashcards: Flashcard[] = [
   { id: 1, question: 'What is the capital of France?', answer: 'Paris' },
   { id: 2, question: 'What is the capital of Germany?', answer: 'Berlin' },
 ]
 
-const createFlashcardSchema = z.object({
-  question: z.string({ required_error: 'Question is required.' }),
-  answer: z.string({ required_error: 'Answer is required.' }),
 })
 
 flashcardsRoute.get('/', (_req, res) => {
