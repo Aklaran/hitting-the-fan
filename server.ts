@@ -1,7 +1,8 @@
+import bodyParser from "body-parser";
 import express from "express";
 import httpLogger from "pino-http";
-import logger from "./lib/util/logger";
 
+import logger from "./lib/util/logger";
 import flashcardsRoute from "./routes/flashcards";
 
 const app = express();
@@ -50,6 +51,8 @@ app.use(
     },
   })
 );
+
+app.use(bodyParser.json());
 
 app.get("/", (_, res) => {
   res.send("Hello, Saturn!");

@@ -1,4 +1,7 @@
 import express, { Router } from "express";
+import { z } from "zod";
+
+import logger from "@/lib/util/logger";
 
 const flashcardsRoute: Router = express.Router();
 
@@ -13,12 +16,17 @@ const fakeFlashcards: Flashcard[] = [
   { id: 2, question: "What is the capital of Germany?", answer: "Berlin" },
 ];
 
+const createFlashcardSchema = z.object({
+  question: z.string(),
+  answer: z.string(),
+});
+
 flashcardsRoute.get("/", (_req, res) => {
   res.json({ flashcards: fakeFlashcards });
 });
 
 flashcardsRoute.post("/", (req, res) => {
-  const { question, answer } = req.body;
+  const { question, answer } = createFlashcardSchema.parse(req.body);
 
   const newFlashcard: Flashcard = {
     id: fakeFlashcards.length + 1,
