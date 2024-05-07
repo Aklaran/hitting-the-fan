@@ -20,10 +20,10 @@ const fakeFlashcards: Flashcard[] = [
   { id: 2, question: 'What is the capital of Germany?', answer: 'Berlin' },
 ]
 
+flashcardsRoute.get('/', (_req, res) => {
+  res.json(fakeFlashcards)
 })
 
-flashcardsRoute.get('/', (_req, res) => {
-  res.json({ flashcards: fakeFlashcards })
 })
 
 flashcardsRoute.post('/', validateData(createFlashcardSchema), (req, res) => {
