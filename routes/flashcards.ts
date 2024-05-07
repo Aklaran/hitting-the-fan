@@ -1,3 +1,4 @@
+import { validateData } from '@/middleware/validation'
 import express, { Router } from 'express'
 import { z } from 'zod'
 
@@ -15,15 +16,15 @@ const fakeFlashcards: Flashcard[] = [
 ]
 
 const createFlashcardSchema = z.object({
-  question: z.string(),
-  answer: z.string(),
+  question: z.string({ required_error: 'Question is required.' }),
+  answer: z.string({ required_error: 'Answer is required.' }),
 })
 
 flashcardsRoute.get('/', (_req, res) => {
   res.json({ flashcards: fakeFlashcards })
 })
 
-flashcardsRoute.post('/', (req, res) => {
+flashcardsRoute.post('/', validateData(createFlashcardSchema), (req, res) => {
   const { question, answer } = createFlashcardSchema.parse(req.body)
 
   const newFlashcard: Flashcard = {
