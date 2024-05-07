@@ -1,4 +1,4 @@
-import { validateData } from '@/middleware/validation'
+import { validateData } from '@backend/lib/middleware/validation'
 import express, { Router } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'

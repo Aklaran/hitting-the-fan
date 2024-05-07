@@ -2,8 +2,8 @@ import bodyParser from 'body-parser'
 import express from 'express'
 import httpLogger from 'pino-http'
 
-import logger from './lib/util/logger'
-import flashcardsRoute from './routes/flashcards'
+import flashcardsRoute from '@backend/routes/flashcards'
+import logger from '@shared/util/logger'
 
 const app = express()
 const port = 3000

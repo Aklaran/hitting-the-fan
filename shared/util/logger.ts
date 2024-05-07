@@ -1,6 +1,6 @@
 import pino, { LoggerOptions } from 'pino'
 
-import { LogLevel } from '@/lib/constants/logLevels'
+import { LogLevel } from '@shared/constants/logLevels'
 
 //
 // Log Level

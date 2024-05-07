@@ -1,4 +1,4 @@
-import logger from '@/lib/util/logger'
+import logger from '@shared/util/logger'
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { UnknownKeysParam, ZodError, ZodRawShape, z } from 'zod'

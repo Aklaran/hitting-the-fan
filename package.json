@@ -4,7 +4,7 @@
   "description": "What do you do when shit hits the fan?",
   "main": "server.ts",
   "scripts": {
-    "dev": "nodemon server.ts",
+    "dev": "nodemon backend/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
