@@ -1,5 +1,6 @@
 import { validateData } from '@/middleware/validation'
 import express, { Router } from 'express'
+import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
 
 const flashcardsRoute: Router = express.Router()
@@ -36,7 +37,7 @@ flashcardsRoute.post('/', validateData(createFlashcardSchema), (req, res) => {
 
   fakeFlashcards.push(newFlashcard)
 
-  res.status(201).json(newFlashcard)
+  res.status(StatusCodes.CREATED).json(newFlashcard)
 })
 
 export default flashcardsRoute
