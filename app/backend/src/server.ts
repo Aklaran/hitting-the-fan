@@ -19,7 +19,6 @@ app.use(
       return `${req.method} ${res.statusCode}`
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     customSuccessObject: (_req, _res, val) => {
       return {
         responseTime: val.responseTime,
@@ -30,7 +29,6 @@ app.use(
       return `${req.method} ${res.statusCode}`
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     customErrorObject: (_req, _res, _error, val) => {
       return {
         responseTime: val.responseTime,
