@@ -20,7 +20,6 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "outDir": "./dist/tsc/",
-    "types": ["node"],
     "lib": ["ES6", "DOM"],
     "isolatedModules": true,
     "paths": {
