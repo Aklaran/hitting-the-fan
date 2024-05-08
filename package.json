@@ -8,12 +8,12 @@
   "scripts": {
     "---------------------------------------------------------------------------- Setup": "",
     "postinstall": "pnpm install:backend && pnpm install:frontend",
-    "install:backend": "cd backend && pnpm install",
-    "install:frontend": "cd frontend && pnpm install",
+    "install:backend": "cd app/backend && pnpm install",
+    "install:frontend": "cd app/frontend && pnpm install",
     "---------------------------------------------------------------------------- Local Dev": "",
     "dev": "./bin/dev-watch.sh",
-    "dev:backend": "cd backend && pnpm dev",
-    "dev:frontend": "cd frontend && pnpm dev",
+    "dev:backend": "cd app/backend && pnpm dev",
+    "dev:frontend": "cd app/frontend && pnpm dev",
     "---------------------------------------------------------------------------- Lint": "",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },

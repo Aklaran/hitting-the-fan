@@ -24,9 +24,9 @@
     "lib": ["ES6", "DOM"],
     "isolatedModules": true,
     "paths": {
-      "@/*": ["./*"],
-      "@backend/*": ["./backend/*"],
-      "@shared/*": ["./shared/*"]
+      "@backend/*": ["./app/backend/src/*"],
+      "@frontend/*": ["./app/frontend/src/*"],
+      "@shared/*": ["./app/shared/*"]
     }
   },
   "ts-node": {
