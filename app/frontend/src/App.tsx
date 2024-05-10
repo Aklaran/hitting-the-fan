@@ -5,9 +5,9 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div>
+    <div className="flex flex-col bg-background">
       <button
-        className="bg-red-100 hover:bg-red-300"
+        className="text-foreground"
         onClick={() => setCount((count) => count + 1)}
       >
         count is {count}
