@@ -1,15 +1,27 @@
-import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import Flashcard from '@shared/types/flashcard'
+import { useEffect, useState } from 'react'
 import './App.css'
+import { Flashcard as FlashcardDisplay } from './components/custom-ui/flashcard'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [flashcard, setFlashcard] = useState<Flashcard | null>(null)
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch('/api/flashcards/1')
+      const flashcard = (await response.json()) as Flashcard
+      setFlashcard(flashcard)
+    })()
+  }, [])
 
   return (
     <div className="flex flex-col bg-background max-w-md m-auto gap-y-5">
-      <Button className="" onClick={() => setCount((count) => count + 1)}>
-        count is {count}
-      </Button>
+      {flashcard && (
+        <FlashcardDisplay
+          question={flashcard.question}
+          answer={flashcard.answer}
+        />
+      )}
     </div>
   )
 }
