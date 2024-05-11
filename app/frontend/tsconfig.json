@@ -23,7 +23,10 @@
     /* path resolution */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@backend/*": ["../backend/src/*"],
+      "@frontend/*": ["../frontend/src/*"],
+      "@shared/*": ["../shared/*"]
     }
   },
   "include": ["src"],
