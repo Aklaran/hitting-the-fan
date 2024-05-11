@@ -4,10 +4,12 @@ import httpLogger from 'pino-http'
 
 import flashcardsRoute from '@backend/routes/flashcards'
 import logger from '@shared/util/logger'
+import path from 'path'
 
 const app = express()
 const port = 3000
 
+// TODO: Can I move this into a different file?
 app.use(
   httpLogger({
     logger,
@@ -52,12 +54,23 @@ app.use(
 
 app.use(bodyParser.json())
 
-app.get('/', (_, res) => {
-  res.send('Hello, Saturn!')
+app.use('/api/flashcards', flashcardsRoute)
+
+// Serve frontend via static files
+// TODO: Can I move this into a different file?
+
+// TODO: Can I use ts path aliases for this?
+const distPath = path.join(__dirname, '../../frontend/dist')
+
+app.use(express.static(distPath))
+app.use(express.static(path.join(distPath, 'index.html')))
+
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'))
 })
+
+// -------------------------------
 
 app.listen(port, () => {
   console.log('Server is running on port 3000')
 })
-
-app.use('/api/flashcards', flashcardsRoute)
