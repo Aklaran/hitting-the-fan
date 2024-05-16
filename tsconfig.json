@@ -19,7 +19,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "outDir": "./dist/tsc/",
     "lib": ["ES6", "DOM"],
     "isolatedModules": true,
     "paths": {
