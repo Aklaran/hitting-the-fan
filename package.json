@@ -6,6 +6,10 @@
   "private": true,
   "description": "What do you do when shit hits the fan?",
   "scripts": {
+    "---------------------------------------------------------------------------- Build": "",
+    "build": "pnpm build:backend && pnpm build:frontend",
+    "build:backend": "cd app/backend && pnpm build",
+    "build:frontend": "cd app/frontend && pnpm build",
     "---------------------------------------------------------------------------- Setup": "",
     "postinstall": "pnpm install:backend && pnpm install:frontend",
     "install:backend": "cd app/backend && pnpm install",
@@ -19,7 +23,9 @@
     "---------------------------------------------------------------------------- Test": "",
     "test:all": "jest --config jest.all.ts",
     "test": "jest",
-    "test:lint": "jest --config jest.lint.ts"
+    "test:lint": "jest --config jest.lint.ts",
+    "---------------------------------------------------------------------------- Start": "",
+    "start": "pnpm build && cd app/backend && pnpm start"
   },
   "dependencies": {
     "http-status-codes": "^2.3.0",

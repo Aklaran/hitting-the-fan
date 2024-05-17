@@ -4,7 +4,8 @@
   "author": "Bo Tembunkiart <botbunk@gmail.com>",
   "private": true,
   "scripts": {
-    "start": "tsc && ts-node src/server.ts",
+    "build": "tsc",
+    "start": "ts-node src/server.ts",
     "dev": "nodemon src/server.ts"
   },
   "dependencies": {
