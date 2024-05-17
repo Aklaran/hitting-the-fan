@@ -6,8 +6,12 @@
   "private": true,
   "description": "What do you do when shit hits the fan?",
   "scripts": {
+    "---------------------------------------------------------------------------- Clean": "",
+    "clean": "pnpm clean:backend && pnpm clean:frontend",
+    "clean:backend": "cd app/backend && pnpm clean",
+    "clean:frontend": "cd app/frontend && pnpm clean",
     "---------------------------------------------------------------------------- Build": "",
-    "build": "pnpm build:backend && pnpm build:frontend",
+    "build": "pnpm clean && pnpm build:backend && pnpm build:frontend",
     "build:backend": "cd app/backend && pnpm build",
     "build:frontend": "cd app/frontend && pnpm build",
     "---------------------------------------------------------------------------- Setup": "",

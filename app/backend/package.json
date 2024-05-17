@@ -4,6 +4,7 @@
   "author": "Bo Tembunkiart <botbunk@gmail.com>",
   "private": true,
   "scripts": {
+    "clean": "rm -rf dist",
     "build": "tsc",
     "start": "ts-node src/server.ts",
     "dev": "nodemon src/server.ts"
