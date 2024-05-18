@@ -1,28 +1,35 @@
-import Flashcard from '@shared/types/flashcard'
-import { useEffect, useState } from 'react'
-import './App.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { httpBatchLink } from '@trpc/client'
 import { Flashcard as FlashcardDisplay } from './components/custom-ui/flashcard'
+import { trpc } from './lib/trpc'
+
+const queryClient = new QueryClient()
+
+const trpcClient = trpc.createClient({
+  // TODO: Use environment variable
+  links: [httpBatchLink({ url: 'http://localhost:5173/api' })],
+})
 
 function App() {
-  const [flashcard, setFlashcard] = useState<Flashcard | null>(null)
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <FlashcardyCard />
+      </QueryClientProvider>
+    </trpc.Provider>
+  )
+}
 
-  useEffect(() => {
-    (async () => {
-      const response = await fetch('/api/flashcards/1')
-      const flashcard = (await response.json()) as Flashcard
-      setFlashcard(flashcard)
-    })()
-  }, [])
+function FlashcardyCard() {
+  const flashcardQuery = trpc.flashcard.get.useQuery({ id: 1 })
 
   return (
-    <div className="flex flex-col bg-background max-w-md m-auto gap-y-5">
-      {flashcard && (
-        <FlashcardDisplay
-          question={flashcard.question}
-          answer={flashcard.answer}
-        />
-      )}
-    </div>
+    flashcardQuery.data && (
+      <FlashcardDisplay
+        question={flashcardQuery.data?.question}
+        answer={flashcardQuery.data?.answer}
+      />
+    )
   )
 }
 

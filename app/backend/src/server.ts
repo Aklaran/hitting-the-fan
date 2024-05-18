@@ -1,15 +1,21 @@
-import bodyParser from 'body-parser'
+import * as trpcExpress from '@trpc/server/adapters/express'
 import express from 'express'
 import httpLogger from 'pino-http'
 
-import flashcardsRoute from '@backend/routes/flashcards'
 import logger from '@shared/util/logger'
 import path from 'path'
+import { createContext } from './lib/middleware/trpc'
+import appRouter from './routes/root'
 
 const app = express()
-const port = 3000
 
-// TODO: Can I move this into a different file?
+app.use(
+  '/api',
+  trpcExpress.createExpressMiddleware({ router: appRouter, createContext }),
+)
+
+// TODO: This is now defunct. I need to find a way to do logging of raw-as-possible
+// requests using Pino in tRPC.
 app.use(
   httpLogger({
     logger,
@@ -52,10 +58,6 @@ app.use(
   }),
 )
 
-app.use(bodyParser.json())
-
-app.use('/api/flashcards', flashcardsRoute)
-
 // Serve frontend via static files
 // TODO: Can I move this into a different file?
 
@@ -70,6 +72,9 @@ app.get('*', (_req, res) => {
 })
 
 // -------------------------------
+
+// TODO: Add to environment variables
+const port = 3000
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)

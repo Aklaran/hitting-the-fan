@@ -7,6 +7,8 @@ const flashcardSchema = z.object({
 })
 
 export const createFlashcardSchema = flashcardSchema.omit({ id: true })
+export const getFlashcardSchema = flashcardSchema.pick({ id: true })
+export const deleteFlashcardSchema = flashcardSchema.pick({ id: true })
 
 type Flashcard = z.infer<typeof flashcardSchema>
 
