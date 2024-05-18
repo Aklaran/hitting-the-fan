@@ -32,6 +32,7 @@
     "start": "pnpm build && cd app/backend && pnpm start"
   },
   "dependencies": {
+    "@trpc/server": "11.0.0-rc.373",
     "http-status-codes": "^2.3.0",
     "pino": "^9.0.0",
     "pino-http": "^9.0.0",
