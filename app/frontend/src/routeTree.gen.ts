@@ -11,16 +11,12 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as FlashcardsImport } from './routes/flashcards'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
+import { Route as FlashcardsIndexImport } from './routes/flashcards/index'
+import { Route as FlashcardsNewImport } from './routes/flashcards/new'
 
 // Create/Update Routes
-
-const FlashcardsRoute = FlashcardsImport.update({
-  path: '/flashcards',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AboutRoute = AboutImport.update({
   path: '/about',
@@ -29,6 +25,16 @@ const AboutRoute = AboutImport.update({
 
 const IndexRoute = IndexImport.update({
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const FlashcardsIndexRoute = FlashcardsIndexImport.update({
+  path: '/flashcards/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const FlashcardsNewRoute = FlashcardsNewImport.update({
+  path: '/flashcards/new',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -50,11 +56,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/flashcards': {
-      id: '/flashcards'
+    '/flashcards/new': {
+      id: '/flashcards/new'
+      path: '/flashcards/new'
+      fullPath: '/flashcards/new'
+      preLoaderRoute: typeof FlashcardsNewImport
+      parentRoute: typeof rootRoute
+    }
+    '/flashcards/': {
+      id: '/flashcards/'
       path: '/flashcards'
       fullPath: '/flashcards'
-      preLoaderRoute: typeof FlashcardsImport
+      preLoaderRoute: typeof FlashcardsIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -65,7 +78,8 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
   AboutRoute,
-  FlashcardsRoute,
+  FlashcardsNewRoute,
+  FlashcardsIndexRoute,
 })
 
 /* prettier-ignore-end */
