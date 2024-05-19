@@ -14,6 +14,9 @@ const NavBar = () => {
       <Link to="/about" className="[&.active]:font-bold">
         About
       </Link>
+      <Link to="/flashcards" className="[&.active]:font-bold">
+        Flashcards
+      </Link>
     </div>
   )
 }
