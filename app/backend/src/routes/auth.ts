@@ -27,16 +27,4 @@ const authRouter: Router = express
     return res.redirect(logoutUrl.toString())
   })
 
-  .get('/me', async (req, res) => {
-    const isAuthenticated = await kindeClient.isAuthenticated(
-      sessionManager(req, res),
-    )
-    if (isAuthenticated) {
-      const user = await kindeClient.getUser(sessionManager(req, res))
-      return res.json(user)
-    } else {
-      return res.status(401).json({ message: 'Unauthorized' })
-    }
-  })
-
 export default authRouter

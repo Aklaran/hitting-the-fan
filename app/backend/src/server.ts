@@ -6,11 +6,16 @@ import httpLogger from 'pino-http'
 import logger from '@shared/util/logger'
 import cookieParser from 'cookie-parser'
 import path from 'path'
-import { createContext } from './lib/middleware/trpc'
+import { createContext } from './lib/middleware/context'
 import authRouter from './routes/auth'
 import appRouter from './routes/root'
 
 const app = express()
+
+// NOTE: This has to come before anything else
+// Because the cookie parser is used to get the session manager
+// In creation of tRPC context
+app.use(cookieParser())
 
 app.use(
   '/api/trpc',
@@ -62,9 +67,6 @@ app.use(
 )
 
 // Kinde Auth
-
-// Gotta have cookies for auth!!!
-app.use(cookieParser())
 
 app.use('/api/auth', authRouter)
 
