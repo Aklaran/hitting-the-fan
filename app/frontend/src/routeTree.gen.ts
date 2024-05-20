@@ -12,10 +12,11 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
-import { Route as IndexImport } from './routes/index'
-import { Route as FlashcardsIndexImport } from './routes/flashcards/index'
-import { Route as UsersMeImport } from './routes/users/me'
-import { Route as FlashcardsNewImport } from './routes/flashcards/new'
+import { Route as AuthenticatedImport } from './routes/_authenticated'
+import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedFlashcardsIndexImport } from './routes/_authenticated/flashcards/index'
+import { Route as AuthenticatedUsersMeImport } from './routes/_authenticated/users/me'
+import { Route as AuthenticatedFlashcardsNewImport } from './routes/_authenticated/flashcards/new'
 
 // Create/Update Routes
 
@@ -24,35 +25,43 @@ const AboutRoute = AboutImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const FlashcardsIndexRoute = FlashcardsIndexImport.update({
-  path: '/flashcards/',
-  getParentRoute: () => rootRoute,
-} as any)
+const AuthenticatedFlashcardsIndexRoute =
+  AuthenticatedFlashcardsIndexImport.update({
+    path: '/flashcards/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
-const UsersMeRoute = UsersMeImport.update({
+const AuthenticatedUsersMeRoute = AuthenticatedUsersMeImport.update({
   path: '/users/me',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const FlashcardsNewRoute = FlashcardsNewImport.update({
-  path: '/flashcards/new',
-  getParentRoute: () => rootRoute,
-} as any)
+const AuthenticatedFlashcardsNewRoute = AuthenticatedFlashcardsNewImport.update(
+  {
+    path: '/flashcards/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any,
+)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -62,26 +71,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/flashcards/new': {
-      id: '/flashcards/new'
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/flashcards/new': {
+      id: '/_authenticated/flashcards/new'
       path: '/flashcards/new'
       fullPath: '/flashcards/new'
-      preLoaderRoute: typeof FlashcardsNewImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedFlashcardsNewImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/users/me': {
-      id: '/users/me'
+    '/_authenticated/users/me': {
+      id: '/_authenticated/users/me'
       path: '/users/me'
       fullPath: '/users/me'
-      preLoaderRoute: typeof UsersMeImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedUsersMeImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/flashcards/': {
-      id: '/flashcards/'
+    '/_authenticated/flashcards/': {
+      id: '/_authenticated/flashcards/'
       path: '/flashcards'
       fullPath: '/flashcards'
-      preLoaderRoute: typeof FlashcardsIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedFlashcardsIndexImport
+      parentRoute: typeof AuthenticatedImport
     }
   }
 }
@@ -89,11 +105,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  IndexRoute,
+  AuthenticatedRoute: AuthenticatedRoute.addChildren({
+    AuthenticatedIndexRoute,
+    AuthenticatedFlashcardsNewRoute,
+    AuthenticatedUsersMeRoute,
+    AuthenticatedFlashcardsIndexRoute,
+  }),
   AboutRoute,
-  FlashcardsNewRoute,
-  UsersMeRoute,
-  FlashcardsIndexRoute,
 })
 
 /* prettier-ignore-end */

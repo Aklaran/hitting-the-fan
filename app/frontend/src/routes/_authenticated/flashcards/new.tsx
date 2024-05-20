@@ -7,7 +7,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { zodValidator } from '@tanstack/zod-form-adapter'
 import { z } from 'zod'
 
-export const Route = createFileRoute('/flashcards/new')({
+export const Route = createFileRoute('/_authenticated/flashcards/new')({
   component: FlashcardForm,
 })
 
