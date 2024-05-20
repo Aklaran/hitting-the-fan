@@ -17,6 +17,9 @@ const NavBar = () => {
       <Link to="/flashcards" className="[&.active]:font-bold">
         Flashcards
       </Link>
+      <Link to="/users/me" className="[&.active]:font-bold">
+        Profile
+      </Link>
     </div>
   )
 }

@@ -6,7 +6,21 @@ export const Route = createFileRoute('/_authenticated/users/me')({
 })
 
 function UserForm() {
-  const query = trpc.user.me.useQuery()
+  const { data } = trpc.user.me.useQuery()
 
-  return <div>{JSON.stringify(query.data)}</div>
+  return (
+    <div className="flex flex-col gap-4">
+      {data && (
+        <>
+          <div>
+            <strong>Name:</strong> {data.given_name} {data.family_name}
+          </div>
+          <div>
+            <strong>Email:</strong> {data.email}
+          </div>
+          <a href="/api/auth/logout">Logout</a>
+        </>
+      )}
+    </div>
+  )
 }
