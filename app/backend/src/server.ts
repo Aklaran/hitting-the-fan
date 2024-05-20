@@ -1,10 +1,13 @@
 import * as trpcExpress from '@trpc/server/adapters/express'
+import 'dotenv/config'
 import express from 'express'
 import httpLogger from 'pino-http'
 
 import logger from '@shared/util/logger'
+import cookieParser from 'cookie-parser'
 import path from 'path'
 import { createContext } from './lib/middleware/trpc'
+import authRouter from './routes/auth'
 import appRouter from './routes/root'
 
 const app = express()
@@ -57,6 +60,13 @@ app.use(
     },
   }),
 )
+
+// Kinde Auth
+
+// Gotta have cookies for auth!!!
+app.use(cookieParser())
+
+app.use('/api/auth', authRouter)
 
 // Serve frontend via static files
 // TODO: Can I move this into a different file?
