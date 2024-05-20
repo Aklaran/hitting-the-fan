@@ -1,4 +1,4 @@
-import { publicProcedure, router } from '@backend/lib/middleware/trpc'
+import { protectedProcedure, router } from '@backend/lib/middleware/trpc'
 import Flashcard, {
   createFlashcardSchema,
   deleteFlashcardSchema,
@@ -11,7 +11,7 @@ const fakeFlashcards: Flashcard[] = [
 ]
 
 const flashcardsRouter = router({
-  create: publicProcedure.input(createFlashcardSchema).mutation((opts) => {
+  create: protectedProcedure.input(createFlashcardSchema).mutation((opts) => {
     const { question, answer } = opts.input
 
     const newFlashcard: Flashcard = {
@@ -26,17 +26,17 @@ const flashcardsRouter = router({
     return newFlashcard
   }),
 
-  list: publicProcedure.query(() => {
+  list: protectedProcedure.query(() => {
     return fakeFlashcards
   }),
 
   // TODO: Convert route param to GUID
-  get: publicProcedure.input(getFlashcardSchema).query((opts) => {
+  get: protectedProcedure.input(getFlashcardSchema).query((opts) => {
     const { id } = opts.input
     return fakeFlashcards.find((flashcard) => flashcard.id === id)
   }),
 
-  delete: publicProcedure.input(deleteFlashcardSchema).mutation((opts) => {
+  delete: protectedProcedure.input(deleteFlashcardSchema).mutation((opts) => {
     const { id } = opts.input
     const index = fakeFlashcards.findIndex((flashcard) => flashcard.id === id)
     if (index === -1) {
