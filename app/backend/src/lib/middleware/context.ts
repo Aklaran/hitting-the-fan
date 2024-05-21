@@ -1,4 +1,5 @@
 import { SessionManager } from '@kinde-oss/kinde-typescript-sdk'
+import { PrismaClient } from '@prisma/client'
 import logger from '@shared/util/logger'
 import * as trpcExpress from '@trpc/server/adapters/express'
 import { kindeClient, sessionManager as sm } from './kinde'
@@ -6,9 +7,13 @@ import { kindeClient, sessionManager as sm } from './kinde'
 async function getUser(sessionManager: SessionManager) {
   try {
     const user = await kindeClient.getUser(sessionManager)
+
+    logger.info(user, 'User')
+
     return user
   } catch (error) {
-    logger.error('Error getting user', error)
+    logger.error(error, 'Error getting user')
+
     return null
   }
 }
@@ -24,9 +29,12 @@ export async function createContext({
 
   const user = isAuthenticated ? await getUser(sessionManager) : null
 
+  const prisma = new PrismaClient()
+
   return {
     isAuthenticated,
     user,
+    prisma,
   }
 }
 

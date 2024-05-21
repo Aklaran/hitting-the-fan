@@ -1,5 +1,5 @@
 import { protectedProcedure, router } from '@backend/lib/middleware/trpc'
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import {
   createFlashcardSchema,
   deleteFlashcardSchema,
@@ -8,23 +8,21 @@ import {
 import logger from '@shared/util/logger'
 import { TRPCError } from '@trpc/server'
 
-// TODO: Pass the Prisma client in tRPC context
-// TODO: Also add nice Prisma-related scripts to package.json
-const prisma = new PrismaClient()
+// TODO: add nice Prisma-related scripts to package.json
 
 const flashcardsRouter = router({
   create: protectedProcedure
     .input(createFlashcardSchema)
-    .mutation(async (opts) => {
+    .mutation(async ({ input, ctx }) => {
       try {
-        const { question, answer } = opts.input
+        const { question, answer } = input
 
         const newFlashcard: Prisma.FlashcardCreateInput = {
           question: question,
           answer: answer,
         }
 
-        await prisma.flashcard.create({ data: newFlashcard })
+        await ctx.prisma.flashcard.create({ data: newFlashcard })
 
         return newFlashcard
       } catch (error) {
@@ -38,22 +36,24 @@ const flashcardsRouter = router({
       }
     }),
 
-  list: protectedProcedure.query(async () => {
-    return await prisma.flashcard.findMany()
+  list: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.flashcard.findMany()
   }),
 
-  get: protectedProcedure.input(getFlashcardSchema).query(async (opts) => {
-    const { id } = opts.input
-    return await prisma.flashcard.findUnique({ where: { id } })
-  }),
+  get: protectedProcedure
+    .input(getFlashcardSchema)
+    .query(async ({ input, ctx }) => {
+      const { id } = input
+      return await ctx.prisma.flashcard.findUnique({ where: { id } })
+    }),
 
   delete: protectedProcedure
     .input(deleteFlashcardSchema)
-    .mutation(async (opts) => {
-      const { id } = opts.input
+    .mutation(async ({ input, ctx }) => {
+      const { id } = input
 
       // TODO: Does this automatically handle not found/other errors?
-      return await prisma.flashcard.delete({ where: { id } })
+      return await ctx.prisma.flashcard.delete({ where: { id } })
     }),
 })
 
