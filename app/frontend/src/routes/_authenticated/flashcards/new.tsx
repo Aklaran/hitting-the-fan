@@ -1,10 +1,11 @@
+import { FormErrorMessage } from '@/components/custom-ui/formErrorMessage'
 import Button from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { trpc } from '@/lib/trpc'
 import { getZodStringValidationErrors } from '@/lib/zod'
 import { createFlashcardSchema } from '@shared/types/flashcard'
-import { ValidationError, useForm } from '@tanstack/react-form'
+import { useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated/flashcards/new')({
@@ -102,17 +103,5 @@ function FlashcardForm() {
         />
       </form>
     </div>
-  )
-}
-
-function FormErrorMessage({ errors }: { errors: ValidationError[] }) {
-  return (
-    <>
-      {errors ? (
-        <div className="text-red-500">
-          {errors.map((error) => error?.toString())}
-        </div>
-      ) : null}
-    </>
   )
 }
