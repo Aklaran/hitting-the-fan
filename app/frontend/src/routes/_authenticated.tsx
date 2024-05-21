@@ -11,10 +11,13 @@ function Login() {
 }
 
 function AuthenticatedComponent() {
-  // TODO: Can I catch the 401 from this so it doesn't clutter the console?
-  const { data } = trpc.user.me.useQuery()
+  const { data, isError, error } = trpc.user.isAuthenticated.useQuery()
 
-  // TODO: Handle loading states instead of showing login during that time
+  if (isError) {
+    console.error('Error in AuthenticatedComponent', error)
+    return <Login />
+  }
+
   if (!data) {
     return <Login />
   }
