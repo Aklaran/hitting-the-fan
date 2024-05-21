@@ -1,51 +1,54 @@
 import { protectedProcedure, router } from '@backend/lib/middleware/trpc'
-import Flashcard, {
+import { Prisma, PrismaClient } from '@prisma/client'
+import {
   createFlashcardSchema,
   deleteFlashcardSchema,
   getFlashcardSchema,
 } from '@shared/types/flashcard'
 
-const fakeFlashcards: Flashcard[] = [
-  { id: 1, question: 'What is the capital of France?', answer: 'Paris' },
-  { id: 2, question: 'What is the capital of Germany?', answer: 'Berlin' },
-]
+// TODO: Pass the Prisma client in tRPC context
+// TODO: Also add nice Prisma-related scripts to package.json
+const prisma = new PrismaClient()
 
 const flashcardsRouter = router({
-  create: protectedProcedure.input(createFlashcardSchema).mutation((opts) => {
-    const { question, answer } = opts.input
+  create: protectedProcedure
+    .input(createFlashcardSchema)
+    .mutation(async (opts) => {
+      try {
+        const { question, answer } = opts.input
 
-    const newFlashcard: Flashcard = {
-      id: fakeFlashcards.length + 1,
-      question,
-      answer,
-    }
+        const newFlashcard: Prisma.FlashcardCreateInput = {
+          question: question,
+          answer: answer,
+        }
 
-    // TODO: Integrate database
-    fakeFlashcards.push(newFlashcard)
+        await prisma.flashcard.create({ data: newFlashcard })
 
-    return newFlashcard
-  }),
+        return newFlashcard
+      } catch (error) {
+        console.error(error)
+        return { error: 'An error occurred while creating the flashcard' }
+      }
+    }),
 
-  list: protectedProcedure.query(() => {
-    return fakeFlashcards
+  list: protectedProcedure.query(async () => {
+    return await prisma.flashcard.findMany()
   }),
 
   // TODO: Convert route param to GUID
-  get: protectedProcedure.input(getFlashcardSchema).query((opts) => {
+  get: protectedProcedure.input(getFlashcardSchema).query(async (opts) => {
     const { id } = opts.input
-    return fakeFlashcards.find((flashcard) => flashcard.id === id)
+    return await prisma.flashcard.findUnique({ where: { id } })
   }),
 
-  delete: protectedProcedure.input(deleteFlashcardSchema).mutation((opts) => {
-    const { id } = opts.input
-    const index = fakeFlashcards.findIndex((flashcard) => flashcard.id === id)
-    if (index === -1) {
-      // TODO: Status codes?
-      return { error: 'Flashcard not found' }
-    }
-    fakeFlashcards.splice(index, 1)
-    return { message: 'Flashcard deleted successfully' }
-  }),
+  delete: protectedProcedure
+    .input(deleteFlashcardSchema)
+    .mutation(async (opts) => {
+      const { id } = opts.input
+
+      // TODO: Does this automatically handle not found/other errors?
+      return await prisma.flashcard.delete({ where: { id } })
+    }),
 })
 
 export default flashcardsRouter
