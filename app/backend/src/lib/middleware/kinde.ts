@@ -44,7 +44,6 @@ export const sessionManager = (req: Request, res: Response) => ({
   },
 
   async destroySession() {
-    // TODO: Is this actually all the cookies I am setting?
     const keys = ['id_token', 'access_token', 'user', 'refresh_token']
 
     keys.forEach((key) => {
