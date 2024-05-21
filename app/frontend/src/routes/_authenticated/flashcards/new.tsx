@@ -4,7 +4,6 @@ import { Label } from '@/components/ui/label'
 import { trpc } from '@/lib/trpc'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-form-adapter'
 import { z } from 'zod'
 
 export const Route = createFileRoute('/_authenticated/flashcards/new')({
@@ -21,10 +20,11 @@ function FlashcardForm() {
       question: '',
       answer: '',
     },
-    validatorAdapter: zodValidator,
+
     onSubmit: async (values) => {
       const { question, answer } = values.value
 
+      // TODO: Catch this error and stop redirect
       await mutation.mutateAsync({
         question,
         answer,
@@ -46,11 +46,20 @@ function FlashcardForm() {
         <div>
           {/* REFACTOR: Componentize form fields */}
           {/* TODO: Use shared type `createFlashcardSchema.shape.question to validate */}
-          {/* FIXME: Nested type errors are fuuuucking this file up */}
           <form.Field
             name="question"
+            // NOTE: The Tanstack Form Zod Validation Adapter is a but fucked rn,
+            // so we're custom making our validator to get around it.
+            // Check back in to see if it gets fixed ever.
             validators={{
-              onChange: z.string().min(3, 'Question is required.'),
+              onChange: ({ value }) => {
+                const schema = z.string().min(3, 'Question is required.')
+                const error = schema.safeParse(value).error
+
+                return error
+                  ? error.issues.map((issue) => issue.message).join('\n')
+                  : undefined
+              },
             }}
             children={(field) => (
               <>
@@ -76,7 +85,14 @@ function FlashcardForm() {
           <form.Field
             name="answer"
             validators={{
-              onChange: z.string().min(3, 'Answer is required.'),
+              onChange: ({ value }) => {
+                const schema = z.string().min(3, 'Answer is required.')
+                const error = schema.safeParse(value).error
+
+                return error
+                  ? error.issues.map((issue) => issue.message).join('\n')
+                  : undefined
+              },
             }}
             children={(field) => (
               <>
