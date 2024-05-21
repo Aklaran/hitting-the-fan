@@ -25,7 +25,7 @@ function FlashcardForm() {
     onSubmit: async (values) => {
       const { question, answer } = values.value
 
-      mutation.mutate({
+      await mutation.mutateAsync({
         question,
         answer,
       })
