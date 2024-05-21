@@ -3,6 +3,7 @@
     "target": "es2021",
     "module": "commonjs",
     "moduleResolution": "node",
+    "types": ["cypress",  "node"],
     "declaration": true,
     "strict": true,
     "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
@@ -18,7 +19,6 @@
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "sourceMap": true,
     "lib": ["ES6", "DOM"],
     "isolatedModules": true,
     "paths": {
