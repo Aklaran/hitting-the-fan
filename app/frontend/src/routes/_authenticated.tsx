@@ -14,6 +14,7 @@ function AuthenticatedComponent() {
   // TODO: Can I catch the 401 from this so it doesn't clutter the console?
   const { data } = trpc.user.me.useQuery()
 
+  // TODO: Handle loading states instead of showing login during that time
   if (!data) {
     return <Login />
   }

@@ -2,9 +2,10 @@ import Button from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { trpc } from '@/lib/trpc'
+import { getZodStringValidationErrors } from '@/lib/zod'
+import { createFlashcardSchema } from '@shared/types/flashcard'
 import { ValidationError, useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { z } from 'zod'
 
 export const Route = createFileRoute('/_authenticated/flashcards/new')({
   component: FlashcardForm,
@@ -44,20 +45,12 @@ function FlashcardForm() {
         }}
       >
         <div>
-          {/* TODO: Use shared type `createFlashcardSchema.shape.question to validate */}
           <form.Field
             name="question"
-            // NOTE: The Tanstack Form Zod Validation Adapter is a but fucked rn,
-            // so we're custom making our validator to get around it.
-            // Check back in to see if it gets fixed ever.
             validators={{
               onChange: ({ value }) => {
-                const schema = z.string().min(3, 'Question is required.')
-                const error = schema.safeParse(value).error
-
-                return error
-                  ? error.issues.map((issue) => issue.message).join('\n')
-                  : undefined
+                const schema = createFlashcardSchema.shape.question
+                return getZodStringValidationErrors(value, schema)
               },
             }}
             children={(field) => (
@@ -79,12 +72,8 @@ function FlashcardForm() {
             name="answer"
             validators={{
               onChange: ({ value }) => {
-                const schema = z.string().min(3, 'Answer is required.')
-                const error = schema.safeParse(value).error
-
-                return error
-                  ? error.issues.map((issue) => issue.message).join('\n')
-                  : undefined
+                const schema = createFlashcardSchema.shape.answer
+                return getZodStringValidationErrors(value, schema)
               },
             }}
             children={(field) => (
