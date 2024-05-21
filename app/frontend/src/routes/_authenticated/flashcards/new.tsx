@@ -7,6 +7,7 @@ import { getZodStringValidationErrors } from '@/lib/zod'
 import { createFlashcardSchema } from '@shared/types/flashcard'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
 
 export const Route = createFileRoute('/_authenticated/flashcards/new')({
   component: FlashcardForm,
@@ -24,15 +25,18 @@ function FlashcardForm() {
     },
 
     onSubmit: async (values) => {
-      const { question, answer } = values.value
+      const newFlashcard = values.value
 
-      // TODO: Catch this error and stop redirect
-      await mutation.mutateAsync({
-        question,
-        answer,
+      mutation.mutate(newFlashcard, {
+        onSuccess: () => {
+          navigate({ to: '/flashcards' })
+        },
+        onError: (error) => {
+          console.error('Error creating flashcard:', error)
+
+          toast.error('Error creating flashcard')
+        },
       })
-
-      navigate({ to: '/flashcards' })
     },
   })
 
@@ -69,6 +73,7 @@ function FlashcardForm() {
               </>
             )}
           />
+
           <form.Field
             name="answer"
             validators={{
@@ -93,6 +98,7 @@ function FlashcardForm() {
             )}
           />
         </div>
+
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (

@@ -5,6 +5,8 @@ import {
   deleteFlashcardSchema,
   getFlashcardSchema,
 } from '@shared/types/flashcard'
+import logger from '@shared/util/logger'
+import { TRPCError } from '@trpc/server'
 
 // TODO: Pass the Prisma client in tRPC context
 // TODO: Also add nice Prisma-related scripts to package.json
@@ -26,8 +28,13 @@ const flashcardsRouter = router({
 
         return newFlashcard
       } catch (error) {
-        console.error(error)
-        return { error: 'An error occurred while creating the flashcard' }
+        logger.error(error)
+
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An error occurred while creating the flashcard',
+          cause: error,
+        })
       }
     }),
 
@@ -35,7 +42,6 @@ const flashcardsRouter = router({
     return await prisma.flashcard.findMany()
   }),
 
-  // TODO: Convert route param to GUID
   get: protectedProcedure.input(getFlashcardSchema).query(async (opts) => {
     const { id } = opts.input
     return await prisma.flashcard.findUnique({ where: { id } })
