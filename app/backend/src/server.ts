@@ -12,23 +12,12 @@ import appRouter from './routes/root'
 
 const app = express()
 
-// NOTE: This has to come before anything else
-// Because the cookie parser is used to get the session manager
-// In creation of tRPC context
-app.use(cookieParser())
-
-app.use(
-  '/api/trpc',
-  trpcExpress.createExpressMiddleware({ router: appRouter, createContext }),
-)
-
-// TODO: This is now defunct. I need to find a way to do logging of raw-as-possible
-// requests using Pino in tRPC.
+// This has to come first so it gets raw HTTP logs.
 app.use(
   httpLogger({
     logger,
     customReceivedMessage: function (req) {
-      return `${req.method} ${req.url}`
+      return `${req.method} ${decodeURIComponent(req.url)}`
     },
 
     customSuccessMessage: function (req, res) {
@@ -59,11 +48,21 @@ app.use(
         return {
           id: req.id,
           method: req.method,
-          url: req.url,
+          url: decodeURIComponent(req.url),
         }
       },
     },
   }),
+)
+
+// This has to come before tRPC middleware
+// Because the cookie parser is used to get the session manager
+// In creation of tRPC context
+app.use(cookieParser())
+
+app.use(
+  '/api/trpc',
+  trpcExpress.createExpressMiddleware({ router: appRouter, createContext }),
 )
 
 // Kinde Auth
