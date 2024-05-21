@@ -45,10 +45,12 @@ function FlashcardForm() {
       >
         <div>
           {/* REFACTOR: Componentize form fields */}
+          {/* TODO: Use shared type `createFlashcardSchema.shape.question to validate */}
+          {/* FIXME: Nested type errors are fuuuucking this file up */}
           <form.Field
             name="question"
             validators={{
-              onChange: z.string().min(1, 'Question is required.'),
+              onChange: z.string().min(3, 'Question is required.'),
             }}
             children={(field) => (
               <>
@@ -74,7 +76,7 @@ function FlashcardForm() {
           <form.Field
             name="answer"
             validators={{
-              onChange: z.string().min(1, 'Answer is required.'),
+              onChange: z.string().min(3, 'Answer is required.'),
             }}
             children={(field) => (
               <>

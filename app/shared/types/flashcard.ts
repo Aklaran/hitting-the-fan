@@ -1,12 +1,14 @@
 import { z } from 'zod'
 
+// TODO: Generate with Prisma Zod Generator maybe?
+// https://github.com/omar-dulaimi/prisma-zod-generator
 const flashcardSchema = z.object({
   id: z.number().int().positive().min(1),
-  question: z.string({ required_error: 'Question is required.' }).min(1, {
-    message: 'Question is required.',
+  question: z.string({ required_error: 'Question is required.' }).min(3, {
+    message: 'Question must be at least 3 characters long.',
   }),
-  answer: z.string({ required_error: 'Answer is required.' }).min(1, {
-    message: 'Answer is required.',
+  answer: z.string({ required_error: 'Answer is required.' }).min(3, {
+    message: 'Answer must be at least 3 characters long.',
   }),
 })
 
