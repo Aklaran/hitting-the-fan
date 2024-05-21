@@ -2,7 +2,7 @@ import Button from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { trpc } from '@/lib/trpc'
-import { useForm } from '@tanstack/react-form'
+import { ValidationError, useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
 
@@ -44,7 +44,6 @@ function FlashcardForm() {
         }}
       >
         <div>
-          {/* REFACTOR: Componentize form fields */}
           {/* TODO: Use shared type `createFlashcardSchema.shape.question to validate */}
           <form.Field
             name="question"
@@ -72,13 +71,7 @@ function FlashcardForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                {field.state.meta.touchedErrors ? (
-                  <div className="text-red-500">
-                    {field.state.meta.touchedErrors.map((error) =>
-                      error?.toString(),
-                    )}
-                  </div>
-                ) : null}
+                <FormErrorMessage errors={field.state.meta.touchedErrors} />
               </>
             )}
           />
@@ -105,13 +98,7 @@ function FlashcardForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                {field.state.meta.touchedErrors ? (
-                  <div className="text-red-500">
-                    {field.state.meta.touchedErrors.map((error) =>
-                      error?.toString(),
-                    )}
-                  </div>
-                ) : null}
+                <FormErrorMessage errors={field.state.meta.touchedErrors} />
               </>
             )}
           />
@@ -126,5 +113,17 @@ function FlashcardForm() {
         />
       </form>
     </div>
+  )
+}
+
+function FormErrorMessage({ errors }: { errors: ValidationError[] }) {
+  return (
+    <>
+      {errors ? (
+        <div className="text-red-500">
+          {errors.map((error) => error?.toString())}
+        </div>
+      ) : null}
+    </>
   )
 }
