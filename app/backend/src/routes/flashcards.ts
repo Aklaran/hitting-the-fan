@@ -8,8 +8,6 @@ import {
 import logger from '@shared/util/logger'
 import { TRPCError } from '@trpc/server'
 
-// TODO: add nice Prisma-related scripts to package.json
-
 const flashcardsRouter = router({
   create: protectedProcedure
     .input(createFlashcardSchema)

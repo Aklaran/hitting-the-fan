@@ -3,7 +3,8 @@
 set -e
 
 concurrently \
-  -n _BACKEND,FRONTEND \
-  -c magenta,cyan \
+  -n _BACKEND,GENERATE,FRONTEND \
+  -c magenta,green,cyan \
   "pnpm dev:backend" \
+  "pnpm generate:watch" \
   "pnpm dev:frontend" 
