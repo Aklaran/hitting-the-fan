@@ -18,7 +18,7 @@ function Flashcards() {
   return (
     <>
       <Table className="max-w-3xl m-auto">
-        <TableCaption>A list of your active flashcards.</TableCaption>
+        <TableCaption>All of the flashcards we currently support.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">ID</TableHead>
