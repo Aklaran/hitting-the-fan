@@ -15,10 +15,18 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 function Flashcards() {
   const { data, isPending } = trpc.flashcard.list.useQuery()
 
+  // TODO: Lol if only I had this in context. Can always give it another try!
+  const isAuthenticatedQuery = trpc.user.isAuthenticated.useQuery()
+
+  if (isAuthenticatedQuery.isError) {
+    console.error('Error in AuthenticatedComponent', isAuthenticatedQuery.error)
+  }
+
   return (
     <>
       <Table className="max-w-3xl m-auto">
         <TableCaption>All of the flashcards we currently support.</TableCaption>
+
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">ID</TableHead>
@@ -26,6 +34,7 @@ function Flashcards() {
             <TableHead>Answer</TableHead>
           </TableRow>
         </TableHeader>
+
         <TableBody>
           {isPending || !data ? (
             <TableSkeleton />
@@ -40,9 +49,12 @@ function Flashcards() {
           )}
         </TableBody>
       </Table>
-      <Link to="/flashcards/new">
-        <Button>Create Flashcard</Button>
-      </Link>
+
+      {isAuthenticatedQuery.data && (
+        <Link to="/flashcards/new">
+          <Button>Create Flashcard</Button>
+        </Link>
+      )}
     </>
   )
 }
