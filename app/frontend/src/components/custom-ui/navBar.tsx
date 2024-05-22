@@ -35,6 +35,7 @@ function AccountActionNavSection() {
 
   return <AuthenticatedNavSection />
 }
+
 function UnauthenticatedNavSection() {
   return (
     <div className="flex gap-2">
@@ -51,6 +52,7 @@ function UnauthenticatedNavSection() {
     </div>
   )
 }
+
 function AuthenticatedNavSection() {
   return (
     <Link to="/users/me" className="[&.active]:font-bold">
