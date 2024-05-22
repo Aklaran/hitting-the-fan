@@ -3,7 +3,6 @@ import {
   publicProcedure,
   router,
 } from '@backend/lib/middleware/trpc'
-import { Prisma } from '@prisma/client'
 import {
   createFlashcardSchema,
   deleteFlashcardSchema,
@@ -11,20 +10,14 @@ import {
 } from '@shared/types/flashcard'
 import logger from '@shared/util/logger'
 import { TRPCError } from '@trpc/server'
+import { flashcardService } from '../services/flashcardService'
 
 const flashcardsRouter = router({
   create: protectedProcedure
     .input(createFlashcardSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        const { question, answer } = input
-
-        const newFlashcard: Prisma.FlashcardCreateInput = {
-          question: question,
-          answer: answer,
-        }
-
-        await ctx.prisma.flashcard.create({ data: newFlashcard })
+        const newFlashcard = await flashcardService.createFlashcard(input, ctx)
 
         return newFlashcard
       } catch (error) {
@@ -39,23 +32,20 @@ const flashcardsRouter = router({
     }),
 
   list: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.flashcard.findMany()
+    return await flashcardService.getFlashcards(ctx)
   }),
 
   get: protectedProcedure
     .input(getFlashcardSchema)
     .query(async ({ input, ctx }) => {
-      const { id } = input
-      return await ctx.prisma.flashcard.findUnique({ where: { id } })
+      return await flashcardService.getFlashcard(input, ctx)
     }),
 
   delete: protectedProcedure
     .input(deleteFlashcardSchema)
     .mutation(async ({ input, ctx }) => {
-      const { id } = input
-
-      // TODO: Does this automatically handle not found/other errors?
-      return await ctx.prisma.flashcard.delete({ where: { id } })
+      // TODO: Handle errors
+      return await flashcardService.deleteFlashcard(input, ctx)
     }),
 })
 

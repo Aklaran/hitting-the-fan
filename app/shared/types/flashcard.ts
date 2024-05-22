@@ -17,5 +17,8 @@ export const getFlashcardSchema = flashcardSchema.pick({ id: true })
 export const deleteFlashcardSchema = flashcardSchema.pick({ id: true })
 
 type Flashcard = z.infer<typeof flashcardSchema>
+export type CreateFlashcardSchema = z.infer<typeof createFlashcardSchema>
+export type GetFlashcardSchema = z.infer<typeof getFlashcardSchema>
+export type DeleteFlashcardSchema = z.infer<typeof deleteFlashcardSchema>
 
 export default Flashcard
