@@ -65,6 +65,6 @@ const TableSkeleton = () => {
     ))
 }
 
-export const Route = createFileRoute('/_authenticated/flashcards/')({
+export const Route = createFileRoute('/flashcards/')({
   component: Flashcards,
 })

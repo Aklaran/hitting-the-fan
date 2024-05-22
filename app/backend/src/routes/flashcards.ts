@@ -1,4 +1,8 @@
-import { protectedProcedure, router } from '@backend/lib/middleware/trpc'
+import {
+  protectedProcedure,
+  publicProcedure,
+  router,
+} from '@backend/lib/middleware/trpc'
 import { Prisma } from '@prisma/client'
 import {
   createFlashcardSchema,
@@ -34,7 +38,7 @@ const flashcardsRouter = router({
       }
     }),
 
-  list: protectedProcedure.query(async ({ ctx }) => {
+  list: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.flashcard.findMany()
   }),
 

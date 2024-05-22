@@ -14,7 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthenticatedFlashcardsIndexImport } from './routes/_authenticated/flashcards/index'
+import { Route as FlashcardsIndexImport } from './routes/flashcards/index'
 import { Route as AuthenticatedUsersMeImport } from './routes/_authenticated/users/me'
 import { Route as AuthenticatedFlashcardsNewImport } from './routes/_authenticated/flashcards/new'
 
@@ -35,11 +35,10 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedFlashcardsIndexRoute =
-  AuthenticatedFlashcardsIndexImport.update({
-    path: '/flashcards/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const FlashcardsIndexRoute = FlashcardsIndexImport.update({
+  path: '/flashcards/',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AuthenticatedUsersMeRoute = AuthenticatedUsersMeImport.update({
   path: '/users/me',
@@ -78,6 +77,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
+    '/flashcards/': {
+      id: '/flashcards/'
+      path: '/flashcards'
+      fullPath: '/flashcards'
+      preLoaderRoute: typeof FlashcardsIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/_authenticated/flashcards/new': {
       id: '/_authenticated/flashcards/new'
       path: '/flashcards/new'
@@ -92,13 +98,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersMeImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/flashcards/': {
-      id: '/_authenticated/flashcards/'
-      path: '/flashcards'
-      fullPath: '/flashcards'
-      preLoaderRoute: typeof AuthenticatedFlashcardsIndexImport
-      parentRoute: typeof AuthenticatedImport
-    }
   }
 }
 
@@ -109,9 +108,9 @@ export const routeTree = rootRoute.addChildren({
   AuthenticatedRoute: AuthenticatedRoute.addChildren({
     AuthenticatedFlashcardsNewRoute,
     AuthenticatedUsersMeRoute,
-    AuthenticatedFlashcardsIndexRoute,
   }),
   AboutRoute,
+  FlashcardsIndexRoute,
 })
 
 /* prettier-ignore-end */
