@@ -16,6 +16,7 @@ import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as FlashcardsIndexImport } from './routes/flashcards/index'
 import { Route as AuthenticatedUsersMeImport } from './routes/_authenticated/users/me'
+import { Route as AuthenticatedFlashcardsStudyImport } from './routes/_authenticated/flashcards/study'
 import { Route as AuthenticatedFlashcardsNewImport } from './routes/_authenticated/flashcards/new'
 
 // Create/Update Routes
@@ -44,6 +45,12 @@ const AuthenticatedUsersMeRoute = AuthenticatedUsersMeImport.update({
   path: '/users/me',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+
+const AuthenticatedFlashcardsStudyRoute =
+  AuthenticatedFlashcardsStudyImport.update({
+    path: '/flashcards/study',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 const AuthenticatedFlashcardsNewRoute = AuthenticatedFlashcardsNewImport.update(
   {
@@ -91,6 +98,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFlashcardsNewImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/flashcards/study': {
+      id: '/_authenticated/flashcards/study'
+      path: '/flashcards/study'
+      fullPath: '/flashcards/study'
+      preLoaderRoute: typeof AuthenticatedFlashcardsStudyImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/users/me': {
       id: '/_authenticated/users/me'
       path: '/users/me'
@@ -107,6 +121,7 @@ export const routeTree = rootRoute.addChildren({
   IndexRoute,
   AuthenticatedRoute: AuthenticatedRoute.addChildren({
     AuthenticatedFlashcardsNewRoute,
+    AuthenticatedFlashcardsStudyRoute,
     AuthenticatedUsersMeRoute,
   }),
   AboutRoute,

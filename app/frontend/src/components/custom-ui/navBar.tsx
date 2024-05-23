@@ -15,6 +15,9 @@ export const NavBar = () => {
         <Link to="/flashcards" className="[&.active]:font-bold">
           Flashcards
         </Link>
+        <Link to="/flashcards/study" className="[&.active]:font-bold">
+          Study
+        </Link>
       </div>
       <AccountActionNavSection />
     </div>

@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 // TODO: Generate with Prisma Zod Generator maybe?
 // https://github.com/omar-dulaimi/prisma-zod-generator
-const flashcardSchema = z.object({
+export const flashcardSchema = z.object({
   id: z.number().int().positive().min(1),
   question: z.string({ required_error: 'Question is required.' }).min(3, {
     message: 'Question must be at least 3 characters long.',
@@ -20,5 +20,7 @@ type Flashcard = z.infer<typeof flashcardSchema>
 export type CreateFlashcardSchema = z.infer<typeof createFlashcardSchema>
 export type GetFlashcardSchema = z.infer<typeof getFlashcardSchema>
 export type DeleteFlashcardSchema = z.infer<typeof deleteFlashcardSchema>
+
+export type FlashcardId = z.infer<typeof flashcardSchema.shape.id>
 
 export default Flashcard
