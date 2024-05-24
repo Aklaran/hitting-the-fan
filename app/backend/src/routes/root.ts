@@ -1,4 +1,4 @@
-import { router } from '@backend/lib/middleware/trpc'
+import { router } from '@backend/lib/clients/trpc'
 import flashcardsRouter from './flashcards'
 import srsRouter from './srs'
 import usersRouter from './users'

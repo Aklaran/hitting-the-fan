@@ -2,7 +2,7 @@ import {
   protectedProcedure,
   publicProcedure,
   router,
-} from '@backend/lib/middleware/trpc'
+} from '@backend/lib/clients/trpc'
 import {
   createFlashcardSchema,
   deleteFlashcardSchema,

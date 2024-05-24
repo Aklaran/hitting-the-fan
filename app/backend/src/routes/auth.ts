@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { kindeClient, sessionManager } from '../lib/middleware/kinde'
+import { kindeClient, sessionManager } from '../lib/clients/kinde'
 
 // Authentication with Kinde
 const authRouter: Router = express

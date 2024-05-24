@@ -2,7 +2,7 @@ import { SessionManager } from '@kinde-oss/kinde-typescript-sdk'
 import { PrismaClient } from '@prisma/client'
 import logger from '@shared/util/logger'
 import * as trpcExpress from '@trpc/server/adapters/express'
-import { kindeClient, sessionManager as sm } from './kinde'
+import { kindeClient, sessionManager as sm } from '../clients/kinde'
 
 async function getUser(sessionManager: SessionManager) {
   try {

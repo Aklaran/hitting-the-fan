@@ -1,4 +1,4 @@
-import { protectedProcedure, router } from '@backend/lib/middleware/trpc'
+import { protectedProcedure, router } from '@backend/lib/clients/trpc'
 import { TRPCError } from '@trpc/server'
 import srsService from '../services/srsService'
 
