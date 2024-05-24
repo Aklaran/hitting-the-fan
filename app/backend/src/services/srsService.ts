@@ -11,6 +11,8 @@ const initializeSrs = async (userId: UserId, ctx: Context) => {
     await userFlashcardRepository.getUserFlashcards(userId, ctx)
 
   // if there are any, throw an error that the srs system has already been inited.
+  // TODO: Handle partial case by adding flashcards to fill the diff between
+  //       existing UserFlashcards and number of Flashcards.
   if (existingUserFlashcards.length > 0) {
     // TODO: Should I throw tRPC errors at the service layer, or should I
     //       make my own error types?
