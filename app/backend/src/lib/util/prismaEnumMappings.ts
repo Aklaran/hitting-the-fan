@@ -3,7 +3,8 @@
 // See: https://github.com/prisma/prisma/issues/8446
 
 import { State as PrismaState } from '@prisma/client'
-import { State as FsrsState } from 'ts-fsrs'
+import { MyGrade } from '@shared/types/srs'
+import { State as FsrsState, Rating } from 'ts-fsrs'
 
 export const FlashcardStateMap = {
   [PrismaState.New]: FsrsState.New,
@@ -17,4 +18,11 @@ export const FlashcardStateReverseMap = {
   [FsrsState.Learning]: PrismaState.Learning,
   [FsrsState.Review]: PrismaState.Review,
   [FsrsState.Relearning]: PrismaState.Relearning,
+}
+
+export const RatingMap = {
+  [MyGrade.Again]: Rating.Again,
+  [MyGrade.Hard]: Rating.Hard,
+  [MyGrade.Good]: Rating.Good,
+  [MyGrade.Easy]: Rating.Easy,
 }

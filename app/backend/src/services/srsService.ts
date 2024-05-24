@@ -1,8 +1,10 @@
 import { Context } from '@backend/lib/middleware/context'
 import userFlashcardRepository from '@backend/repositories/userFlashcardRepository'
+import { StudyFlashcardSchema } from '@shared/types/srs'
 import { UserId } from '@shared/types/user'
 import { TRPCError } from '@trpc/server'
 import fsrsAdapter from '../lib/fsrs'
+import { RatingMap } from '../lib/util/prismaEnumMappings'
 import flashcardRepository from '../repositories/flashcardRepository'
 
 const initializeSrs = async (userId: UserId, ctx: Context) => {
@@ -51,9 +53,61 @@ const getScheduledCards = async (userId: UserId, ctx: Context) => {
   return userFlashcards
 }
 
+const getNextScheduledCard = async (userId: UserId, ctx: Context) => {
+  const nextScheduledCard = await userFlashcardRepository.getNextScheduledCard(
+    userId,
+    ctx,
+  )
+
+  return nextScheduledCard
+}
+
+const studyCard = async (input: StudyFlashcardSchema, ctx: Context) => {
+  const { userFlashcardId, grade } = input
+
+  // TODO: Authorization checking
+
+  try {
+    // TODO: Is it better to get the userFlashcard here or have the complete info.
+    //       Sent in from the endpoint? I'm leaning towards just using IDs at the API level.
+    const userFlashcard = await userFlashcardRepository.getUserFlashcard(
+      userFlashcardId,
+      ctx,
+    )
+
+    if (!userFlashcard) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'The UserFlashcard does not exist.',
+      })
+    }
+
+    const convertedRating = RatingMap[grade]
+    const studyLog = fsrsAdapter.studyFlashcard(userFlashcard, convertedRating)
+    const newFlashcardSchedule = studyLog.card
+
+    const savedFlashcardSchedule =
+      await userFlashcardRepository.updateUserFlashcard(
+        userFlashcardId,
+        newFlashcardSchedule,
+        ctx,
+      )
+
+    return savedFlashcardSchedule
+  } catch (e) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'An error occurred while studying the flashcard.',
+      cause: e,
+    })
+  }
+}
+
 const srsService = {
   initializeSrs,
   getScheduledCards,
+  getNextScheduledCard,
+  studyCard,
 }
 
 export default srsService

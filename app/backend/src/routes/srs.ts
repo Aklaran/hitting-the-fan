@@ -1,4 +1,5 @@
 import { protectedProcedure, router } from '@backend/lib/clients/trpc'
+import { studyFlashcardSchema } from '@shared/types/srs'
 import { TRPCError } from '@trpc/server'
 import srsService from '../services/srsService'
 
@@ -33,15 +34,22 @@ const srsRouter = router({
   getScheduledCards: protectedProcedure.query(async ({ ctx }) => {
     const { user } = ctx
 
-    if (!user) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'You are not authorized to get scheduled cards',
-      })
-    }
-
-    return await srsService.getScheduledCards(user.id, ctx)
+    // TODO: Is there a way that I could not force-unwrap user
+    //       in a protected route?
+    return await srsService.getScheduledCards(user!.id, ctx)
   }),
+
+  getNextScheduledCard: protectedProcedure.query(async ({ ctx }) => {
+    const { user } = ctx
+
+    return await srsService.getNextScheduledCard(user!.id, ctx)
+  }),
+
+  studyCard: protectedProcedure
+    .input(studyFlashcardSchema)
+    .mutation(async ({ ctx, input }) => {
+      return await srsService.studyCard(input, ctx)
+    }),
 })
 
 export default srsRouter
