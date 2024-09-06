@@ -17,6 +17,7 @@ export function ScenarioPlayerInput({
 
     onSubmit: async (values) => {
       onSubmit(values.value)
+      form.reset()
     },
   })
 
