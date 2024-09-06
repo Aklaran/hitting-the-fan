@@ -15,6 +15,7 @@ import { Route as AboutImport } from './routes/about'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as FlashcardsIndexImport } from './routes/flashcards/index'
+import { Route as ScenarioPlayImport } from './routes/scenario/play'
 import { Route as AuthenticatedUsersMeImport } from './routes/_authenticated/users/me'
 import { Route as AuthenticatedFlashcardsStudyImport } from './routes/_authenticated/flashcards/study'
 import { Route as AuthenticatedFlashcardsNewImport } from './routes/_authenticated/flashcards/new'
@@ -39,6 +40,11 @@ const IndexRoute = IndexImport.update({
 
 const FlashcardsIndexRoute = FlashcardsIndexImport.update({
   path: '/flashcards/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ScenarioPlayRoute = ScenarioPlayImport.update({
+  path: '/scenario/play',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -91,6 +97,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
+    '/scenario/play': {
+      id: '/scenario/play'
+      path: '/scenario/play'
+      fullPath: '/scenario/play'
+      preLoaderRoute: typeof ScenarioPlayImport
+      parentRoute: typeof rootRoute
+    }
     '/flashcards/': {
       id: '/flashcards/'
       path: '/flashcards'
@@ -140,6 +153,7 @@ export const routeTree = rootRoute.addChildren({
     AuthenticatedUsersMeRoute,
   }),
   AboutRoute,
+  ScenarioPlayRoute,
   FlashcardsIndexRoute,
 })
 
