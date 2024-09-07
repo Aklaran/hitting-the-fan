@@ -9,7 +9,7 @@ const processAction = (
   scenarioState: ScenarioState,
 ) => {
   const { action } = input
-  const { log, patientHealth } = scenarioState
+  const { log, patient } = scenarioState
 
   const newState: ScenarioState = {
     ...scenarioState,
@@ -26,8 +26,11 @@ const processAction = (
         "You carefully examine your partner's ankle. It appears to be sprained."
       break
     case 'break leg':
-      newState.patientHealth = patientHealth - 20
-      responseText = `Jesus Christ, why would you do that? You break your patient's leg. Their health is now ${newState.patientHealth}.`
+      newState.patient.health = patient.health - 20
+      responseText = `Jesus Christ, why would you do that? You break your patient's leg. Their health is now ${newState.patient.health}.`
+      break
+    case 'ask name':
+      responseText = `The patient looks at you and says "My name ${patient.name}!"`
       break
     default:
       responseText = "You're not sure how to do that."

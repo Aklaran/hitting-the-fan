@@ -32,7 +32,10 @@ export const scenarioLogSchema = z.array(scenarioLogEntrySchema)
 
 export const scenarioStateSchema = z.object({
   log: scenarioLogSchema,
-  patientHealth: z.number().int().positive().min(0).max(100),
+  patient: z.object({
+    name: z.string(),
+    health: z.number().int().positive().min(0).max(100),
+  }),
 })
 
 export const processActionSchema = z.object({

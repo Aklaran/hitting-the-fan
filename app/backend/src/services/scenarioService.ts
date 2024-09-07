@@ -57,7 +57,10 @@ const getScenarioSession = async (userId: string, ctx: Context) => {
   // TODO: create the initial scenario state in the new screen
   const initialScenarioState: ScenarioState = {
     log: [{ text: scenario.openingPrompt, type: 'narrator' }],
-    patientHealth: 100,
+    patient: {
+      name: 'Jeff',
+      health: 100,
+    },
   }
 
   const scenarioSession = await scenarioSessionRepository.createScenarioSession(
