@@ -6,7 +6,7 @@ import { useRef } from 'react'
 
 function ScenarioPlayPage() {
   const {
-    data: scenarioState,
+    data: scenarioLog,
     isLoading,
     isError,
   } = trpc.scenario.getSessionState.useQuery()
@@ -31,7 +31,7 @@ function ScenarioPlayPage() {
     return <div>Loading...</div>
   }
 
-  if (!scenarioState) {
+  if (!scenarioLog) {
     return <div>Error - no data</div>
   }
 
@@ -55,7 +55,7 @@ function ScenarioPlayPage() {
     <div className="pt-2">
       <div className="flex flex-col justify-between gap-2 border rounded p-2 w-5/6 h-96 max-h-dvh mx-auto">
         <ScenarioLogOutput
-          scenarioState={scenarioState}
+          scenarioLog={scenarioLog}
           logContainerRef={logContainerRef}
         />
 

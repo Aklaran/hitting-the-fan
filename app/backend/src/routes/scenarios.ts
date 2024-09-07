@@ -65,7 +65,8 @@ const scenariosRouter = router({
       ctx,
     )
 
-    return scenarioSession.scenarioState as ScenarioState
+    const { log } = scenarioSession.scenarioState as ScenarioState
+    return log
   }),
 
   processAction: protectedProcedure
@@ -76,7 +77,8 @@ const scenariosRouter = router({
         ctx,
       )
 
-      return updatedScenarioSession.scenarioState as ScenarioState
+      const { log } = updatedScenarioSession.scenarioState as ScenarioState
+      return log
     }),
 })
 
