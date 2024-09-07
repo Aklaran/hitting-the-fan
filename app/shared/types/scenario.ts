@@ -36,7 +36,6 @@ export const scenarioStateSchema = z.object({
 
 export const processActionSchema = z.object({
   action: z.string(),
-  scenario: scenarioStateSchema,
 })
 
 export type ScenarioLogEntry = z.infer<typeof scenarioLogEntrySchema>

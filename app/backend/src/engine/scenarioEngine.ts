@@ -1,8 +1,15 @@
-import { ProcessActionSchema, ScenarioLogEntry } from '@shared/types/scenario'
+import {
+  ProcessActionSchema,
+  ScenarioLogEntry,
+  ScenarioState,
+} from '@shared/types/scenario'
 
-const processAction = (input: ProcessActionSchema) => {
-  const { action, scenario } = input
-  const { log } = scenario
+const processAction = (
+  input: ProcessActionSchema,
+  scenarioState: ScenarioState,
+) => {
+  const { action } = input
+  const { log } = scenarioState
 
   let responseText: string
   switch (action.toLowerCase()) {

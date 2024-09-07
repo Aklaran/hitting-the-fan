@@ -81,7 +81,10 @@ const processAction = async (input: ProcessActionSchema, ctx: Context) => {
     })
   }
 
-  const newScenarioState = scenarioEngine.processAction(input)
+  const newScenarioState = scenarioEngine.processAction(
+    input,
+    scenarioSession.scenarioState as ScenarioState,
+  )
 
   const updatedScenarioSession =
     await scenarioSessionRepository.updateScenarioSession(

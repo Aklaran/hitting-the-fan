@@ -36,7 +36,7 @@ function ScenarioPlayPage() {
   }
 
   const handlePlayerInput = async (value: { action: string }) => {
-    mutation.mutate({ action: value.action, scenario: scenarioState })
+    mutation.mutate({ action: value.action })
   }
 
   const scrollLogContainer = () => {
