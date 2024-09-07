@@ -48,7 +48,7 @@ function ScenarioPlayPage() {
           behavior: 'smooth',
         })
       }
-    })
+    }, 100)
   }
 
   return (
