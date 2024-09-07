@@ -23,9 +23,6 @@ importers:
       express-session:
         specifier: ^1.18.0
         version: 1.18.0
-      ts-fsrs:
-        specifier: ^3.5.7
-        version: 3.5.7
     devDependencies:
       '@types/body-parser':
         specifier: ^1.19.5
@@ -490,9 +487,6 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  seedrandom@3.0.5:
-    resolution: {integrity: sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==}
-
   semver@7.6.1:
     resolution: {integrity: sha512-f/vbBsu+fOiYt+lmwZV0rVwJScl46HppnOA1ZvIuBWKOTlllpyJ3bfVax76/OrhCH38dyxoDIA8K7uB963IYgA==}
     engines: {node: '>=10'}
@@ -540,10 +534,6 @@ packages:
   touch@3.1.0:
     resolution: {integrity: sha512-WBx8Uy5TLtOSRtIq+M03/sKDrXCLHxwDcquSP2c43Le03/9serjQBIztjRz6FkJez9D/hleyAXTBGLwwZUw9lA==}
     hasBin: true
-
-  ts-fsrs@3.5.7:
-    resolution: {integrity: sha512-xA18Igi1adkuCNgNjKkorjYgZq842+HdgRjatQPDERcrAWMlzM+3BwIbrF/Q0ijYEyw3NcTp3yJIMSO7agBLKQ==}
-    engines: {node: '>=16.0.0'}
 
   ts-node@10.9.2:
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
@@ -1058,8 +1048,6 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  seedrandom@3.0.5: {}
-
   semver@7.6.1: {}
 
   send@0.18.0:
@@ -1126,10 +1114,6 @@ snapshots:
   touch@3.1.0:
     dependencies:
       nopt: 1.0.10
-
-  ts-fsrs@3.5.7:
-    dependencies:
-      seedrandom: 3.0.5
 
   ts-node@10.9.2(@types/node@20.12.10)(typescript@5.4.5):
     dependencies:
