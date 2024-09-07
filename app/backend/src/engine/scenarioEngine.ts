@@ -9,7 +9,11 @@ const processAction = (
   scenarioState: ScenarioState,
 ) => {
   const { action } = input
-  const { log } = scenarioState
+  const { log, patientHealth } = scenarioState
+
+  const newState: ScenarioState = {
+    ...scenarioState,
+  }
 
   let responseText: string
   switch (action.toLowerCase()) {
@@ -21,7 +25,10 @@ const processAction = (
       responseText =
         "You carefully examine your partner's ankle. It appears to be sprained."
       break
-    // Add more cases for different actions
+    case 'break leg':
+      newState.patientHealth = patientHealth - 20
+      responseText = `Jesus Christ, why would you do that? You break your patient's leg. Their health is now ${newState.patientHealth}.`
+      break
     default:
       responseText = "You're not sure how to do that."
   }
@@ -36,7 +43,9 @@ const processAction = (
     type: 'narrator',
   }
 
-  return { log: [...log, actionLog, responseLog] }
+  newState.log = [...log, actionLog, responseLog]
+
+  return newState
 }
 
 export const scenarioEngine = {
