@@ -31,10 +31,13 @@ export async function createContext({
 
   const prisma = prismaClient
 
+  const sessionId = req.session.id
+
   return {
     isAuthenticated,
     user,
     prisma,
+    sessionId,
   }
 }
 

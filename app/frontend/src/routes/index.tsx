@@ -12,7 +12,7 @@ function Index() {
       <Link to="/flashcards" className="text-blue-500 hover:underline">
         Start Studying Flashcards
       </Link>
-      <Link to="/scenario/play" className="text-blue-500 hover:underline">
+      <Link to="/scenarios/play" className="text-blue-500 hover:underline">
         Play a Scenario
       </Link>
     </div>

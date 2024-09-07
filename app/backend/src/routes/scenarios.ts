@@ -7,6 +7,8 @@ import {
   createScenarioSchema,
   deleteScenarioSchema,
   getScenarioSchema,
+  processActionSchema,
+  ScenarioState,
 } from '@shared/types/scenario'
 import logger from '@shared/util/logger'
 import { TRPCError } from '@trpc/server'
@@ -46,6 +48,35 @@ const scenariosRouter = router({
     .mutation(async ({ input, ctx }) => {
       // TODO: Handle errors
       return await scenarioService.deleteScenario(input, ctx)
+    }),
+
+  getSessionState: protectedProcedure.query(async ({ ctx }) => {
+    const { user } = ctx
+
+    if (!user) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You are not authorized to initialize SRS',
+      })
+    }
+
+    const scenarioSession = await scenarioService.getScenarioSession(
+      user.id,
+      ctx,
+    )
+
+    return scenarioSession.scenarioState as ScenarioState
+  }),
+
+  processAction: protectedProcedure
+    .input(processActionSchema)
+    .mutation(async ({ input, ctx }) => {
+      const updatedScenarioSession = await scenarioService.processAction(
+        input,
+        ctx,
+      )
+
+      return updatedScenarioSession.scenarioState as ScenarioState
     }),
 })
 

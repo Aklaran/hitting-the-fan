@@ -27,6 +27,15 @@ const getScenario = async (input: GetScenarioSchema, ctx: Context) => {
   return scenario
 }
 
+const getRandomScenario = async (ctx: Context) => {
+  // TODO: Implement random scenario selection
+  const scenario = await ctx.prisma.scenario.findFirst({
+    orderBy: { id: 'asc' },
+  })
+
+  return scenario
+}
+
 const deleteScenario = async (input: DeleteScenarioSchema, ctx: Context) => {
   const scenario = await ctx.prisma.scenario.delete({
     where: { id: input.id },
@@ -39,6 +48,7 @@ const scenarioRepository = {
   createScenario,
   getScenarios,
   getScenario,
+  getRandomScenario,
   deleteScenario,
 }
 

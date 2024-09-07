@@ -16,8 +16,8 @@ import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as ScenariosIndexImport } from './routes/scenarios/index'
 import { Route as FlashcardsIndexImport } from './routes/flashcards/index'
-import { Route as ScenariosPlayImport } from './routes/scenarios/play'
 import { Route as AuthenticatedUsersMeImport } from './routes/_authenticated/users/me'
+import { Route as AuthenticatedScenariosPlayImport } from './routes/_authenticated/scenarios/play'
 import { Route as AuthenticatedScenariosNewImport } from './routes/_authenticated/scenarios/new'
 import { Route as AuthenticatedFlashcardsStudyImport } from './routes/_authenticated/flashcards/study'
 import { Route as AuthenticatedFlashcardsNewImport } from './routes/_authenticated/flashcards/new'
@@ -50,15 +50,17 @@ const FlashcardsIndexRoute = FlashcardsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ScenariosPlayRoute = ScenariosPlayImport.update({
-  path: '/scenarios/play',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AuthenticatedUsersMeRoute = AuthenticatedUsersMeImport.update({
   path: '/users/me',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+
+const AuthenticatedScenariosPlayRoute = AuthenticatedScenariosPlayImport.update(
+  {
+    path: '/scenarios/play',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any,
+)
 
 const AuthenticatedScenariosNewRoute = AuthenticatedScenariosNewImport.update({
   path: '/scenarios/new',
@@ -109,13 +111,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/scenarios/play': {
-      id: '/scenarios/play'
-      path: '/scenarios/play'
-      fullPath: '/scenarios/play'
-      preLoaderRoute: typeof ScenariosPlayImport
-      parentRoute: typeof rootRoute
-    }
     '/flashcards/': {
       id: '/flashcards/'
       path: '/flashcards'
@@ -158,6 +153,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedScenariosNewImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/scenarios/play': {
+      id: '/_authenticated/scenarios/play'
+      path: '/scenarios/play'
+      fullPath: '/scenarios/play'
+      preLoaderRoute: typeof AuthenticatedScenariosPlayImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/users/me': {
       id: '/_authenticated/users/me'
       path: '/users/me'
@@ -177,10 +179,10 @@ export const routeTree = rootRoute.addChildren({
     AuthenticatedFlashcardsNewRoute,
     AuthenticatedFlashcardsStudyRoute,
     AuthenticatedScenariosNewRoute,
+    AuthenticatedScenariosPlayRoute,
     AuthenticatedUsersMeRoute,
   }),
   AboutRoute,
-  ScenariosPlayRoute,
   FlashcardsIndexRoute,
   ScenariosIndexRoute,
 })
