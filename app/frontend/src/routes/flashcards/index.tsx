@@ -1,5 +1,5 @@
+import TableSkeleton from '@/components/custom-ui/tableSkeleton'
 import Button from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -37,7 +37,7 @@ function Flashcards() {
 
         <TableBody>
           {isPending || !data ? (
-            <TableSkeleton />
+            <TableSkeleton rows={3} />
           ) : (
             data.map((flashcard) => (
               <TableRow key={flashcard.id}>
@@ -57,24 +57,6 @@ function Flashcards() {
       )}
     </>
   )
-}
-
-const TableSkeleton = () => {
-  return Array(3)
-    .fill(0)
-    .map((_, i) => (
-      <TableRow key={i}>
-        <TableCell className="font-medium">
-          <Skeleton className="h-4" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-4" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-4" />
-        </TableCell>
-      </TableRow>
-    ))
 }
 
 export const Route = createFileRoute('/flashcards/')({
