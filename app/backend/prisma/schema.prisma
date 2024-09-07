@@ -7,6 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --- FLASHCARDS --- //
+
 model Flashcard {
   id         Int   @id @unique @default(autoincrement())
 
@@ -53,4 +55,29 @@ enum Rating {
   Hard   @map("2")
   Good   @map("3")
   Easy   @map("4")
+}
+
+// --- SCENARIOS --- //
+
+model Scenario {
+  id      Int    @id @unique @default(autoincrement())
+
+  title String
+  openingPrompt String
+
+  ScenarioSession ScenarioSession[]
+}
+
+model ScenarioSession {
+  id      Int    @id @unique @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  userId String
+  sessionId String
+  scenarioId Int
+  scenario Scenario @relation(fields: [scenarioId], references: [id])
+
+  scenarioState Json
+
+  @@index([sessionId])
 }

@@ -14,9 +14,11 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
+import { Route as ScenariosIndexImport } from './routes/scenarios/index'
 import { Route as FlashcardsIndexImport } from './routes/flashcards/index'
-import { Route as ScenarioPlayImport } from './routes/scenario/play'
+import { Route as ScenariosPlayImport } from './routes/scenarios/play'
 import { Route as AuthenticatedUsersMeImport } from './routes/_authenticated/users/me'
+import { Route as AuthenticatedScenariosNewImport } from './routes/_authenticated/scenarios/new'
 import { Route as AuthenticatedFlashcardsStudyImport } from './routes/_authenticated/flashcards/study'
 import { Route as AuthenticatedFlashcardsNewImport } from './routes/_authenticated/flashcards/new'
 import { Route as AuthenticatedFlashcardsInitializeImport } from './routes/_authenticated/flashcards/initialize'
@@ -38,18 +40,28 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ScenariosIndexRoute = ScenariosIndexImport.update({
+  path: '/scenarios/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const FlashcardsIndexRoute = FlashcardsIndexImport.update({
   path: '/flashcards/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const ScenarioPlayRoute = ScenarioPlayImport.update({
-  path: '/scenario/play',
+const ScenariosPlayRoute = ScenariosPlayImport.update({
+  path: '/scenarios/play',
   getParentRoute: () => rootRoute,
 } as any)
 
 const AuthenticatedUsersMeRoute = AuthenticatedUsersMeImport.update({
   path: '/users/me',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedScenariosNewRoute = AuthenticatedScenariosNewImport.update({
+  path: '/scenarios/new',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -97,11 +109,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/scenario/play': {
-      id: '/scenario/play'
-      path: '/scenario/play'
-      fullPath: '/scenario/play'
-      preLoaderRoute: typeof ScenarioPlayImport
+    '/scenarios/play': {
+      id: '/scenarios/play'
+      path: '/scenarios/play'
+      fullPath: '/scenarios/play'
+      preLoaderRoute: typeof ScenariosPlayImport
       parentRoute: typeof rootRoute
     }
     '/flashcards/': {
@@ -109,6 +121,13 @@ declare module '@tanstack/react-router' {
       path: '/flashcards'
       fullPath: '/flashcards'
       preLoaderRoute: typeof FlashcardsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/scenarios/': {
+      id: '/scenarios/'
+      path: '/scenarios'
+      fullPath: '/scenarios'
+      preLoaderRoute: typeof ScenariosIndexImport
       parentRoute: typeof rootRoute
     }
     '/_authenticated/flashcards/initialize': {
@@ -132,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFlashcardsStudyImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/scenarios/new': {
+      id: '/_authenticated/scenarios/new'
+      path: '/scenarios/new'
+      fullPath: '/scenarios/new'
+      preLoaderRoute: typeof AuthenticatedScenariosNewImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/users/me': {
       id: '/_authenticated/users/me'
       path: '/users/me'
@@ -150,11 +176,13 @@ export const routeTree = rootRoute.addChildren({
     AuthenticatedFlashcardsInitializeRoute,
     AuthenticatedFlashcardsNewRoute,
     AuthenticatedFlashcardsStudyRoute,
+    AuthenticatedScenariosNewRoute,
     AuthenticatedUsersMeRoute,
   }),
   AboutRoute,
-  ScenarioPlayRoute,
+  ScenariosPlayRoute,
   FlashcardsIndexRoute,
+  ScenariosIndexRoute,
 })
 
 /* prettier-ignore-end */
