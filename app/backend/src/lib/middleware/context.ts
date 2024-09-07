@@ -1,8 +1,9 @@
 import { SessionManager } from '@kinde-oss/kinde-typescript-sdk'
 import logger from '@shared/util/logger'
 import * as trpcExpress from '@trpc/server/adapters/express'
-import { kindeClient, sessionManager as sm } from '../clients/kinde'
+import { kindeClient } from '../clients/kinde'
 import { prismaClient } from '../clients/prisma'
+import { sessionManager as sm } from '../clients/session'
 
 async function getUser(sessionManager: SessionManager) {
   try {
@@ -21,9 +22,8 @@ async function getUser(sessionManager: SessionManager) {
 // created for each request
 export async function createContext({
   req,
-  res,
 }: trpcExpress.CreateExpressContextOptions) {
-  const sessionManager = sm(req, res)
+  const sessionManager = sm(req)
 
   const isAuthenticated = await kindeClient.isAuthenticated(sessionManager)
 
