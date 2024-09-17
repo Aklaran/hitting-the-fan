@@ -59,7 +59,15 @@ const getScenarioSession = async (userId: string, ctx: Context) => {
     log: [{ text: scenario.openingPrompt, type: 'narrator' }],
     patient: {
       name: 'Jeff',
+      age: 30,
+      gender: 'male',
       health: 100,
+      heartRate: 60,
+      respiratoryRate: 20,
+      coreTemperatureCelsius: 37,
+    },
+    environment: {
+      temperature: 0,
     },
   }
 

@@ -30,12 +30,24 @@ export const scenarioLogEntrySchema = z.object({
 
 export const scenarioLogSchema = z.array(scenarioLogEntrySchema)
 
+export const patientSchema = z.object({
+  name: z.string(),
+  age: z.number().int().positive().min(0).max(100),
+  gender: z.enum(['male', 'female', 'other']),
+  health: z.number().int().positive().min(0).max(100),
+  heartRate: z.number().int().positive().min(0).max(200),
+  respiratoryRate: z.number().int().positive().min(0).max(60),
+  coreTemperatureCelsius: z.number().int().positive().min(0).max(45),
+})
+
+export const environmentSchema = z.object({
+  temperature: z.number().int().positive().min(0).max(45),
+})
+
 export const scenarioStateSchema = z.object({
   log: scenarioLogSchema,
-  patient: z.object({
-    name: z.string(),
-    health: z.number().int().positive().min(0).max(100),
-  }),
+  patient: patientSchema,
+  environment: environmentSchema,
 })
 
 export const processActionSchema = z.object({
