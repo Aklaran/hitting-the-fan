@@ -1,39 +1,23 @@
 import {
+  Command,
+  Noun,
   ProcessActionSchema,
   ScenarioLogEntry,
   ScenarioState,
+  Verb,
+  VerbHandler,
 } from '@shared/types/scenario'
+import { lookHandler } from './verbHandlers/lookHandler'
 
 const processAction = (
   input: ProcessActionSchema,
   scenarioState: ScenarioState,
 ) => {
   const { action } = input
-  const { log, patient } = scenarioState
+  const { log } = scenarioState
 
-  const newState: ScenarioState = {
+  const actionState: ScenarioState = {
     ...scenarioState,
-  }
-
-  let responseText: string
-  switch (action.toLowerCase()) {
-    case 'look':
-      responseText =
-        'You see your injured climbing partner and the rocky cliff face.'
-      break
-    case 'help partner':
-      responseText =
-        "You carefully examine your partner's ankle. It appears to be sprained."
-      break
-    case 'break leg':
-      newState.patient.health = patient.health - 20
-      responseText = `Jesus Christ, why would you do that? You break your patient's leg. Their health is now ${newState.patient.health}.`
-      break
-    case 'ask name':
-      responseText = `The patient looks at you and says "My name ${patient.name}!"`
-      break
-    default:
-      responseText = "You're not sure how to do that."
   }
 
   const actionLog: ScenarioLogEntry = {
@@ -41,14 +25,52 @@ const processAction = (
     type: 'player',
   }
 
-  const responseLog: ScenarioLogEntry = {
-    text: responseText,
-    type: 'narrator',
+  actionState.log = [...log, actionLog]
+
+  const command = createCommand(action, actionState)
+
+  const verbHandler = getVerbHandler(command.verb)
+
+  const finalState = verbHandler.execute(command, actionState)
+
+  return finalState
+}
+
+const createCommand = (
+  action: string,
+  scenarioState: ScenarioState,
+): Command => {
+  const tokens = action.split(' ')
+
+  const objectName = tokens[1].toLowerCase() as Noun
+  const object = resolveObject(objectName, scenarioState)
+
+  const command: Command = {
+    verb: tokens[0].toLowerCase() as Verb,
+    object: object,
   }
 
-  newState.log = [...log, actionLog, responseLog]
+  return command
+}
 
-  return newState
+const getVerbHandler = (verb: Verb): VerbHandler => {
+  switch (verb) {
+    case 'look':
+      return lookHandler
+    default:
+      return lookHandler
+  }
+}
+
+const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
+  switch (objectName) {
+    case 'patient':
+      return scenarioState.patient
+    case 'environment':
+      return scenarioState.environment
+    default:
+      return undefined
+  }
 }
 
 export const scenarioEngine = {

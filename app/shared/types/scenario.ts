@@ -30,17 +30,64 @@ export const scenarioLogEntrySchema = z.object({
 
 export const scenarioLogSchema = z.array(scenarioLogEntrySchema)
 
+export const bodyPartNames = z.enum([
+  'head',
+  'neck',
+  'chest',
+  'stomach',
+  'back',
+  'leftArm',
+  'rightArm',
+  'leftHand',
+  'rightHand',
+  'leftLeg',
+  'rightLeg',
+  'leftFoot',
+  'rightFoot',
+])
+
+export const bodyPartSchema = z.object({
+  part: bodyPartNames,
+  description: z.string(),
+})
+
+export const ailmentSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  effects: z.object({
+    heartRateMultiplier: z.number().int().positive().min(0).max(100),
+    respiratoryRateMultiplier: z.number().int().positive().min(0).max(100),
+    coreTemperatureCelsiusMultiplier: z
+      .number()
+      .int()
+      .positive()
+      .min(0)
+      .max(100),
+    bodyParts: z.array(
+      z.object({
+        part: bodyPartNames,
+        description: z.string(),
+        palpationResponse: z.string(),
+        mobility: z.string(),
+      }),
+    ),
+  }),
+})
+
 export const patientSchema = z.object({
   name: z.string(),
+  description: z.string(),
   age: z.number().int().positive().min(0).max(100),
   gender: z.enum(['male', 'female', 'other']),
   health: z.number().int().positive().min(0).max(100),
   heartRate: z.number().int().positive().min(0).max(200),
   respiratoryRate: z.number().int().positive().min(0).max(60),
   coreTemperatureCelsius: z.number().int().positive().min(0).max(45),
+  ailments: z.array(ailmentSchema),
 })
 
 export const environmentSchema = z.object({
+  description: z.string(),
   temperature: z.number().int().positive().min(0).max(45),
 })
 
@@ -54,9 +101,35 @@ export const processActionSchema = z.object({
   action: z.string(),
 })
 
+export const verbSchema = z.enum(['look', 'help', 'break', 'ask'])
+
+export const nounSchema = z.enum(['patient', 'leg', 'name', 'environment'])
+
+export const commandSchema = z.object({
+  verb: verbSchema,
+  object: z
+    .union([patientSchema, environmentSchema, ailmentSchema, bodyPartSchema])
+    .optional(),
+})
+
+export const verbHandlerSchema = z.object({
+  execute: z
+    .function()
+    .args(commandSchema, scenarioStateSchema)
+    .returns(scenarioStateSchema),
+})
+
 export type ScenarioLogEntry = z.infer<typeof scenarioLogEntrySchema>
 export type ScenarioLog = z.infer<typeof scenarioLogSchema>
 export type ScenarioState = z.infer<typeof scenarioStateSchema>
 export type ProcessActionSchema = z.infer<typeof processActionSchema>
+export type BodyPart = z.infer<typeof bodyPartSchema>
+export type Ailment = z.infer<typeof ailmentSchema>
+export type Patient = z.infer<typeof patientSchema>
+export type Environment = z.infer<typeof environmentSchema>
+export type Command = z.infer<typeof commandSchema>
+export type Verb = z.infer<typeof verbSchema>
+export type Noun = z.infer<typeof nounSchema>
+export type VerbHandler = z.infer<typeof verbHandlerSchema>
 
 export default Scenario
