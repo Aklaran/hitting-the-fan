@@ -66,7 +66,33 @@ const getScenarioSession = async (userId: string, ctx: Context) => {
       heartRate: 60,
       respiratoryRate: 20,
       coreTemperatureCelsius: 37,
-      ailments: [],
+      bodyParts: [
+        {
+          part: 'leftLeg',
+          description: 'The leg looks normal...',
+          palpationResponse: 'You press on the left leg.',
+        },
+      ],
+      ailments: [
+        {
+          name: 'Broken ankle',
+          description: 'The boy broke is ankle maaaaan',
+          effects: {
+            heartRateMultiplier: 1.3,
+            respiratoryRateMultiplier: 1.3,
+            coreTemperatureCelsiusMultiplier: 1.3,
+            bodyParts: [
+              {
+                part: 'leftLeg',
+                description:
+                  'The ankle is swollen and the foot turned the wrong way.',
+                palpationResponse:
+                  "Pressing on the outside of the patient's ankle causes severe pain.",
+              },
+            ],
+          },
+        },
+      ],
     },
     environment: {
       description: "You're at the base of a mega alpine climb.",

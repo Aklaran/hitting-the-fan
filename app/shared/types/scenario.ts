@@ -49,6 +49,7 @@ export const bodyPartNames = z.enum([
 export const bodyPartSchema = z.object({
   part: bodyPartNames,
   description: z.string(),
+  palpationResponse: z.string(),
 })
 
 export const ailmentSchema = z.object({
@@ -63,14 +64,7 @@ export const ailmentSchema = z.object({
       .positive()
       .min(0)
       .max(100),
-    bodyParts: z.array(
-      z.object({
-        part: bodyPartNames,
-        description: z.string(),
-        palpationResponse: z.string(),
-        mobility: z.string(),
-      }),
-    ),
+    bodyParts: z.array(bodyPartSchema),
   }),
 })
 
@@ -83,6 +77,7 @@ export const patientSchema = z.object({
   heartRate: z.number().int().positive().min(0).max(200),
   respiratoryRate: z.number().int().positive().min(0).max(60),
   coreTemperatureCelsius: z.number().int().positive().min(0).max(45),
+  bodyParts: z.array(bodyPartSchema),
   ailments: z.array(ailmentSchema),
 })
 
@@ -101,9 +96,15 @@ export const processActionSchema = z.object({
   action: z.string(),
 })
 
-export const verbSchema = z.enum(['look', 'help', 'break', 'ask'])
+export const verbSchema = z.enum(['look', 'help', 'break', 'ask', 'palpate'])
 
-export const nounSchema = z.enum(['patient', 'leg', 'name', 'environment'])
+export const nounSchema = z.enum([
+  'patient',
+  'leg',
+  'name',
+  'environment',
+  ...bodyPartNames.options,
+])
 
 export const commandSchema = z.object({
   verb: verbSchema,

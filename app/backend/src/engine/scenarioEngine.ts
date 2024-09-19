@@ -8,6 +8,7 @@ import {
   VerbHandler,
 } from '@shared/types/scenario'
 import { lookHandler } from './verbHandlers/lookHandler'
+import { palpateHandler } from './verbHandlers/palpateHandler'
 
 const processAction = (
   input: ProcessActionSchema,
@@ -42,12 +43,12 @@ const createCommand = (
 ): Command => {
   const tokens = action.split(' ')
 
-  const objectName = tokens[1].toLowerCase() as Noun
+  const objectName = tokens[1] as Noun
   const object = resolveObject(objectName, scenarioState)
 
   const command: Command = {
     verb: tokens[0].toLowerCase() as Verb,
-    object: object,
+    object,
   }
 
   return command
@@ -57,6 +58,8 @@ const getVerbHandler = (verb: Verb): VerbHandler => {
   switch (verb) {
     case 'look':
       return lookHandler
+    case 'palpate':
+      return palpateHandler
     default:
       return lookHandler
   }
@@ -68,6 +71,14 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
       return scenarioState.patient
     case 'environment':
       return scenarioState.environment
+    case 'leftLeg':
+      return scenarioState.patient.bodyParts.find(
+        (part) => part.part === 'leftLeg',
+      )
+    case 'rightLeg':
+      return scenarioState.patient.bodyParts.find(
+        (part) => part.part === 'rightLeg',
+      )
     default:
       return undefined
   }
