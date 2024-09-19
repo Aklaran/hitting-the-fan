@@ -1,9 +1,5 @@
-import {
-  Command,
-  ScenarioLogEntry,
-  ScenarioState,
-  VerbHandler,
-} from '@shared/types/scenario'
+import { Command, ScenarioState, VerbHandler } from '@shared/types/scenario'
+import { scenarioUtils } from '../scenarioUtils'
 
 export const lookHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
@@ -11,13 +7,7 @@ export const lookHandler: VerbHandler = {
       command.object?.description ??
       'You stare vacantly into space. (NO OBJECT)'
 
-    const responseLog: ScenarioLogEntry = {
-      text: responseText,
-      type: 'narrator',
-    }
-
-    scenarioState.log = [...scenarioState.log, responseLog]
-
+    scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
     return scenarioState
   },
 }

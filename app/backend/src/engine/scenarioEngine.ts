@@ -2,11 +2,11 @@ import {
   Command,
   Noun,
   ProcessActionSchema,
-  ScenarioLogEntry,
   ScenarioState,
   Verb,
   VerbHandler,
 } from '@shared/types/scenario'
+import { scenarioUtils } from './scenarioUtils'
 import { lookHandler } from './verbHandlers/lookHandler'
 import { palpateHandler } from './verbHandlers/palpateHandler'
 
@@ -15,24 +15,14 @@ const processAction = (
   scenarioState: ScenarioState,
 ) => {
   const { action } = input
-  const { log } = scenarioState
 
-  const actionState: ScenarioState = {
-    ...scenarioState,
-  }
+  scenarioUtils.appendLogEntry(scenarioState, action, 'player')
 
-  const actionLog: ScenarioLogEntry = {
-    text: action,
-    type: 'player',
-  }
-
-  actionState.log = [...log, actionLog]
-
-  const command = createCommand(action, actionState)
+  const command = createCommand(action, scenarioState)
 
   const verbHandler = getVerbHandler(command.verb)
 
-  const finalState = verbHandler.execute(command, actionState)
+  const finalState = verbHandler.execute(command, scenarioState)
 
   return finalState
 }

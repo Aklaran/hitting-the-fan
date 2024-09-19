@@ -3,11 +3,11 @@ import {
   BodyPart,
   bodyPartSchema,
   Command,
-  ScenarioLogEntry,
   ScenarioState,
   VerbHandler,
 } from '@shared/types/scenario'
 import { z, ZodTypeAny } from 'zod'
+import { scenarioUtils } from '../scenarioUtils'
 
 export const palpateHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
@@ -27,7 +27,7 @@ export const palpateHandler: VerbHandler = {
       ].join(' ')
     }
 
-    appendResponseLog(scenarioState, responseText)
+    scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
     return scenarioState
   },
 }
@@ -47,17 +47,4 @@ export function isSchema<T extends ZodTypeAny>(
   obj: unknown,
 ): obj is z.infer<T> {
   return schema.safeParse(obj).success
-}
-
-const appendResponseLog = (
-  scenarioState: ScenarioState,
-  responseText: string,
-) => {
-  const responseLog: ScenarioLogEntry = {
-    text: responseText,
-    type: 'narrator',
-  }
-
-  scenarioState.log = [...scenarioState.log, responseLog]
-  return scenarioState
 }
