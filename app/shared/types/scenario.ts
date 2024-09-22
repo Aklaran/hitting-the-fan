@@ -96,6 +96,12 @@ export const processActionSchema = z.object({
   action: z.string(),
 })
 
+export const viewableSchema = z.object({
+  description: z.string(),
+})
+
+export type Viewable = z.infer<typeof viewableSchema>
+
 export const verbSchema = z.enum(['look', 'help', 'break', 'ask', 'palpate'])
 
 export const nounSchema = z.enum([
@@ -104,12 +110,20 @@ export const nounSchema = z.enum([
   'name',
   'environment',
   ...bodyPartNames.options,
+  'pulse',
 ])
 
 export const commandSchema = z.object({
   verb: verbSchema,
   object: z
-    .union([patientSchema, environmentSchema, ailmentSchema, bodyPartSchema])
+    .union([
+      patientSchema,
+      environmentSchema,
+      ailmentSchema,
+      bodyPartSchema,
+      z.number(),
+      z.string(),
+    ])
     .optional(),
 })
 

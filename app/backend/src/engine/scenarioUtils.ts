@@ -4,6 +4,8 @@ import {
   bodyPartSchema,
   ScenarioLogEntry,
   ScenarioState,
+  Viewable,
+  viewableSchema,
 } from '@shared/types/scenario'
 import { z, ZodTypeAny } from 'zod'
 
@@ -32,6 +34,10 @@ const isBodyPart = (obj: unknown): obj is BodyPart => {
   return isSchema(bodyPartSchema, obj)
 }
 
+const isViewable = (obj: unknown): obj is Viewable => {
+  return isSchema(viewableSchema, obj)
+}
+
 const getAilmentsByBodyPart = (ailments: Ailment[], bodyPart: BodyPart) => {
   return ailments
     .flatMap((ailment) => ailment.effects.bodyParts)
@@ -41,6 +47,7 @@ const getAilmentsByBodyPart = (ailments: Ailment[], bodyPart: BodyPart) => {
 export const scenarioUtils = {
   appendLogEntry,
   isBodyPart,
+  isViewable,
   isSchema,
   getAilmentsByBodyPart,
 }
