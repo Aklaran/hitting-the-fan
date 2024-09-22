@@ -8,6 +8,7 @@ import {
 } from '@shared/types/scenario'
 import { scenarioUtils } from './scenarioUtils'
 import { lookHandler } from './verbHandlers/lookHandler'
+import { measureHandler } from './verbHandlers/measureHandler'
 import { palpateHandler } from './verbHandlers/palpateHandler'
 
 const processAction = (
@@ -50,6 +51,8 @@ const getVerbHandler = (verb: Verb): VerbHandler => {
       return lookHandler
     case 'palpate':
       return palpateHandler
+    case 'measure':
+      return measureHandler
     default:
       return lookHandler
   }
@@ -69,6 +72,8 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
       return scenarioState.patient.bodyParts.find(
         (part) => part.part === 'rightLeg',
       )
+    case 'pulse':
+      return 'pulse'
     default:
       return undefined
   }

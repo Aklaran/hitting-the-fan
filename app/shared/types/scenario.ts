@@ -102,7 +102,14 @@ export const viewableSchema = z.object({
 
 export type Viewable = z.infer<typeof viewableSchema>
 
-export const verbSchema = z.enum(['look', 'help', 'break', 'ask', 'palpate'])
+export const verbSchema = z.enum([
+  'look',
+  'help',
+  'break',
+  'ask',
+  'palpate',
+  'measure',
+])
 
 export const nounSchema = z.enum([
   'patient',
