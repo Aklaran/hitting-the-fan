@@ -72,6 +72,11 @@ const getScenarioSession = async (userId: string, ctx: Context) => {
           description: 'The leg looks normal...',
           palpationResponse: 'You press on the left leg.',
         },
+        {
+          part: 'rightLeg',
+          description: 'The leg looks normal...',
+          palpationResponse: 'You press on the right leg.',
+        },
       ],
       ailments: [
         {

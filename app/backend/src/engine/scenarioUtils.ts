@@ -1,6 +1,7 @@
 import {
   Ailment,
   BodyPart,
+  bodyPartNames,
   bodyPartSchema,
   ScenarioLogEntry,
   ScenarioState,
@@ -34,6 +35,10 @@ const isBodyPart = (obj: unknown): obj is BodyPart => {
   return isSchema(bodyPartSchema, obj)
 }
 
+const isBodyPartName = (str: string): boolean => {
+  return isSchema(bodyPartNames, str)
+}
+
 const isViewable = (obj: unknown): obj is Viewable => {
   return isSchema(viewableSchema, obj)
 }
@@ -47,6 +52,7 @@ const getAilmentsByBodyPart = (ailments: Ailment[], bodyPart: BodyPart) => {
 export const scenarioUtils = {
   appendLogEntry,
   isBodyPart,
+  isBodyPartName,
   isViewable,
   isSchema,
   getAilmentsByBodyPart,

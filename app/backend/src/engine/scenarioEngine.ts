@@ -59,19 +59,17 @@ const getVerbHandler = (verb: Verb): VerbHandler => {
 }
 
 const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
+  if (scenarioUtils.isBodyPartName(objectName)) {
+    return scenarioState.patient.bodyParts.find(
+      (part) => part.part === objectName,
+    )
+  }
+
   switch (objectName) {
     case 'patient':
       return scenarioState.patient
     case 'environment':
       return scenarioState.environment
-    case 'leftLeg':
-      return scenarioState.patient.bodyParts.find(
-        (part) => part.part === 'leftLeg',
-      )
-    case 'rightLeg':
-      return scenarioState.patient.bodyParts.find(
-        (part) => part.part === 'rightLeg',
-      )
     case 'pulse':
       return 'pulse'
     default:
