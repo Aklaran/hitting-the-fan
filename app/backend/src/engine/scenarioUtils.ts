@@ -36,7 +36,7 @@ const isSchema = <T extends ZodTypeAny>(
   const result = schema.safeParse(obj)
 
   if (!result.success) {
-    logger.error(result.error.format())
+    logger.debug(`isSchema returning false because: ${result.error.message}`)
     return false
   }
 
