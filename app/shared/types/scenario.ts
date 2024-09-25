@@ -1,28 +1,5 @@
 import { z } from 'zod'
 
-export const scenarioSchema = z.object({
-  id: z.number().int().positive().min(1),
-  title: z.string({ required_error: 'Title is required.' }).min(3, {
-    message: 'Title must be at least 3 characters long.',
-  }),
-  openingPrompt: z
-    .string({ required_error: 'Opening prompt is required.' })
-    .min(10, {
-      message: 'Opening prompt must be at least 10 characters long.',
-    }),
-})
-
-export const createScenarioSchema = scenarioSchema.omit({ id: true })
-export const getScenarioSchema = scenarioSchema.pick({ id: true })
-export const deleteScenarioSchema = scenarioSchema.pick({ id: true })
-
-type Scenario = z.infer<typeof scenarioSchema>
-export type CreateScenarioSchema = z.infer<typeof createScenarioSchema>
-export type GetScenarioSchema = z.infer<typeof getScenarioSchema>
-export type DeleteScenarioSchema = z.infer<typeof deleteScenarioSchema>
-
-export type ScenarioId = z.infer<typeof scenarioSchema.shape.id>
-
 export const scenarioLogEntrySchema = z.object({
   text: z.string(),
   type: z.enum(['player', 'narrator']),
@@ -58,14 +35,9 @@ export const ailmentSchema = z.object({
   name: z.string(),
   description: z.string(),
   effects: z.object({
-    heartRateMultiplier: z.number().int().positive().min(0).max(100),
-    respiratoryRateMultiplier: z.number().int().positive().min(0).max(100),
-    coreTemperatureCelsiusMultiplier: z
-      .number()
-      .int()
-      .positive()
-      .min(0)
-      .max(100),
+    heartRateMultiplier: z.number().positive().max(100),
+    respiratoryRateMultiplier: z.number().positive().max(100),
+    coreTemperatureCelsiusMultiplier: z.number().positive().max(100),
     bodyParts: z.array(bodyPartSchema),
   }),
 })
@@ -73,19 +45,18 @@ export const ailmentSchema = z.object({
 export const patientSchema = z.object({
   name: z.string(),
   description: z.string(),
-  age: z.number().int().positive().min(0).max(100),
+  age: z.number().int().nonnegative().max(100),
   gender: z.enum(['male', 'female', 'other']),
-  health: z.number().int().positive().min(0).max(100),
-  heartRate: z.number().int().positive().min(0).max(200),
-  respiratoryRate: z.number().int().positive().min(0).max(60),
-  coreTemperatureCelsius: z.number().int().positive().min(0).max(45),
+  heartRate: z.number().int().nonnegative().max(200),
+  respiratoryRate: z.number().int().nonnegative().max(60),
+  coreTemperatureCelsius: z.number().int().nonnegative().max(45),
   bodyParts: z.array(bodyPartSchema),
   ailments: z.array(ailmentSchema),
 })
 
 export const environmentSchema = z.object({
   description: z.string(),
-  temperature: z.number().int().positive().min(0).max(45),
+  temperatureCelsius: z.number().int().min(-40).max(45),
 })
 
 export const scenarioStateSchema = z.object({
@@ -147,6 +118,30 @@ export const verbHandlerSchema = z.object({
     .args(commandSchema, scenarioStateSchema)
     .returns(scenarioStateSchema),
 })
+
+export const scenarioSchema = z.object({
+  id: z.number().int().positive().min(1),
+  title: z.string({ required_error: 'Title is required.' }).min(3, {
+    message: 'Title must be at least 3 characters long.',
+  }),
+  openingPrompt: z
+    .string({ required_error: 'Opening prompt is required.' })
+    .min(10, {
+      message: 'Opening prompt must be at least 10 characters long.',
+    }),
+  initialState: scenarioStateSchema.required(),
+})
+
+export const createScenarioSchema = scenarioSchema.omit({ id: true })
+export const getScenarioSchema = scenarioSchema.pick({ id: true })
+export const deleteScenarioSchema = scenarioSchema.pick({ id: true })
+
+type Scenario = z.infer<typeof scenarioSchema>
+export type CreateScenarioSchema = z.infer<typeof createScenarioSchema>
+export type GetScenarioSchema = z.infer<typeof getScenarioSchema>
+export type DeleteScenarioSchema = z.infer<typeof deleteScenarioSchema>
+
+export type ScenarioId = z.infer<typeof scenarioSchema.shape.id>
 
 export type ScenarioLogEntry = z.infer<typeof scenarioLogEntrySchema>
 export type ScenarioLog = z.infer<typeof scenarioLogSchema>

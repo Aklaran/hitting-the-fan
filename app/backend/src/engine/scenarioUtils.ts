@@ -8,9 +8,11 @@ import {
   questionTargetSchema,
   ScenarioLogEntry,
   ScenarioState,
+  scenarioStateSchema,
   Viewable,
   viewableSchema,
 } from '@shared/types/scenario'
+import logger from '@shared/util/logger'
 import { z, ZodTypeAny } from 'zod'
 
 const appendLogEntry = (
@@ -31,7 +33,18 @@ const isSchema = <T extends ZodTypeAny>(
   schema: T,
   obj: unknown,
 ): obj is z.infer<T> => {
-  return schema.safeParse(obj).success
+  const result = schema.safeParse(obj)
+
+  if (!result.success) {
+    logger.error(result.error.format())
+    return false
+  }
+
+  return result.success
+}
+
+const isScenarioState = (obj: unknown): obj is ScenarioState => {
+  return isSchema(scenarioStateSchema, obj)
 }
 
 const isBodyPart = (obj: unknown): obj is BodyPart => {
@@ -58,6 +71,7 @@ const getAilmentsByBodyPart = (ailments: Ailment[], bodyPart: BodyPart) => {
 
 export const scenarioUtils = {
   appendLogEntry,
+  isScenarioState,
   isBodyPart,
   isBodyPartName,
   isViewable,

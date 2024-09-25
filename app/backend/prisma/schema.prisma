@@ -64,6 +64,7 @@ model Scenario {
 
   title String
   openingPrompt String
+  initialState Json
 
   ScenarioSession ScenarioSession[]
 }
