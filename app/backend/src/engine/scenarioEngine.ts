@@ -1,7 +1,7 @@
 import {
   Command,
   Noun,
-  ProcessActionSchema,
+  ProcessAction,
   ScenarioState,
   Verb,
   VerbHandler,
@@ -12,10 +12,7 @@ import { lookHandler } from './verbHandlers/lookHandler'
 import { measureHandler } from './verbHandlers/measureHandler'
 import { palpateHandler } from './verbHandlers/palpateHandler'
 
-const processAction = (
-  input: ProcessActionSchema,
-  scenarioState: ScenarioState,
-) => {
+const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
   const { action } = input
 
   scenarioUtils.appendLogEntry(scenarioState, action, 'player')

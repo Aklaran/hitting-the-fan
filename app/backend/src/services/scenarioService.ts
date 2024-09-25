@@ -4,7 +4,7 @@ import {
   CreateScenarioSchema,
   DeleteScenarioSchema,
   GetScenarioSchema,
-  ProcessActionSchema,
+  ProcessAction,
   ScenarioState,
 } from '@shared/types/scenario'
 import { TRPCError } from '@trpc/server'
@@ -76,7 +76,7 @@ const getScenarioSession = async (userId: string, ctx: Context) => {
   return scenarioSession
 }
 
-const processAction = async (input: ProcessActionSchema, ctx: Context) => {
+const processAction = async (input: ProcessAction, ctx: Context) => {
   const scenarioSession = await scenarioSessionRepository.getScenarioSession(
     ctx.sessionId,
     ctx,
