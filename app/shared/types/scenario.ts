@@ -46,6 +46,8 @@ export const bodyPartNames = z.enum([
   'rightFoot',
 ])
 
+export type BodyPartName = z.infer<typeof bodyPartNames>
+
 export const bodyPartSchema = z.object({
   part: bodyPartNames,
   description: z.string(),
@@ -120,6 +122,10 @@ export const nounSchema = z.enum([
   'pulse',
   'respiratoryRate',
 ])
+
+export const questionTargetSchema = z.enum(['name', 'age', 'gender'])
+
+export type QuestionTarget = z.infer<typeof questionTargetSchema>
 
 export const commandSchema = z.object({
   verb: verbSchema,

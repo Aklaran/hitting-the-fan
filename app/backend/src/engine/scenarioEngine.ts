@@ -7,6 +7,7 @@ import {
   VerbHandler,
 } from '@shared/types/scenario'
 import { scenarioUtils } from './scenarioUtils'
+import { askHandler } from './verbHandlers/askHandler'
 import { lookHandler } from './verbHandlers/lookHandler'
 import { measureHandler } from './verbHandlers/measureHandler'
 import { palpateHandler } from './verbHandlers/palpateHandler'
@@ -53,6 +54,8 @@ const getVerbHandler = (verb: Verb): VerbHandler => {
       return palpateHandler
     case 'measure':
       return measureHandler
+    case 'ask':
+      return askHandler
     default:
       return lookHandler
   }
@@ -63,6 +66,10 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
     return scenarioState.patient.bodyParts.find(
       (part) => part.part === objectName,
     )
+  }
+
+  if (scenarioUtils.isQuestionTarget(objectName)) {
+    return objectName
   }
 
   switch (objectName) {
