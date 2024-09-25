@@ -1,9 +1,14 @@
 import { SessionManager } from '@kinde-oss/kinde-typescript-sdk'
+import connectPgSimple from 'connect-pg-simple'
 import { Request } from 'express'
-import { SessionOptions } from 'express-session'
+import session, { SessionOptions } from 'express-session'
 
-// TODO: default MemoryStore is not production ready. Use something like redis.
 export const sessionOptions: SessionOptions = {
+  store: new (connectPgSimple(session))({
+    conObject: {
+      connectionString: process.env.DATABASE_URL,
+    },
+  }),
   secret: process.env.SESSION_SECRET!,
   resave: false,
   saveUninitialized: true,

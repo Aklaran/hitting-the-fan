@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --- SESSIONS --- //
+
+model session {
+  sid    String   @id
+  sess   Json
+  expire DateTime
+
+  @@index([expire], name: "IDX_session_expire")
+}
+
 // --- FLASHCARDS --- //
 
 model Flashcard {
