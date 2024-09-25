@@ -118,6 +118,7 @@ export const nounSchema = z.enum([
   'environment',
   ...bodyPartNames.options,
   'pulse',
+  'respiratoryRate',
 ])
 
 export const commandSchema = z.object({

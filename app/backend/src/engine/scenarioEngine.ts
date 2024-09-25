@@ -72,6 +72,8 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
       return scenarioState.environment
     case 'pulse':
       return 'pulse'
+    case 'respiratoryRate':
+      return 'respiratoryRate'
     default:
       return undefined
   }

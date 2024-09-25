@@ -5,6 +5,16 @@ export const measureHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
     let responseText = 'What do you want to measure? (NO OBJECT)'
 
+    switch (command.object) {
+      case 'pulse':
+        responseText = measurePulse(scenarioState)
+        break
+      case 'respiratoryRate':
+        responseText = measureRespiratoryRate(scenarioState)
+        break
+      default:
+        responseText = 'What do you want to measure? (NO OBJECT)'
+    }
     if (command.object === 'pulse') {
       responseText = measurePulse(scenarioState)
     }
@@ -16,5 +26,10 @@ export const measureHandler: VerbHandler = {
 
 const measurePulse = (scenarioState: ScenarioState) => {
   const pulse = scenarioState.patient.heartRate
-  return `You measure the pulse at ${pulse} beats per minute.`
+  return `You take the patient's pulse at the wrist. It is ${pulse} beats per minute.`
+}
+
+const measureRespiratoryRate = (scenarioState: ScenarioState) => {
+  const respiratoryRate = scenarioState.patient.respiratoryRate
+  return `You take the patient's respiratory rate by holding your hand to their back. It is ${respiratoryRate} breaths per minute.`
 }
