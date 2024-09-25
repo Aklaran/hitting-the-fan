@@ -41,10 +41,17 @@ const updateScenarioSession = async (
   return updatedScenarioSession
 }
 
+const deleteScenarioSession = async (sessionId: string, ctx: Context) => {
+  await ctx.prisma.scenarioSession.deleteMany({
+    where: { sessionId: sessionId },
+  })
+}
+
 const scenarioSessionRepository = {
   createScenarioSession,
   getScenarioSession,
   updateScenarioSession,
+  deleteScenarioSession,
 }
 
 export default scenarioSessionRepository

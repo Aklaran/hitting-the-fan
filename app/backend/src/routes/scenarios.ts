@@ -80,6 +80,10 @@ const scenariosRouter = router({
       const { log } = updatedScenarioSession.scenarioState as ScenarioState
       return log
     }),
+
+  deleteSession: protectedProcedure.mutation(async ({ ctx }) => {
+    return await scenarioService.deleteSession(ctx)
+  }),
 })
 
 export default scenariosRouter

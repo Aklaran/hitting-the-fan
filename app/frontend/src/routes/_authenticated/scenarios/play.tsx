@@ -1,5 +1,6 @@
 import { ScenarioLogOutput } from '@/components/custom-ui/scenarioLogOutput'
 import { ScenarioPlayerInput } from '@/components/custom-ui/scenarioPlayerInput'
+import Button from '@/components/ui/button'
 import { trpc } from '@/lib/trpc'
 import { createFileRoute } from '@tanstack/react-router'
 import { useRef } from 'react'
@@ -18,6 +19,12 @@ function ScenarioPlayPage() {
       trpcUtils.scenario.getSessionState.invalidate()
 
       scrollLogContainer()
+    },
+  })
+
+  const resetMutation = trpc.scenario.deleteSession.useMutation({
+    onSuccess: () => {
+      trpcUtils.scenario.getSessionState.invalidate()
     },
   })
 
@@ -61,6 +68,13 @@ function ScenarioPlayPage() {
 
         <ScenarioPlayerInput onSubmit={handlePlayerInput} />
       </div>
+      <Button
+        onClick={() => {
+          resetMutation.mutate()
+        }}
+      >
+        Reset
+      </Button>
     </div>
   )
 }

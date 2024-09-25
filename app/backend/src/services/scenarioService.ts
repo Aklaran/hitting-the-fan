@@ -10,7 +10,6 @@ import {
 import { TRPCError } from '@trpc/server'
 import { mvpScenarioState } from '../data/mvpScenarioState'
 import { scenarioEngine } from '../engine/scenarioEngine'
-import { scenarioUtils } from '../engine/scenarioUtils'
 import scenarioSessionRepository from '../repositories/scenarioSessionRepository'
 
 const createScenario = async (input: CreateScenarioSchema, ctx: Context) => {
@@ -57,14 +56,16 @@ const getScenarioSession = async (userId: string, ctx: Context) => {
     })
   }
 
-  if (!scenarioUtils.isScenarioState(scenario.initialState)) {
-    throw new TRPCError({
-      code: 'PRECONDITION_FAILED',
-      message: 'Invalid scenario state.',
-    })
-  }
+  // TODO: Use the DB state when I'm done devving
+  // if (!scenarioUtils.isScenarioState(scenario.initialState)) {
+  //   throw new TRPCError({
+  //     code: 'PRECONDITION_FAILED',
+  //     message: 'Invalid scenario state.',
+  //   })
+  // }
 
-  const initialState = scenario.initialState as ScenarioState
+  // const initialState = scenario.initialState as ScenarioState
+  const initialState = mvpScenarioState
 
   const scenarioSession = await scenarioSessionRepository.createScenarioSession(
     scenario.id,
@@ -74,6 +75,10 @@ const getScenarioSession = async (userId: string, ctx: Context) => {
   )
 
   return scenarioSession
+}
+
+const deleteSession = async (ctx: Context) => {
+  await scenarioSessionRepository.deleteScenarioSession(ctx.sessionId, ctx)
 }
 
 const processAction = async (input: ProcessAction, ctx: Context) => {
@@ -111,4 +116,5 @@ export const scenarioService = {
   deleteScenario,
   getScenarioSession,
   processAction,
+  deleteSession,
 }
