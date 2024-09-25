@@ -56,7 +56,7 @@ const scenariosRouter = router({
     if (!user) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
-        message: 'You are not authorized to initialize SRS',
+        message: 'You are not authorized to view scenario sessions.',
       })
     }
 
