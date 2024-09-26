@@ -73,7 +73,7 @@ function ScenarioPlayPage() {
           logContainerRef={logContainerRef}
         />
 
-        <ScenarioPlayerInput onSubmit={handlePlayerInput} />
+        <ScenarioPlayerInput onSubmit={handlePlayerInput} autoFocus={true} />
       </div>
       <Button
         onClick={() => {

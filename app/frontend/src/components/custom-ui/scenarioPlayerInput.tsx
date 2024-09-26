@@ -7,8 +7,10 @@ import { FormErrorMessage } from './formErrorMessage'
 
 export function ScenarioPlayerInput({
   onSubmit,
+  autoFocus = false,
 }: {
   onSubmit: (value: { action: string }) => void
+  autoFocus?: boolean
 }) {
   const form = useForm({
     defaultValues: {
@@ -45,6 +47,7 @@ export function ScenarioPlayerInput({
             </Label>
             <Label htmlFor={field.name}>&gt;</Label>
             <Input
+              autoFocus={autoFocus}
               className="border-r-0 border-l-0 border-b-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-t-white"
               id={field.name}
               name={field.name}
