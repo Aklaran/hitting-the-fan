@@ -11,6 +11,10 @@ export const wearHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
     let responseText = 'What would you like to wear? (NO OBJECT)'
 
+    if (!command.object) {
+      return { responseText, scenarioState }
+    }
+
     if (!scenarioUtils.isWearable(command.object)) {
       responseText = 'Now why would you want to put that on?'
       return { responseText, scenarioState }

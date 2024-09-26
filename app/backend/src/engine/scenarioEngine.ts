@@ -2,6 +2,7 @@ import {
   Command,
   Noun,
   ProcessAction,
+  questionTargetSchema,
   ScenarioState,
   Verb,
   VerbHandler,
@@ -77,7 +78,7 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
   }
 
   if (scenarioUtils.isQuestionTarget(objectName)) {
-    return objectName
+    return questionTargetSchema.Enum[objectName]
   }
 
   if (scenarioUtils.isWearable(objectName)) {
@@ -100,7 +101,7 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
     case 'mechanismOfInjury':
       return scenarioState.patient
     default:
-      return undefined
+      return objectName
   }
 }
 
