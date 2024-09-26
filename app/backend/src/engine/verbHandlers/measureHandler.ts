@@ -24,9 +24,6 @@ export const measureHandler: VerbHandler = {
       default:
         responseText = 'What do you want to measure? (NO OBJECT)'
     }
-    if (command.object === 'pulse') {
-      responseText = measurePulse(scenarioState)
-    }
 
     return { responseText, scenarioState }
   },
