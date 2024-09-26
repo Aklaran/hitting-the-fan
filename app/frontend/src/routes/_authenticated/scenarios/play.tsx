@@ -1,6 +1,7 @@
 import { ScenarioLogOutput } from '@/components/custom-ui/scenarioLogOutput'
 import { ScenarioPlayerInput } from '@/components/custom-ui/scenarioPlayerInput'
 import Button from '@/components/ui/button'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { trpc } from '@/lib/trpc'
 import { createFileRoute } from '@tanstack/react-router'
 import { useRef } from 'react'
@@ -25,6 +26,12 @@ function ScenarioPlayPage() {
   const resetMutation = trpc.scenario.deleteSession.useMutation({
     onSuccess: () => {
       trpcUtils.scenario.getSessionState.invalidate()
+    },
+  })
+
+  useKeyboardShortcuts({
+    'ctrl+r': () => {
+      resetMutation.mutate()
     },
   })
 
