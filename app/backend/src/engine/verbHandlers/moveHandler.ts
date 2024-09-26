@@ -3,11 +3,11 @@ import {
   distanceSchema,
   ScenarioState,
   VerbHandler,
+  VerbResponse,
 } from '@shared/types/scenario'
-import { scenarioUtils } from '../scenarioUtils'
 
 export const moveHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
+  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
     let responseText = 'Where would you like to move? (NO OBJECT)'
 
     if (command.object === 'in') {
@@ -15,6 +15,6 @@ export const moveHandler: VerbHandler = {
       scenarioState.player.distanceToPatient = distanceSchema.Enum.near
     }
 
-    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
+    return { responseText, scenarioState }
   },
 }

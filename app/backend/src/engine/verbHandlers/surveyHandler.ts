@@ -1,8 +1,12 @@
-import { Command, ScenarioState, VerbHandler } from '@shared/types/scenario'
-import { scenarioUtils } from '../scenarioUtils'
+import {
+  Command,
+  ScenarioState,
+  VerbHandler,
+  VerbResponse,
+} from '@shared/types/scenario'
 
 export const surveyHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
+  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
     let responseText = 'What would you like to survey? (NO OBJECT)'
 
     if (command.object === scenarioState.patient) {
@@ -19,6 +23,6 @@ export const surveyHandler: VerbHandler = {
       ].join(' ')
     }
 
-    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
+    return { responseText, scenarioState }
   },
 }

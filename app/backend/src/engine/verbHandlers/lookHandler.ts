@@ -3,11 +3,12 @@ import {
   Command,
   ScenarioState,
   VerbHandler,
+  VerbResponse,
 } from '@shared/types/scenario'
 import { scenarioUtils } from '../scenarioUtils'
 
 export const lookHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
+  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
     let responseText = 'You stare vacantly into space. (NO OBJECT)'
 
     if (scenarioUtils.isBodyPart(command.object)) {
@@ -18,7 +19,7 @@ export const lookHandler: VerbHandler = {
       responseText = command.object.description
     }
 
-    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
+    return { responseText, scenarioState }
   },
 }
 

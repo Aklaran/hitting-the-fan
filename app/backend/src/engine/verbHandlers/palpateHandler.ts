@@ -1,12 +1,18 @@
-import { Command, ScenarioState, VerbHandler } from '@shared/types/scenario'
+import {
+  Command,
+  ScenarioState,
+  VerbHandler,
+  VerbResponse,
+} from '@shared/types/scenario'
 import { scenarioUtils } from '../scenarioUtils'
 
 export const palpateHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
+  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
     let responseText = 'You paw at the air. It feels like air. (NO OBJECT)'
 
     if (scenarioState.player.distanceToPatient === 'far') {
-      return scenarioUtils.appendTooFarLogEntry(scenarioState)
+      responseText = 'You are too far away to do that.'
+      return { responseText, scenarioState }
     }
 
     if (scenarioUtils.isBodyPart(command.object)) {
@@ -23,6 +29,6 @@ export const palpateHandler: VerbHandler = {
       ].join(' ')
     }
 
-    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
+    return { responseText, scenarioState }
   },
 }

@@ -1,12 +1,17 @@
-import { Command, ScenarioState, VerbHandler } from '@shared/types/scenario'
-import { scenarioUtils } from '../scenarioUtils'
+import {
+  Command,
+  ScenarioState,
+  VerbHandler,
+  VerbResponse,
+} from '@shared/types/scenario'
 
 export const measureHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
+  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
     let responseText = 'What do you want to measure? (NO OBJECT)'
 
     if (scenarioState.player.distanceToPatient === 'far') {
-      return scenarioUtils.appendTooFarLogEntry(scenarioState)
+      responseText = 'You are too far away to do that.'
+      return { responseText, scenarioState }
     }
 
     switch (command.object) {
@@ -23,7 +28,7 @@ export const measureHandler: VerbHandler = {
       responseText = measurePulse(scenarioState)
     }
 
-    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
+    return { responseText, scenarioState }
   },
 }
 

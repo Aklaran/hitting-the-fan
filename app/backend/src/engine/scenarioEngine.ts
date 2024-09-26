@@ -32,7 +32,13 @@ const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
 
   const verbHandler = getVerbHandler(command.verb)
 
-  const finalState = verbHandler.execute(command, scenarioState)
+  const executionResponse = verbHandler.execute(command, scenarioState)
+
+  const finalState = scenarioUtils.appendLogEntry(
+    executionResponse.scenarioState,
+    executionResponse.responseText,
+    'narrator',
+  )
 
   return finalState
 }
@@ -58,6 +64,8 @@ const getVerbHandler = (verb: Verb): VerbHandler => {
   return verbHandlers[verb] || lookHandler
 }
 
+// TODO: I don't think this is actually doing anything for me,
+//       Let's revisit object resolution sometime.
 const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
   if (scenarioUtils.isBodyPartName(objectName)) {
     return scenarioState.patient.bodyParts.find(
