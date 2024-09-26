@@ -5,6 +5,10 @@ export const measureHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
     let responseText = 'What do you want to measure? (NO OBJECT)'
 
+    if (scenarioState.player.distanceToPatient === 'far') {
+      return scenarioUtils.appendTooFarLogEntry(scenarioState)
+    }
+
     switch (command.object) {
       case 'pulse':
         responseText = measurePulse(scenarioState)

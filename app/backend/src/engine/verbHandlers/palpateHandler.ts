@@ -5,6 +5,10 @@ export const palpateHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): ScenarioState => {
     let responseText = 'You paw at the air. It feels like air. (NO OBJECT)'
 
+    if (scenarioState.player.distanceToPatient === 'far') {
+      return scenarioUtils.appendTooFarLogEntry(scenarioState)
+    }
+
     if (scenarioUtils.isBodyPart(command.object)) {
       responseText = command.object.palpationResponse
 

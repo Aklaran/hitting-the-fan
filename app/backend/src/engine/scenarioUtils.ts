@@ -30,6 +30,14 @@ const appendLogEntry = (
   return scenarioState
 }
 
+const appendTooFarLogEntry = (scenarioState: ScenarioState) => {
+  return appendLogEntry(
+    scenarioState,
+    'You are too far away to do that.',
+    'narrator',
+  )
+}
+
 const isSchema = <T extends ZodTypeAny>(
   schema: T,
   obj: unknown,
@@ -72,6 +80,7 @@ const getAilmentsByBodyPart = (ailments: Ailment[], bodyPart: BodyPart) => {
 
 export const scenarioUtils = {
   appendLogEntry,
+  appendTooFarLogEntry,
   isScenarioState,
   isBodyPart,
   isBodyPartName,
