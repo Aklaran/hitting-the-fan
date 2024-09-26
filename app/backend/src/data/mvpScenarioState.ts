@@ -11,6 +11,8 @@ export const mvpScenarioState: ScenarioState = {
       near: 'A man on the ground, whimpering like a puppy and holding his leg. From close up, you can see that something is wrong with his ankle.',
       far: 'A man on the ground, whimpering like a puppy and holding his leg.',
     },
+    mechanismOfInjury:
+      'The patient appears to have taken a gnarly lead whip and come down hard on their ankle.',
     age: 30,
     gender: 'male',
     heartRate: 60,
@@ -52,5 +54,6 @@ export const mvpScenarioState: ScenarioState = {
   environment: {
     description: "You're at the base of a mega alpine climb.",
     temperatureCelsius: 0,
+    hazards: ['The cliff above is a total chossfest.'],
   },
 }

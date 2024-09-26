@@ -16,6 +16,7 @@ export type ScenarioLog = z.infer<typeof scenarioLogSchema>
 export const environmentSchema = z.object({
   description: z.string(),
   temperatureCelsius: z.number().int().min(-40).max(45),
+  hazards: z.array(z.string()),
 })
 export type Environment = z.infer<typeof environmentSchema>
 
@@ -79,6 +80,7 @@ export const patientSchema = z.object({
   coreTemperatureCelsius: z.number().int().nonnegative().max(45),
   bodyParts: z.array(bodyPartSchema),
   ailments: z.array(ailmentSchema),
+  mechanismOfInjury: z.string(),
 })
 export type Patient = z.infer<typeof patientSchema>
 
@@ -120,6 +122,7 @@ export const verbSchema = z.enum([
   'palpate',
   'measure',
   'move',
+  'survey',
 ])
 export type Verb = z.infer<typeof verbSchema>
 
@@ -132,6 +135,8 @@ export const nounSchema = z.enum([
   'pulse',
   'respiratoryRate',
   'in',
+  'hazards',
+  'mechanismOfInjury',
 ])
 export type Noun = z.infer<typeof nounSchema>
 
