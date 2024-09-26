@@ -4,6 +4,8 @@ export const mvpScenarioState: ScenarioState = {
   log: [{ text: 'Welcome to the game!', type: 'narrator' }],
   player: {
     distanceToPatient: 'far',
+    inventory: ['gloves'],
+    worn: [],
   },
   patient: {
     name: 'Jeff',

@@ -4,6 +4,7 @@ import {
   BodyPartName,
   bodyPartNames,
   bodyPartSchema,
+  InventoryItem,
   QuestionTarget,
   questionTargetSchema,
   ScenarioLogEntry,
@@ -11,6 +12,8 @@ import {
   scenarioStateSchema,
   Viewable,
   viewableSchema,
+  Wearable,
+  wearableSchema,
 } from '@shared/types/scenario'
 import logger from '@shared/util/logger'
 import { z, ZodTypeAny } from 'zod'
@@ -63,10 +66,34 @@ const isQuestionTarget = (obj: unknown): obj is QuestionTarget => {
   return isSchema(questionTargetSchema, obj)
 }
 
+const isWearable = (obj: unknown): obj is Wearable => {
+  return isSchema(wearableSchema, obj)
+}
+
 const getAilmentsByBodyPart = (ailments: Ailment[], bodyPart: BodyPart) => {
   return ailments
     .flatMap((ailment) => ailment.effects.bodyParts)
     .filter((part) => part.part === bodyPart.part)
+}
+
+const removeFromInventory = (
+  itemToRemove: InventoryItem,
+  scenarioState: ScenarioState,
+): ScenarioState => {
+  let removed = false
+  const newInventory = scenarioState.player.inventory.filter((item) => {
+    if (!removed && item === itemToRemove) {
+      removed = true
+      return false
+    }
+
+    return true
+  })
+
+  return {
+    ...scenarioState,
+    player: { ...scenarioState.player, inventory: newInventory },
+  }
 }
 
 export const scenarioUtils = {
@@ -75,7 +102,9 @@ export const scenarioUtils = {
   isBodyPart,
   isBodyPartName,
   isViewable,
+  isWearable,
   isSchema,
   isQuestionTarget,
   getAilmentsByBodyPart,
+  removeFromInventory,
 }

@@ -5,6 +5,7 @@ import {
   ScenarioState,
   Verb,
   VerbHandler,
+  wearableSchema,
 } from '@shared/types/scenario'
 import { scenarioUtils } from './scenarioUtils'
 import { askHandler } from './verbHandlers/askHandler'
@@ -13,6 +14,7 @@ import { measureHandler } from './verbHandlers/measureHandler'
 import { moveHandler } from './verbHandlers/moveHandler'
 import { palpateHandler } from './verbHandlers/palpateHandler'
 import { surveyHandler } from './verbHandlers/surveyHandler'
+import { wearHandler } from './verbHandlers/wearHandler'
 
 const verbHandlers: Record<Verb, VerbHandler> = {
   look: lookHandler,
@@ -21,6 +23,7 @@ const verbHandlers: Record<Verb, VerbHandler> = {
   ask: askHandler,
   move: moveHandler,
   survey: surveyHandler,
+  wear: wearHandler,
 }
 
 const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
@@ -75,6 +78,10 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
 
   if (scenarioUtils.isQuestionTarget(objectName)) {
     return objectName
+  }
+
+  if (scenarioUtils.isWearable(objectName)) {
+    return wearableSchema.Enum[objectName]
   }
 
   switch (objectName) {

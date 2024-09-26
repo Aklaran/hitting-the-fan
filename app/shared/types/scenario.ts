@@ -86,10 +86,17 @@ export type Patient = z.infer<typeof patientSchema>
 
 // -- PLAYER -- //
 
+export const wearableSchema = z.enum(['gloves', 'mask'])
+export type Wearable = z.infer<typeof wearableSchema>
+
+export const inventoryItemSchema = z.enum([...wearableSchema.options])
+export type InventoryItem = z.infer<typeof inventoryItemSchema>
+
 export const playerSchema = z.object({
   distanceToPatient: distanceSchema,
+  inventory: z.array(inventoryItemSchema),
+  worn: z.array(wearableSchema),
 })
-
 export type Player = z.infer<typeof playerSchema>
 
 // -- SCENARIO STATE -- //
@@ -121,6 +128,7 @@ export const verbSchema = z.enum([
   'measure',
   'move',
   'survey',
+  'wear',
 ])
 export type Verb = z.infer<typeof verbSchema>
 
@@ -135,6 +143,7 @@ export const nounSchema = z.enum([
   'in',
   'hazards',
   'mechanismOfInjury',
+  ...inventoryItemSchema.options,
 ])
 export type Noun = z.infer<typeof nounSchema>
 
