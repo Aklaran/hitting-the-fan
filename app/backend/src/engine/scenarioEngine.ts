@@ -14,6 +14,15 @@ import { moveHandler } from './verbHandlers/moveHandler'
 import { palpateHandler } from './verbHandlers/palpateHandler'
 import { surveyHandler } from './verbHandlers/surveyHandler'
 
+const verbHandlers: Record<Verb, VerbHandler> = {
+  look: lookHandler,
+  palpate: palpateHandler,
+  measure: measureHandler,
+  ask: askHandler,
+  move: moveHandler,
+  survey: surveyHandler,
+}
+
 const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
   const { action } = input
 
@@ -46,22 +55,7 @@ const createCommand = (
 }
 
 const getVerbHandler = (verb: Verb): VerbHandler => {
-  switch (verb) {
-    case 'look':
-      return lookHandler
-    case 'palpate':
-      return palpateHandler
-    case 'measure':
-      return measureHandler
-    case 'ask':
-      return askHandler
-    case 'move':
-      return moveHandler
-    case 'survey':
-      return surveyHandler
-    default:
-      return lookHandler
-  }
+  return verbHandlers[verb] || lookHandler
 }
 
 const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
