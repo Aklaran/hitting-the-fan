@@ -25,9 +25,8 @@ const appendLogEntry = (
     type,
   }
 
-  // NOTE: This destructively modifies the scenarioState
-  scenarioState.log = [...scenarioState.log, logEntry]
-  return scenarioState
+  const newLog = [...scenarioState.log, logEntry]
+  return { ...scenarioState, log: newLog }
 }
 
 const appendTooFarLogEntry = (scenarioState: ScenarioState) => {
