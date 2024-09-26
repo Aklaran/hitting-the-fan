@@ -25,6 +25,7 @@ const appendLogEntry = (
     type,
   }
 
+  // NOTE: This destructively modifies the scenarioState
   scenarioState.log = [...scenarioState.log, logEntry]
   return scenarioState
 }

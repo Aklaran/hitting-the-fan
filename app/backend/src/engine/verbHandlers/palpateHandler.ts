@@ -19,7 +19,6 @@ export const palpateHandler: VerbHandler = {
       ].join(' ')
     }
 
-    scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
-    return scenarioState
+    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
   },
 }

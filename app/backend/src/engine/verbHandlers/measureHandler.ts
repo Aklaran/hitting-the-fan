@@ -19,8 +19,7 @@ export const measureHandler: VerbHandler = {
       responseText = measurePulse(scenarioState)
     }
 
-    scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
-    return scenarioState
+    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
   },
 }
 

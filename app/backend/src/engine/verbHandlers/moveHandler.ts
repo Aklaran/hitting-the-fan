@@ -15,7 +15,6 @@ export const moveHandler: VerbHandler = {
       scenarioState.player.distanceToPatient = distanceSchema.Enum.near
     }
 
-    scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
-    return scenarioState
+    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
   },
 }

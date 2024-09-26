@@ -17,7 +17,6 @@ export const askHandler: VerbHandler = {
       responseText = `The patient responds, "I am ${scenarioState.patient.gender}."`
     }
 
-    scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
-    return scenarioState
+    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
   },
 }

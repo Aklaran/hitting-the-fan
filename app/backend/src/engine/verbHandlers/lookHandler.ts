@@ -18,8 +18,7 @@ export const lookHandler: VerbHandler = {
       responseText = command.object.description
     }
 
-    scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
-    return scenarioState
+    return scenarioUtils.appendLogEntry(scenarioState, responseText, 'narrator')
   },
 }
 
