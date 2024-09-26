@@ -119,6 +119,7 @@ export const verbSchema = z.enum([
   'ask',
   'palpate',
   'measure',
+  'move',
 ])
 export type Verb = z.infer<typeof verbSchema>
 
@@ -130,6 +131,7 @@ export const nounSchema = z.enum([
   ...bodyPartNames.options,
   'pulse',
   'respiratoryRate',
+  'in',
 ])
 export type Noun = z.infer<typeof nounSchema>
 

@@ -10,6 +10,7 @@ import { scenarioUtils } from './scenarioUtils'
 import { askHandler } from './verbHandlers/askHandler'
 import { lookHandler } from './verbHandlers/lookHandler'
 import { measureHandler } from './verbHandlers/measureHandler'
+import { moveHandler } from './verbHandlers/moveHandler'
 import { palpateHandler } from './verbHandlers/palpateHandler'
 
 const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
@@ -53,6 +54,8 @@ const getVerbHandler = (verb: Verb): VerbHandler => {
       return measureHandler
     case 'ask':
       return askHandler
+    case 'move':
+      return moveHandler
     default:
       return lookHandler
   }
@@ -78,6 +81,8 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
       return 'pulse'
     case 'respiratoryRate':
       return 'respiratoryRate'
+    case 'in':
+      return 'in'
     default:
       return undefined
   }
