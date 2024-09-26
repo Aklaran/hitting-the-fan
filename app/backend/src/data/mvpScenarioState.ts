@@ -2,9 +2,15 @@ import { ScenarioState } from '@shared/types/scenario'
 
 export const mvpScenarioState: ScenarioState = {
   log: [{ text: 'Welcome to the game!', type: 'narrator' }],
+  player: {
+    distanceToPatient: 'far',
+  },
   patient: {
     name: 'Jeff',
-    description: 'A man in his 30s, whimpering on the ground like a puppy.',
+    descriptions: {
+      near: 'A man on the ground, whimpering like a puppy and holding his leg. From close up, you can see that something is wrong with his ankle.',
+      far: 'A man on the ground, whimpering like a puppy and holding his leg.',
+    },
     age: 30,
     gender: 'male',
     heartRate: 60,

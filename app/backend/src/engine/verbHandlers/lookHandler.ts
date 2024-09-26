@@ -12,6 +12,8 @@ export const lookHandler: VerbHandler = {
 
     if (scenarioUtils.isBodyPart(command.object)) {
       responseText = lookAtBodyPart(command.object, scenarioState)
+    } else if (command.object === scenarioState.patient) {
+      responseText = lookAtPatient(scenarioState)
     } else if (scenarioUtils.isViewable(command.object)) {
       responseText = command.object.description
     }
@@ -22,6 +24,10 @@ export const lookHandler: VerbHandler = {
 }
 
 const lookAtBodyPart = (bodyPart: BodyPart, scenarioState: ScenarioState) => {
+  if (scenarioState.player.distanceToPatient === 'far') {
+    return 'You are too far away to see the details.'
+  }
+
   let responseText = bodyPart.description
 
   const ailments = scenarioUtils.getAilmentsByBodyPart(
@@ -35,4 +41,10 @@ const lookAtBodyPart = (bodyPart: BodyPart, scenarioState: ScenarioState) => {
   ].join(' ')
 
   return responseText
+}
+
+const lookAtPatient = (scenarioState: ScenarioState) => {
+  return scenarioState.patient.descriptions[
+    scenarioState.player.distanceToPatient
+  ]
 }

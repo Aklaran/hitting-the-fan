@@ -11,6 +11,17 @@ export type ScenarioLogEntry = z.infer<typeof scenarioLogEntrySchema>
 export const scenarioLogSchema = z.array(scenarioLogEntrySchema)
 export type ScenarioLog = z.infer<typeof scenarioLogSchema>
 
+// -- ENVIRONMENT -- //
+
+export const environmentSchema = z.object({
+  description: z.string(),
+  temperatureCelsius: z.number().int().min(-40).max(45),
+})
+export type Environment = z.infer<typeof environmentSchema>
+
+export const distanceSchema = z.enum(['near', 'far'])
+export type Distance = z.infer<typeof distanceSchema>
+
 // -- PATIENT -- //
 
 // BODY PART //
@@ -57,7 +68,10 @@ export type Ailment = z.infer<typeof ailmentSchema>
 
 export const patientSchema = z.object({
   name: z.string(),
-  description: z.string(),
+  descriptions: z.object({
+    [distanceSchema.Enum.near]: z.string(),
+    [distanceSchema.Enum.far]: z.string(),
+  }),
   age: z.number().int().nonnegative().max(100),
   gender: z.enum(['male', 'female', 'other']),
   heartRate: z.number().int().nonnegative().max(200),
@@ -68,18 +82,19 @@ export const patientSchema = z.object({
 })
 export type Patient = z.infer<typeof patientSchema>
 
-// -- ENVIRONMENT -- //
+// -- PLAYER -- //
 
-export const environmentSchema = z.object({
-  description: z.string(),
-  temperatureCelsius: z.number().int().min(-40).max(45),
+export const playerSchema = z.object({
+  distanceToPatient: distanceSchema,
 })
-export type Environment = z.infer<typeof environmentSchema>
+
+export type Player = z.infer<typeof playerSchema>
 
 // -- SCENARIO STATE -- //
 
 export const scenarioStateSchema = z.object({
   log: scenarioLogSchema,
+  player: playerSchema,
   patient: patientSchema,
   environment: environmentSchema,
 })
