@@ -81,6 +81,9 @@ export const patientSchema = z.object({
   bodyParts: z.array(bodyPartSchema),
   ailments: z.array(ailmentSchema),
   mechanismOfInjury: z.string(),
+  instructions: z.object({
+    dontMove: z.boolean(),
+  }),
 })
 export type Patient = z.infer<typeof patientSchema>
 
@@ -124,6 +127,7 @@ export type Viewable = z.infer<typeof viewableSchema>
 export const verbSchema = z.enum([
   'look',
   'ask',
+  'instruct',
   'palpate',
   'measure',
   'move',
@@ -149,6 +153,9 @@ export type Noun = z.infer<typeof nounSchema>
 
 export const questionTargetSchema = z.enum(['name', 'age', 'gender'])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
+
+export const instructTargetSchema = z.enum(['dontMove'])
+export type InstructTarget = z.infer<typeof instructTargetSchema>
 
 export const commandSchema = z.object({
   verb: verbSchema,

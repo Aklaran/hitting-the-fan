@@ -52,6 +52,9 @@ export const mvpScenarioState: ScenarioState = {
         },
       },
     ],
+    instructions: {
+      dontMove: false,
+    },
   },
   environment: {
     description: "You're at the base of a mega alpine climb.",
