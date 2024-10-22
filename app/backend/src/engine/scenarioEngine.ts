@@ -30,13 +30,17 @@ const verbHandlers: Record<Verb, VerbHandler> = {
 const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
   const { action } = input
 
-  scenarioUtils.appendLogEntry(scenarioState, action, 'player')
+  const initialState = scenarioUtils.appendLogEntry(
+    scenarioState,
+    action,
+    'player',
+  )
 
-  const command = createCommand(action, scenarioState)
+  const command = createCommand(action, initialState)
 
   const verbHandler = getVerbHandler(command.verb)
 
-  const executionResponse = verbHandler.execute(command, scenarioState)
+  const executionResponse = verbHandler.execute(command, initialState)
 
   const finalState = scenarioUtils.appendLogEntry(
     executionResponse.scenarioState,
