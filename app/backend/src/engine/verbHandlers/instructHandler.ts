@@ -21,45 +21,35 @@ export const instructHandler: VerbHandler = {
       return { responseText, scenarioState }
     }
 
-    switch (command.object) {
-      case 'dontMove':
-        scenarioState = instructDontMove(scenarioState)
-        break
+    const instruction = command.object
 
-      case 'acceptCare':
-        scenarioState = instructAcceptCare(scenarioState)
-        break
+    if (hasAlreadyReceivedInstruction(scenarioState, instruction)) {
+      const responseText = repeatResponseBank[instruction]
+      return { responseText, scenarioState }
     }
 
-    responseText = responseBank[command.object]
-    return { responseText, scenarioState }
+    responseText = responseBank[instruction]
+
+    const newState = {
+      ...scenarioState,
+      patient: {
+        ...scenarioState.patient,
+        instructions: {
+          ...scenarioState.patient.instructions,
+          [instruction]: true,
+        },
+      },
+    }
+
+    return { responseText, scenarioState: newState }
   },
 }
 
-const instructDontMove = (scenarioState: ScenarioState): ScenarioState => {
-  return {
-    ...scenarioState,
-    patient: {
-      ...scenarioState.patient,
-      instructions: {
-        ...scenarioState.patient.instructions,
-        dontMove: true,
-      },
-    },
-  }
-}
-
-const instructAcceptCare = (scenarioState: ScenarioState): ScenarioState => {
-  return {
-    ...scenarioState,
-    patient: {
-      ...scenarioState.patient,
-      instructions: {
-        ...scenarioState.patient.instructions,
-        acceptCare: true,
-      },
-    },
-  }
+const hasAlreadyReceivedInstruction = (
+  scenarioState: ScenarioState,
+  instruction: InstructTarget,
+) => {
+  return scenarioState.patient.instructions[instruction]
 }
 
 const responseBank: Record<InstructTarget, string> = {
@@ -67,4 +57,9 @@ const responseBank: Record<InstructTarget, string> = {
     'The patient nods their understanding. That might have broken their spine itself, but oh well.',
   acceptCare:
     'You inform the patient that you are a Wilderness First Responder and ask them if they would like help. They consent.',
+}
+
+const repeatResponseBank: Record<InstructTarget, string> = {
+  dontMove: 'You have already instructed the patient not to move.',
+  acceptCare: 'You have already obtained consent to care.',
 }
