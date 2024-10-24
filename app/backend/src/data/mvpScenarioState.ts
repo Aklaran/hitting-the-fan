@@ -54,6 +54,7 @@ export const mvpScenarioState: ScenarioState = {
     ],
     instructions: {
       dontMove: false,
+      acceptCare: false,
     },
   },
   environment: {
