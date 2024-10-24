@@ -24,6 +24,11 @@ export const instructHandler: VerbHandler = {
     switch (command.object) {
       case 'dontMove':
         scenarioState = instructDontMove(scenarioState)
+        break
+
+      case 'acceptCare':
+        scenarioState = instructAcceptCare(scenarioState)
+        break
     }
 
     responseText = responseBank[command.object]
@@ -44,7 +49,22 @@ const instructDontMove = (scenarioState: ScenarioState): ScenarioState => {
   }
 }
 
+const instructAcceptCare = (scenarioState: ScenarioState): ScenarioState => {
+  return {
+    ...scenarioState,
+    patient: {
+      ...scenarioState.patient,
+      instructions: {
+        ...scenarioState.patient.instructions,
+        acceptCare: true,
+      },
+    },
+  }
+}
+
 const responseBank: Record<InstructTarget, string> = {
   dontMove:
     'The patient nods their understanding. That might have broken their spine itself, but oh well.',
+  acceptCare:
+    'You inform the patient that you are a Wilderness First Responder and ask them if they would like help. They consent.',
 }
