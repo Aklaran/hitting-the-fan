@@ -14,6 +14,11 @@ export const controlHandler: VerbHandler = {
       return { responseText, scenarioState }
     }
 
+    if (scenarioState.player.distanceToPatient === 'far') {
+      responseText = 'You are too far away to do that.'
+      return { responseText, scenarioState }
+    }
+
     if (!scenarioUtils.isControlTarget(command.object)) {
       responseText = `You can't control that...`
       return { responseText, scenarioState }
