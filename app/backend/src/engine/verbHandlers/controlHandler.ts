@@ -24,6 +24,10 @@ export const controlHandler: VerbHandler = {
       return { responseText, scenarioState }
     }
 
+    if (command.modifiers && command.modifiers.includes('remove')) {
+      return removeSpineControl(scenarioState)
+    }
+
     return applySpineControl(scenarioState)
   },
 }
@@ -47,3 +51,21 @@ const applySpineControl = (scenarioState: ScenarioState): VerbResponse => {
   return { responseText, scenarioState: newState }
 }
 
+const removeSpineControl = (scenarioState: ScenarioState): VerbResponse => {
+  if (!scenarioState.patient.isSpineControlled) {
+    const responseText = "You aren't controlling the patient's spine."
+    return { responseText, scenarioState }
+  }
+
+  const newState = {
+    ...scenarioState,
+    patient: {
+      ...scenarioState.patient,
+      isSpineControlled: false,
+    },
+  }
+
+  const responseText =
+    "You release your hold on the patient's head and allow them to move."
+  return { responseText, scenarioState: newState }
+}

@@ -171,6 +171,9 @@ export const controlTargetSchema = bodyPartSchema.refine(
 )
 export type ControlTarget = z.infer<typeof controlTargetSchema>
 
+export const modifierSchema = z.enum(['remove', 'loose', 'tight'])
+export type Modifier = z.infer<typeof modifierSchema>
+
 export const commandSchema = z.object({
   verb: verbSchema,
   object: z
@@ -183,6 +186,7 @@ export const commandSchema = z.object({
       z.string(),
     ])
     .optional(),
+  modifiers: z.array(modifierSchema).optional(),
 })
 export type Command = z.infer<typeof commandSchema>
 

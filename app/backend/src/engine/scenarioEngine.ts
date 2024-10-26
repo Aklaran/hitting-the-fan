@@ -1,5 +1,7 @@
 import {
   Command,
+  Modifier,
+  modifierSchema,
   Noun,
   ProcessAction,
   questionTargetSchema,
@@ -63,10 +65,12 @@ const createCommand = (
 
   const objectName = tokens[1] as Noun
   const object = resolveObject(objectName, scenarioState)
+  const modifiers = resolveModifiers(tokens)
 
   const command: Command = {
     verb: tokens[0].toLowerCase() as Verb,
     object,
+    modifiers,
   }
 
   return command
@@ -111,6 +115,13 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
     default:
       return objectName
   }
+}
+
+const resolveModifiers = (tokens: string[]): Modifier[] => {
+  // TODO: notify the player if they passed in invalid modifiers
+  return tokens.filter(
+    (token): token is Modifier => modifierSchema.safeParse(token).success,
+  )
 }
 
 export const scenarioEngine = {
