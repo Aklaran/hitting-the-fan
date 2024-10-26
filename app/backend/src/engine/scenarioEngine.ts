@@ -18,6 +18,7 @@ import { lookHandler } from './verbHandlers/lookHandler'
 import { measureHandler } from './verbHandlers/measureHandler'
 import { moveHandler } from './verbHandlers/moveHandler'
 import { palpateHandler } from './verbHandlers/palpateHandler'
+import { removeHandler } from './verbHandlers/removeHandler'
 import { surveyHandler } from './verbHandlers/surveyHandler'
 import { wearHandler } from './verbHandlers/wearHandler'
 
@@ -31,6 +32,7 @@ const verbHandlers: Record<Verb, VerbHandler> = {
   survey: surveyHandler,
   wear: wearHandler,
   control: controlHandler,
+  remove: removeHandler,
 }
 
 const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
@@ -65,7 +67,9 @@ const createCommand = (
 
   const objectName = tokens[1] as Noun
   const object = resolveObject(objectName, scenarioState)
-  const modifiers = resolveModifiers(tokens)
+
+  // HACK: Only look for modifiers from the 2nd elem of tokens onward
+  const modifiers = resolveModifiers(tokens.slice(2))
 
   const command: Command = {
     verb: tokens[0].toLowerCase() as Verb,

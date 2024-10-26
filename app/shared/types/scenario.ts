@@ -147,6 +147,7 @@ export const verbSchema = z.enum([
   'survey',
   'wear',
   'control',
+  'remove',
 ])
 export type Verb = z.infer<typeof verbSchema>
 
@@ -179,8 +180,16 @@ export const controlTargetSchema = bodyPartSchema.refine(
 )
 export type ControlTarget = z.infer<typeof controlTargetSchema>
 
-export const modifierSchema = z.enum(['remove', 'loose', 'tight'])
+export const modifierSchema = z.enum([
+  'remove',
+  'loose',
+  'tight',
+  'obstruction',
+])
 export type Modifier = z.infer<typeof modifierSchema>
+
+export const removeTargetSchema = z.enum([modifierSchema.Enum.obstruction])
+export type RemoveTarget = z.infer<typeof removeTargetSchema>
 
 export const commandSchema = z.object({
   verb: verbSchema,
