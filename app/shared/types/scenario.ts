@@ -29,6 +29,7 @@ export type Distance = z.infer<typeof distanceSchema>
 
 export const bodyPartNames = z.enum([
   'head',
+  'mouth',
   'neck',
   'chest',
   'stomach',

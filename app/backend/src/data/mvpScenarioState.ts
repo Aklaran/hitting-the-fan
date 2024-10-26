@@ -69,6 +69,15 @@ export const mvpScenarioState: ScenarioState = {
         palpationResponse:
           "You press on various locations on the patient's back.",
       },
+      {
+        part: 'mouth',
+        description: {
+          obstructed: 'The patient is chewing on gum.',
+          unobstructed: 'The mouth looks normal.',
+        },
+        obstructedState: 'obstructed',
+        palpationResponse: "You probably don't want to do that.",
+      },
     ],
     ailments: [
       {
