@@ -31,6 +31,24 @@ export const mvpScenarioState: ScenarioState = {
         description: 'The leg looks normal...',
         palpationResponse: 'You press on the right leg.',
       },
+      {
+        part: 'head',
+        description: "The patient's head looks normal...",
+        palpationResponse:
+          "You remove any headwear, run your fingers through the patient's hair, and check all orifices.",
+      },
+      {
+        part: 'spine',
+        description: "The patient's spine looks normal...",
+        palpationResponse:
+          "You press on various locations on the patient's back.",
+      },
+      {
+        part: 'back',
+        description: "The patient's back looks normal...",
+        palpationResponse:
+          "You press on various locations on the patient's back.",
+      },
     ],
     ailments: [
       {
@@ -56,6 +74,7 @@ export const mvpScenarioState: ScenarioState = {
       dontMove: false,
       acceptCare: false,
     },
+    isSpineControlled: false,
   },
   environment: {
     description: "You're at the base of a mega alpine climb.",

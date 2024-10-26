@@ -4,6 +4,8 @@ import {
   BodyPartName,
   bodyPartNames,
   bodyPartSchema,
+  ControlTarget,
+  controlTargetSchema,
   InstructTarget,
   instructTargetSchema,
   InventoryItem,
@@ -72,6 +74,10 @@ const isInstructTarget = (obj: unknown): obj is InstructTarget => {
   return isSchema(instructTargetSchema, obj)
 }
 
+const isControlTarget = (obj: unknown): obj is ControlTarget => {
+  return isSchema(controlTargetSchema, obj)
+}
+
 const isWearable = (obj: unknown): obj is Wearable => {
   return isSchema(wearableSchema, obj)
 }
@@ -112,6 +118,7 @@ export const scenarioUtils = {
   isSchema,
   isQuestionTarget,
   isInstructTarget,
+  isControlTarget,
   getAilmentsByBodyPart,
   removeFromInventory,
 }

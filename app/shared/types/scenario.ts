@@ -32,7 +32,9 @@ export const bodyPartNames = z.enum([
   'neck',
   'chest',
   'stomach',
+  // TODO: 'back' and 'spine' are synonyms for each other. We should make a synonym system.
   'back',
+  'spine',
   'leftArm',
   'rightArm',
   'leftHand',
@@ -85,6 +87,7 @@ export const patientSchema = z.object({
     dontMove: z.boolean(),
     acceptCare: z.boolean(),
   }),
+  isSpineControlled: z.boolean(),
 })
 export type Patient = z.infer<typeof patientSchema>
 
@@ -100,6 +103,7 @@ export const playerSchema = z.object({
   distanceToPatient: distanceSchema,
   inventory: z.array(inventoryItemSchema),
   worn: z.array(wearableSchema),
+  // TODO: Track whether the player is occupied (controlling spine, CPR)
 })
 export type Player = z.infer<typeof playerSchema>
 
@@ -134,6 +138,7 @@ export const verbSchema = z.enum([
   'move',
   'survey',
   'wear',
+  'control',
 ])
 export type Verb = z.infer<typeof verbSchema>
 
@@ -157,6 +162,14 @@ export type QuestionTarget = z.infer<typeof questionTargetSchema>
 
 export const instructTargetSchema = z.enum(['dontMove', 'acceptCare'])
 export type InstructTarget = z.infer<typeof instructTargetSchema>
+
+export const controlTargetSchema = bodyPartSchema.refine(
+  (bodyPart) => bodyPart.part === 'spine' || bodyPart.part === 'head',
+  {
+    message: "Body part must be 'spine' or 'head'",
+  },
+)
+export type ControlTarget = z.infer<typeof controlTargetSchema>
 
 export const commandSchema = z.object({
   verb: verbSchema,

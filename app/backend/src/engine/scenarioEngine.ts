@@ -10,6 +10,7 @@ import {
 } from '@shared/types/scenario'
 import { scenarioUtils } from './scenarioUtils'
 import { askHandler } from './verbHandlers/askHandler'
+import { controlHandler } from './verbHandlers/controlHandler'
 import { instructHandler } from './verbHandlers/instructHandler'
 import { lookHandler } from './verbHandlers/lookHandler'
 import { measureHandler } from './verbHandlers/measureHandler'
@@ -27,6 +28,7 @@ const verbHandlers: Record<Verb, VerbHandler> = {
   move: moveHandler,
   survey: surveyHandler,
   wear: wearHandler,
+  control: controlHandler,
 }
 
 const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
