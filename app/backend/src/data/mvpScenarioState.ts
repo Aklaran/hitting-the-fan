@@ -23,29 +23,49 @@ export const mvpScenarioState: ScenarioState = {
     bodyParts: [
       {
         part: 'leftLeg',
-        description: 'The leg looks normal...',
+        description: {
+          obstructed: 'The leg is covered by clothing.',
+          unobstructed: 'The leg looks normal...',
+        },
+        obstructedState: 'obstructed',
         palpationResponse: 'You press on the left leg.',
       },
       {
         part: 'rightLeg',
-        description: 'The leg looks normal...',
+        description: {
+          obstructed: 'The leg is covered by clothing.',
+          unobstructed: 'The leg looks normal...',
+        },
+        obstructedState: 'obstructed',
         palpationResponse: 'You press on the right leg.',
       },
       {
         part: 'head',
-        description: "The patient's head looks normal...",
+        description: {
+          obstructed: 'The head is covered by a hat.',
+          unobstructed: 'The leg looks normal...',
+        },
+        obstructedState: 'unobstructed',
         palpationResponse:
           "You remove any headwear, run your fingers through the patient's hair, and check all orifices.",
       },
       {
         part: 'spine',
-        description: "The patient's spine looks normal...",
+        description: {
+          obstructed: 'The spine is covered by clothing.',
+          unobstructed: 'The spine looks normal...',
+        },
+        obstructedState: 'obstructed',
         palpationResponse:
           "You press on various locations on the patient's back.",
       },
       {
         part: 'back',
-        description: "The patient's back looks normal...",
+        description: {
+          obstructed: 'The back is covered by clothing.',
+          unobstructed: 'The back looks normal...',
+        },
+        obstructedState: 'obstructed',
         palpationResponse:
           "You press on various locations on the patient's back.",
       },
@@ -61,8 +81,11 @@ export const mvpScenarioState: ScenarioState = {
           bodyParts: [
             {
               part: 'leftLeg',
-              description:
-                'The ankle is swollen and the foot turned the wrong way.',
+              description: {
+                obstructed: 'It looks like the foot is turned the wrong way...',
+                unobstructed:
+                  'The ankle is swollen and the foot is turned the wrong way.',
+              },
               palpationResponse:
                 "Pressing on the outside of the patient's ankle causes severe pain.",
             },

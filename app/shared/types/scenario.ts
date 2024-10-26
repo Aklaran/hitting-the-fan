@@ -46,10 +46,17 @@ export const bodyPartNames = z.enum([
 ])
 export type BodyPartName = z.infer<typeof bodyPartNames>
 
+export const obstructionSchema = z.enum(['obstructed', 'unobstructed'])
+export type Obstruction = z.infer<typeof obstructionSchema>
+
 export const bodyPartSchema = z.object({
   part: bodyPartNames,
-  description: z.string(),
+  description: z.object({
+    [obstructionSchema.Enum.obstructed]: z.string(),
+    [obstructionSchema.Enum.unobstructed]: z.string(),
+  }),
   palpationResponse: z.string(),
+  obstructedState: obstructionSchema,
 })
 export type BodyPart = z.infer<typeof bodyPartSchema>
 
@@ -62,7 +69,7 @@ export const ailmentSchema = z.object({
     heartRateMultiplier: z.number().positive().max(100),
     respiratoryRateMultiplier: z.number().positive().max(100),
     coreTemperatureCelsiusMultiplier: z.number().positive().max(100),
-    bodyParts: z.array(bodyPartSchema),
+    bodyParts: z.array(bodyPartSchema.omit({ obstructedState: true })),
   }),
 })
 export type Ailment = z.infer<typeof ailmentSchema>

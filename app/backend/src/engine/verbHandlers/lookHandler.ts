@@ -28,7 +28,7 @@ const lookAtBodyPart = (bodyPart: BodyPart, scenarioState: ScenarioState) => {
     return 'You are too far away to see the details.'
   }
 
-  let responseText = bodyPart.description
+  let responseText = bodyPart.description[bodyPart.obstructedState]
 
   const ailments = scenarioUtils.getAilmentsByBodyPart(
     scenarioState.patient.ailments,
@@ -37,7 +37,7 @@ const lookAtBodyPart = (bodyPart: BodyPart, scenarioState: ScenarioState) => {
 
   responseText = [
     responseText,
-    ...ailments.map((ailment) => ailment.description),
+    ...ailments.map((ailment) => ailment.description[bodyPart.obstructedState]),
   ].join(' ')
 
   return responseText
