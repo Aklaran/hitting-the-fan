@@ -10,6 +10,7 @@ import {
   VerbHandler,
   wearableSchema,
 } from '@shared/types/scenario'
+import logger from '@shared/util/logger'
 import { scenarioUtils } from './scenarioUtils'
 import { askHandler } from './verbHandlers/askHandler'
 import { controlHandler } from './verbHandlers/controlHandler'
@@ -35,7 +36,10 @@ const verbHandlers: Record<Verb, VerbHandler> = {
   remove: removeHandler,
 }
 
-const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
+const processAction = (
+  input: ProcessAction,
+  scenarioState: ScenarioState,
+): ScenarioState => {
   const { action } = input
 
   const initialState = scenarioUtils.appendLogEntry(
@@ -48,15 +52,31 @@ const processAction = (input: ProcessAction, scenarioState: ScenarioState) => {
 
   const verbHandler = getVerbHandler(command.verb)
 
-  const executionResponse = verbHandler.execute(command, initialState)
+  try {
+    const executionResponse = verbHandler.execute(command, initialState)
 
-  const finalState = scenarioUtils.appendLogEntry(
-    executionResponse.scenarioState,
-    executionResponse.responseText,
-    'narrator',
-  )
+    const finalState = scenarioUtils.appendLogEntry(
+      executionResponse.scenarioState,
+      executionResponse.responseText,
+      'narrator',
+    )
 
-  return finalState
+    return finalState
+  } catch (error) {
+    const err = error as Error
+
+    logger.error(
+      `Error in ${command.verb} verb handler: ${err.message}, ${err.stack}`,
+    )
+
+    const finalState = scenarioUtils.appendLogEntry(
+      initialState,
+      "I'm sorry, but I encountered an error while processing your request.",
+      'narrator',
+    )
+
+    return finalState
+  }
 }
 
 const createCommand = (
