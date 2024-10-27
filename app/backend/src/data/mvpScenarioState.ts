@@ -105,6 +105,7 @@ export const mvpScenarioState: ScenarioState = {
           heartRateMultiplier: 1.3,
           respiratoryRateMultiplier: 1.3,
           coreTemperatureCelsiusMultiplier: 1.3,
+          bleed: 'none',
           bodyParts: [
             {
               part: 'leftLeg',

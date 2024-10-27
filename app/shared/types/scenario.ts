@@ -63,6 +63,9 @@ export type BodyPart = z.infer<typeof bodyPartSchema>
 
 // AILMENT //
 
+export const bleedSchema = z.enum(['major', 'minor', 'none'])
+export type Bleed = z.infer<typeof bleedSchema>
+
 export const ailmentSchema = z.object({
   name: z.string(),
   description: z.string(),
@@ -70,6 +73,7 @@ export const ailmentSchema = z.object({
     heartRateMultiplier: z.number().positive().max(100),
     respiratoryRateMultiplier: z.number().positive().max(100),
     coreTemperatureCelsiusMultiplier: z.number().positive().max(100),
+    bleed: bleedSchema,
     bodyParts: z.array(bodyPartSchema.omit({ obstructedState: true })),
   }),
 })
@@ -159,6 +163,7 @@ export const verbSchema = z.enum([
   'wear',
   'control',
   'remove',
+  'perform',
 ])
 export type Verb = z.infer<typeof verbSchema>
 
@@ -194,6 +199,9 @@ export const controlTargetSchema = bodyPartSchema.refine(
   },
 )
 export type ControlTarget = z.infer<typeof controlTargetSchema>
+
+export const performTargetSchema = z.enum(['bloodSweep'])
+export type PerformTarget = z.infer<typeof performTargetSchema>
 
 export const modifierSchema = z.enum([
   'remove',

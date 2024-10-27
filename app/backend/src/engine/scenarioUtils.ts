@@ -9,6 +9,8 @@ import {
   InstructTarget,
   instructTargetSchema,
   InventoryItem,
+  PerformTarget,
+  performTargetSchema,
   QuestionTarget,
   questionTargetSchema,
   RemoveTarget,
@@ -80,6 +82,10 @@ const isControlTarget = (obj: unknown): obj is ControlTarget => {
   return isSchema(controlTargetSchema, obj)
 }
 
+const isPerformTarget = (obj: unknown): obj is PerformTarget => {
+  return isSchema(performTargetSchema, obj)
+}
+
 const isRemoveTarget = (obj: unknown): obj is RemoveTarget => {
   return isSchema(removeTargetSchema, obj)
 }
@@ -132,6 +138,7 @@ export const scenarioUtils = {
   isQuestionTarget,
   isInstructTarget,
   isControlTarget,
+  isPerformTarget,
   isRemoveTarget,
   getBodyPartByName,
   getAilmentsByBodyPart,

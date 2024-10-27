@@ -19,6 +19,7 @@ import { lookHandler } from './verbHandlers/lookHandler'
 import { measureHandler } from './verbHandlers/measureHandler'
 import { moveHandler } from './verbHandlers/moveHandler'
 import { palpateHandler } from './verbHandlers/palpateHandler'
+import { performHandler } from './verbHandlers/performHandler'
 import { removeHandler } from './verbHandlers/removeHandler'
 import { surveyHandler } from './verbHandlers/surveyHandler'
 import { wearHandler } from './verbHandlers/wearHandler'
@@ -34,6 +35,7 @@ const verbHandlers: Record<Verb, VerbHandler> = {
   wear: wearHandler,
   control: controlHandler,
   remove: removeHandler,
+  perform: performHandler,
 }
 
 const processAction = (
