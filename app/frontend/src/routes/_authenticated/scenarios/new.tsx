@@ -4,7 +4,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { trpc } from '@/lib/trpc'
 import { getZodStringValidationErrors } from '@/lib/zod'
-import { createScenarioSchema, patientSchema } from '@shared/types/scenario'
+import Scenario, {
+  createScenarioSchema,
+  patientSchema,
+} from '@shared/types/scenario'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
@@ -18,26 +21,47 @@ function ScenarioForm() {
 
   const navigate = useNavigate()
 
-  const form = useForm({
+  const form = useForm<Scenario>({
     defaultValues: {
+      id: 0,
       title: '',
       openingPrompt: '',
       initialState: {
         log: [],
+        player: {
+          distanceToPatient: 'far',
+          inventory: [],
+          worn: [],
+        },
         patient: {
           name: '',
-          description: '',
+          descriptions: {
+            near: '',
+            far: '',
+          },
           bodyParts: [],
           ailments: [],
           age: 0,
           gender: patientSchema.shape.gender.Values.male,
           heartRate: 0,
-          respiratoryRate: 0,
+          respiration: {
+            rate: 0,
+            rhythm: 'regular',
+            effort: 'easy',
+          },
           coreTemperatureCelsius: 0,
+          isSpineControlled: false,
+          mechanismOfInjury: '',
+          instructions: {
+            dontMove: false,
+            acceptCare: false,
+            breathe: false,
+          },
         },
         environment: {
           description: '',
           temperatureCelsius: 0,
+          hazards: [],
         },
       },
     },
