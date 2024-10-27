@@ -93,6 +93,7 @@ const createCommand = (
   // HACK: Only look for modifiers from the 2nd elem of tokens onward
   const modifiers = resolveModifiers(tokens.slice(2))
 
+  // TODO: Gracefully handle the case of an unknown verb
   const command: Command = {
     verb: tokens[0].toLowerCase() as Verb,
     object,

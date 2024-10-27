@@ -33,7 +33,7 @@ export const mvpScenarioState: ScenarioState = {
         part: 'leftLeg',
         description: {
           obstructed: 'The leg is covered by clothing.',
-          unobstructed: 'The leg looks normal...',
+          unobstructed: 'The skin of the leg is exposed.',
         },
         obstructedState: 'obstructed',
         palpationResponse: 'You press on the left leg.',
@@ -42,7 +42,7 @@ export const mvpScenarioState: ScenarioState = {
         part: 'rightLeg',
         description: {
           obstructed: 'The leg is covered by clothing.',
-          unobstructed: 'The leg looks normal...',
+          unobstructed: 'The skin of the leg is exposed',
         },
         obstructedState: 'obstructed',
         palpationResponse: 'You press on the right leg.',
@@ -51,7 +51,7 @@ export const mvpScenarioState: ScenarioState = {
         part: 'head',
         description: {
           obstructed: 'The head is covered by a hat.',
-          unobstructed: 'The leg looks normal...',
+          unobstructed: 'The head is uncovered.',
         },
         obstructedState: 'unobstructed',
         palpationResponse:
