@@ -77,6 +77,12 @@ export type Ailment = z.infer<typeof ailmentSchema>
 
 // PATIENT //
 
+export const rhythmSchema = z.enum(['regular', 'irregular'])
+export type Rhythm = z.infer<typeof rhythmSchema>
+
+export const effortSchema = z.enum(['easy', 'labored'])
+export type Effort = z.infer<typeof effortSchema>
+
 export const patientSchema = z.object({
   name: z.string(),
   descriptions: z.object({
@@ -86,7 +92,11 @@ export const patientSchema = z.object({
   age: z.number().int().nonnegative().max(100),
   gender: z.enum(['male', 'female', 'other']),
   heartRate: z.number().int().nonnegative().max(200),
-  respiratoryRate: z.number().int().nonnegative().max(60),
+  respiration: z.object({
+    rate: z.number().int().nonnegative().max(60),
+    rhythm: rhythmSchema,
+    effort: effortSchema,
+  }),
   coreTemperatureCelsius: z.number().int().nonnegative().max(45),
   bodyParts: z.array(bodyPartSchema),
   ailments: z.array(ailmentSchema),

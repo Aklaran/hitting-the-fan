@@ -1,4 +1,8 @@
-import { ScenarioState } from '@shared/types/scenario'
+import {
+  effortSchema,
+  rhythmSchema,
+  ScenarioState,
+} from '@shared/types/scenario'
 
 export const mvpScenarioState: ScenarioState = {
   log: [{ text: 'Welcome to the game!', type: 'narrator' }],
@@ -18,7 +22,11 @@ export const mvpScenarioState: ScenarioState = {
     age: 30,
     gender: 'male',
     heartRate: 60,
-    respiratoryRate: 20,
+    respiration: {
+      rate: 20,
+      rhythm: rhythmSchema.Enum.regular,
+      effort: effortSchema.Enum.easy,
+    },
     coreTemperatureCelsius: 37,
     bodyParts: [
       {
