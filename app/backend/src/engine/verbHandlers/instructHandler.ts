@@ -28,7 +28,7 @@ export const instructHandler: VerbHandler = {
       return { responseText, scenarioState }
     }
 
-    responseText = responseBank[instruction]
+    responseText = responseBank[instruction](scenarioState)
 
     const newState = {
       ...scenarioState,
@@ -52,14 +52,23 @@ const hasAlreadyReceivedInstruction = (
   return scenarioState.patient.instructions[instruction]
 }
 
-const responseBank: Record<InstructTarget, string> = {
-  dontMove:
+const responseBank: Record<
+  InstructTarget,
+  (scenarioState: ScenarioState) => string
+> = {
+  dontMove: () =>
     'The patient nods their understanding. That might have broken their spine itself, but oh well.',
-  acceptCare:
+  acceptCare: () =>
     'You inform the patient that you are a Wilderness First Responder and ask them if they would like help. They consent.',
+  breathe: (scenarioState) => {
+    const respiration = scenarioState.patient.respiration
+
+    return `You instruct the patient to take 2 deep breathes and place your hand on the back to feel them. They are ${respiration.effort} and ${respiration.rhythm}.`
+  },
 }
 
 const repeatResponseBank: Record<InstructTarget, string> = {
   dontMove: 'You have already instructed the patient not to move.',
   acceptCare: 'You have already obtained consent to care.',
+  breathe: 'You have already checked that the patient can breathe.',
 }

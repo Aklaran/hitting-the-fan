@@ -104,6 +104,7 @@ export const patientSchema = z.object({
   instructions: z.object({
     dontMove: z.boolean(),
     acceptCare: z.boolean(),
+    breathe: z.boolean(),
   }),
   isSpineControlled: z.boolean(),
 })
@@ -179,7 +180,11 @@ export type Noun = z.infer<typeof nounSchema>
 export const questionTargetSchema = z.enum(['name', 'age', 'gender'])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 
-export const instructTargetSchema = z.enum(['dontMove', 'acceptCare'])
+export const instructTargetSchema = z.enum([
+  'dontMove',
+  'acceptCare',
+  'breathe',
+])
 export type InstructTarget = z.infer<typeof instructTargetSchema>
 
 export const controlTargetSchema = bodyPartSchema.refine(

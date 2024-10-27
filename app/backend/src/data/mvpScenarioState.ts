@@ -113,6 +113,7 @@ export const mvpScenarioState: ScenarioState = {
     instructions: {
       dontMove: false,
       acceptCare: false,
+      breathe: false,
     },
     isSpineControlled: false,
   },
