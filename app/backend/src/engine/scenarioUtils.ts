@@ -88,6 +88,13 @@ const isWearable = (obj: unknown): obj is Wearable => {
   return isSchema(wearableSchema, obj)
 }
 
+const getBodyPartByName = (
+  bodyParts: BodyPart[],
+  name: BodyPartName,
+): BodyPart | undefined => {
+  return bodyParts.find((part) => part.part === name)
+}
+
 const getAilmentsByBodyPart = (ailments: Ailment[], bodyPart: BodyPart) => {
   return ailments
     .flatMap((ailment) => ailment.effects.bodyParts)
@@ -126,6 +133,7 @@ export const scenarioUtils = {
   isInstructTarget,
   isControlTarget,
   isRemoveTarget,
+  getBodyPartByName,
   getAilmentsByBodyPart,
   removeFromInventory,
 }

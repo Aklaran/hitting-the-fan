@@ -177,7 +177,7 @@ export const nounSchema = z.enum([
 ])
 export type Noun = z.infer<typeof nounSchema>
 
-export const questionTargetSchema = z.enum(['name', 'age', 'gender'])
+export const questionTargetSchema = z.enum(['name', 'age', 'gender', 'injury'])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 
 export const instructTargetSchema = z.enum([
@@ -200,6 +200,7 @@ export const modifierSchema = z.enum([
   'loose',
   'tight',
   'obstruction',
+  ...bodyPartNames.options,
 ])
 export type Modifier = z.infer<typeof modifierSchema>
 

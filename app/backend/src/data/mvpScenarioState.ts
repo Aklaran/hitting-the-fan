@@ -86,6 +86,16 @@ export const mvpScenarioState: ScenarioState = {
         obstructedState: 'obstructed',
         palpationResponse: "You probably don't want to do that.",
       },
+      {
+        part: 'chest',
+        description: {
+          obstructed: 'The chest is covered by clothing.',
+          unobstructed: 'The chest looks normal...',
+        },
+        obstructedState: 'obstructed',
+        palpationResponse:
+          "You push in on either side of the patient's chest wall high and low and ask the patient to inhale, feeling for instability or asymmetry.",
+      },
     ],
     ailments: [
       {
