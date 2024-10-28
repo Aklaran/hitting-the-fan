@@ -58,6 +58,16 @@ export const mvpScenarioState: ScenarioState = {
           "You remove any headwear, run your fingers through the patient's hair, and check all orifices.",
       },
       {
+        part: 'neck',
+        description: {
+          obstructed: 'The neck is covered by a buff.',
+          unobstructed: 'The neck is uncovered.',
+        },
+        obstructedState: 'unobstructed',
+        palpationResponse:
+          "You check for tracheal alignment and press lightly on the patient's collarbones.",
+      },
+      {
         part: 'spine',
         description: {
           obstructed: 'The spine is covered by clothing.',
