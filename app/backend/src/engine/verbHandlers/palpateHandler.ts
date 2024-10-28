@@ -23,10 +23,14 @@ export const palpateHandler: VerbHandler = {
         command.object,
       )
 
-      responseText = [
-        responseText,
-        ...ailments.map((ailment) => ailment.palpationResponse),
-      ].join(' ')
+      if (ailments && ailments.length > 0) {
+        responseText = [
+          responseText,
+          ...ailments.map((ailment) => ailment.palpationResponse),
+        ].join(' ')
+      } else {
+        responseText += ' Everything feels normal.'
+      }
     }
 
     return { responseText, scenarioState }
