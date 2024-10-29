@@ -75,6 +75,11 @@ const askAboutMedicalTags = (_: Command, scenarioState: ScenarioState) => {
   return { responseText, scenarioState }
 }
 
+const askWhatHappened = (_: Command, scenarioState: ScenarioState) => {
+  const responseText = `The patient responds, "${scenarioState.patient.events}"`
+  return { responseText, scenarioState }
+}
+
 const responseBank: Record<
   QuestionTarget,
   (command: Command, scenarioState: ScenarioState) => VerbResponse
@@ -95,4 +100,6 @@ const responseBank: Record<
   injury: (command, scenarioState) => askAboutInjury(command, scenarioState),
   medicalTags: (command, scenarioState) =>
     askAboutMedicalTags(command, scenarioState),
+  whatHappened: (command, scenarioState) =>
+    askWhatHappened(command, scenarioState),
 }

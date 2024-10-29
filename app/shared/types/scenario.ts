@@ -118,6 +118,7 @@ export const patientSchema = z.object({
   }),
   isSpineControlled: z.boolean(),
   medicalTag: medicalTagSchema.optional(),
+  events: z.string(),
 })
 export type Patient = z.infer<typeof patientSchema>
 
@@ -195,6 +196,7 @@ export const questionTargetSchema = z.enum([
   'gender',
   'injury',
   'medicalTags',
+  'whatHappened',
 ])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 

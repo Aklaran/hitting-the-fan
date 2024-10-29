@@ -140,6 +140,8 @@ export const mvpScenarioState: ScenarioState = {
     medicalTag: {
       description: 'Yo yo, this is mah medical tag.',
     },
+    events:
+      'We were just climbing this pitch and I took a hard fall and came down on my ankle weird. I think it might be broken.',
   },
   environment: {
     description: "You're at the base of a mega alpine climb.",

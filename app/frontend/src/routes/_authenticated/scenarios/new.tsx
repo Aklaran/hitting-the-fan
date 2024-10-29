@@ -57,6 +57,7 @@ function ScenarioForm() {
             acceptCare: false,
             breathe: false,
           },
+          events: '',
         },
         environment: {
           description: '',
