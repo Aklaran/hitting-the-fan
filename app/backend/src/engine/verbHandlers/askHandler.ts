@@ -1,7 +1,6 @@
 import {
   Command,
   QuestionTarget,
-  questionTargetSchema,
   ScenarioState,
   VerbHandler,
   VerbResponse,
@@ -16,30 +15,25 @@ export const askHandler: VerbHandler = {
       return { responseText, scenarioState }
     }
 
-    if (command.object === questionTargetSchema.Enum.injury) {
-      responseText = askAboutInjury(command, scenarioState)
-      return { responseText, scenarioState }
-    }
-
     if (!scenarioUtils.isQuestionTarget(command.object)) {
       responseText = `You probably don't want to ask your patient about that...`
       return { responseText, scenarioState }
     }
 
-    responseText = responseBank[command.object](scenarioState)
-    return { responseText, scenarioState }
+    return responseBank[command.object](command, scenarioState)
   },
 }
 
 const askAboutInjury = (
   command: Command,
   scenarioState: ScenarioState,
-): string => {
+): VerbResponse => {
+  let responseText = 'Please provide a body part to ask about.'
   if (
     !command.modifiers ||
     !scenarioUtils.isBodyPartName(command.modifiers[0])
   ) {
-    return 'Please provide a body part to ask about.'
+    return { responseText, scenarioState }
   }
 
   const bodyPartName = command.modifiers[0]
@@ -50,7 +44,8 @@ const askAboutInjury = (
   )
 
   if (!bodyPart) {
-    return `The patient doesn't have a ${bodyPartName}. Weird.`
+    responseText = `The patient doesn't have a ${bodyPartName}. Weird.`
+    return { responseText, scenarioState }
   }
 
   const injuries = scenarioUtils.getAilmentsByBodyPart(
@@ -59,21 +54,30 @@ const askAboutInjury = (
   )
 
   if (injuries.length > 0) {
-    return `The patient responds, "Yeah, I think I hurt my ${bodyPart.part}."`
+    responseText = `The patient responds, "Yeah, I think I hurt my ${bodyPart.part}."`
+    return { responseText, scenarioState }
   }
 
-  return `The patient responds, "No, I don't think I hurt my ${bodyPart.part}."`
+  responseText = `The patient responds, "No, I don't think I hurt my ${bodyPart.part}."`
+  return { responseText, scenarioState }
 }
 
 const responseBank: Record<
   QuestionTarget,
-  (scenarioState: ScenarioState) => string
+  (command: Command, scenarioState: ScenarioState) => VerbResponse
 > = {
-  name: (scenarioState) =>
-    `The patient responds, "My name is ${scenarioState.patient.name}."`,
-  age: (scenarioState) =>
-    `The patient responds, "I am ${scenarioState.patient.age} years old."`,
-  gender: (scenarioState) =>
-    `The patient responds, "I am ${scenarioState.patient.gender}."`,
-  injury: () => `What injury would you like to ask about?`,
+  // TODO: Distance gate these (maybe make a snarky message)
+  name: (_, scenarioState) => ({
+    responseText: `The patient responds, "My name is ${scenarioState.patient.name}."`,
+    scenarioState,
+  }),
+  age: (_, scenarioState) => ({
+    responseText: `The patient responds, "I am ${scenarioState.patient.age} years old."`,
+    scenarioState,
+  }),
+  gender: (_, scenarioState) => ({
+    responseText: `The patient responds, "I am ${scenarioState.patient.gender}."`,
+    scenarioState,
+  }),
+  injury: (command, scenarioState) => askAboutInjury(command, scenarioState),
 }

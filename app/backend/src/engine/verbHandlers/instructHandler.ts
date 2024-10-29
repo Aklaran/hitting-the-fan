@@ -61,6 +61,7 @@ const responseBank: Record<
   acceptCare: () =>
     'You inform the patient that you are a Wilderness First Responder and ask them if they would like help. They consent.',
   breathe: (scenarioState) => {
+    // TODO: Distance gate this
     const respiration = scenarioState.patient.respiration
 
     return `You instruct the patient to take 2 deep breathes and place your hand on the back to feel them. They are ${respiration.effort} and ${respiration.rhythm}.`
