@@ -81,6 +81,11 @@ export type Ailment = z.infer<typeof ailmentSchema>
 
 // PATIENT //
 
+export const medicalTagSchema = z.object({
+  description: z.string(),
+})
+export type MedicalTag = z.infer<typeof medicalTagSchema>
+
 export const rhythmSchema = z.enum(['regular', 'irregular'])
 export type Rhythm = z.infer<typeof rhythmSchema>
 
@@ -95,6 +100,7 @@ export const patientSchema = z.object({
   }),
   age: z.number().int().nonnegative().max(100),
   gender: z.enum(['male', 'female', 'other']),
+  // TODO: Add details about the heart rate
   heartRate: z.number().int().nonnegative().max(200),
   respiration: z.object({
     rate: z.number().int().nonnegative().max(60),
@@ -111,6 +117,7 @@ export const patientSchema = z.object({
     breathe: z.boolean(),
   }),
   isSpineControlled: z.boolean(),
+  medicalTag: medicalTagSchema.optional(),
 })
 export type Patient = z.infer<typeof patientSchema>
 
@@ -182,7 +189,13 @@ export const nounSchema = z.enum([
 ])
 export type Noun = z.infer<typeof nounSchema>
 
-export const questionTargetSchema = z.enum(['name', 'age', 'gender', 'injury'])
+export const questionTargetSchema = z.enum([
+  'name',
+  'age',
+  'gender',
+  'injury',
+  'medicalTags',
+])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 
 export const instructTargetSchema = z.enum([

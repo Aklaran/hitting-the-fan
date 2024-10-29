@@ -62,6 +62,19 @@ const askAboutInjury = (
   return { responseText, scenarioState }
 }
 
+const askAboutMedicalTags = (_: Command, scenarioState: ScenarioState) => {
+  let responseText = `The patient responds, "I don't have medical tags."`
+
+  if (!scenarioState.patient.medicalTag) {
+    return { responseText, scenarioState }
+  }
+
+  responseText = `The patient responds, "Yes, I have medical tags." They remove them and hand them to you. `
+  responseText += `The tags read: ${scenarioState.patient.medicalTag.description}`
+
+  return { responseText, scenarioState }
+}
+
 const responseBank: Record<
   QuestionTarget,
   (command: Command, scenarioState: ScenarioState) => VerbResponse
@@ -80,4 +93,6 @@ const responseBank: Record<
     scenarioState,
   }),
   injury: (command, scenarioState) => askAboutInjury(command, scenarioState),
+  medicalTags: (command, scenarioState) =>
+    askAboutMedicalTags(command, scenarioState),
 }

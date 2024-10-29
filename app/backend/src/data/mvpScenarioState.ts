@@ -137,6 +137,9 @@ export const mvpScenarioState: ScenarioState = {
       breathe: false,
     },
     isSpineControlled: false,
+    medicalTag: {
+      description: 'Yo yo, this is mah medical tag.',
+    },
   },
   environment: {
     description: "You're at the base of a mega alpine climb.",
