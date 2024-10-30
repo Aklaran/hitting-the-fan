@@ -92,6 +92,29 @@ export type Rhythm = z.infer<typeof rhythmSchema>
 export const effortSchema = z.enum(['easy', 'labored'])
 export type Effort = z.infer<typeof effortSchema>
 
+export const LOR_VALUES = {
+  U: 0,
+  P: 1,
+  V: 2,
+  AO0: 3,
+  AO1: 4,
+  AO2: 5,
+  AO3: 6,
+  AO4: 7,
+} as const
+
+export const levelOfResponsivenessSchema = z.enum([
+  'U', // unresponsive
+  'P', // not awake. responds only to painful stimulus
+  'V', // not awake. responds only to verbal stimulus
+  'AO0', // awake, but not oriented.
+  'AO1', // awake and oriented to Person
+  'AO2', // awake and oriented to Person, Place
+  'AO3', // awake and oriented to Person, Place, Time
+  'AO4', // awake and oriented to Person, Place, Time, and Events
+])
+export type LevelOfResponsiveness = z.infer<typeof levelOfResponsivenessSchema>
+
 export const patientSchema = z.object({
   name: z.string(),
   descriptions: z.object({
@@ -107,6 +130,7 @@ export const patientSchema = z.object({
     rhythm: rhythmSchema,
     effort: effortSchema,
   }),
+  levelOfResponsiveness: levelOfResponsivenessSchema,
   coreTemperatureCelsius: z.number().int().nonnegative().max(45),
   bodyParts: z.array(bodyPartSchema),
   ailments: z.array(ailmentSchema),

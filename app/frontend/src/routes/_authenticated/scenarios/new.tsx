@@ -58,6 +58,7 @@ function ScenarioForm() {
             breathe: false,
           },
           events: '',
+          levelOfResponsiveness: 'U',
         },
         environment: {
           description: '',

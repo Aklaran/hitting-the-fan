@@ -5,7 +5,7 @@ import {
   VerbHandler,
   VerbResponse,
 } from '@shared/types/scenario'
-import { scenarioUtils } from '../scenarioUtils'
+import { LORCapabilities, scenarioUtils } from '../scenarioUtils'
 
 export const askHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
@@ -63,6 +63,13 @@ const askAboutInjury = (
 }
 
 const askAboutMedicalTags = (_: Command, scenarioState: ScenarioState) => {
+  const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
+
+  if (!LORCapabilities.knowsIdentity(levelOfResponsiveness)) {
+    const responseText = `The patient responds, "I... I don't know..."`
+    return { responseText, scenarioState }
+  }
+
   let responseText = `The patient responds, "I don't have medical tags."`
 
   if (!scenarioState.patient.medicalTag) {
@@ -75,9 +82,21 @@ const askAboutMedicalTags = (_: Command, scenarioState: ScenarioState) => {
   return { responseText, scenarioState }
 }
 
-const askWhatHappened = (_: Command, scenarioState: ScenarioState) => {
-  const responseText = `The patient responds, "${scenarioState.patient.events}"`
-  return { responseText, scenarioState }
+const withConsciousnessCheck = (
+  handler: (command: Command, scenarioState: ScenarioState) => VerbResponse,
+) => {
+  return (command: Command, scenarioState: ScenarioState): VerbResponse => {
+    const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
+
+    if (!LORCapabilities.isAwake(levelOfResponsiveness)) {
+      return {
+        responseText: 'The patient is knocked tf out.',
+        scenarioState,
+      }
+    }
+
+    return handler(command, scenarioState)
+  }
 }
 
 const responseBank: Record<
@@ -85,21 +104,59 @@ const responseBank: Record<
   (command: Command, scenarioState: ScenarioState) => VerbResponse
 > = {
   // TODO: Distance gate these (maybe make a snarky message)
-  name: (_, scenarioState) => ({
-    responseText: `The patient responds, "My name is ${scenarioState.patient.name}."`,
-    scenarioState,
+  name: withConsciousnessCheck((_, scenarioState) => {
+    const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
+
+    if (!LORCapabilities.knowsIdentity(levelOfResponsiveness)) {
+      const responseText = `The patient responds, "I... I don't know..."`
+      return { responseText, scenarioState }
+    }
+
+    const responseText = `The patient responds, "My name ${scenarioState.patient.name}!"`
+    return { responseText, scenarioState }
   }),
-  age: (_, scenarioState) => ({
-    responseText: `The patient responds, "I am ${scenarioState.patient.age} years old."`,
-    scenarioState,
+
+  age: withConsciousnessCheck((_, scenarioState) => {
+    const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
+
+    if (!LORCapabilities.knowsIdentity(levelOfResponsiveness)) {
+      const responseText = `The patient responds, "I... I don't know..."`
+      return { responseText, scenarioState }
+    }
+
+    const responseText = `The patient responds, "I am ${scenarioState.patient.age} years old."`
+    return { responseText, scenarioState }
   }),
-  gender: (_, scenarioState) => ({
-    responseText: `The patient responds, "I am ${scenarioState.patient.gender}."`,
-    scenarioState,
+
+  gender: withConsciousnessCheck((_, scenarioState) => {
+    const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
+
+    if (!LORCapabilities.knowsIdentity(levelOfResponsiveness)) {
+      const responseText = `The patient responds, "I... I don't know..."`
+      return { responseText, scenarioState }
+    }
+
+    const responseText = `The patient responds, "I am ${scenarioState.patient.gender}."`
+    return { responseText, scenarioState }
   }),
-  injury: (command, scenarioState) => askAboutInjury(command, scenarioState),
-  medicalTags: (command, scenarioState) =>
+
+  injury: withConsciousnessCheck((command, scenarioState) =>
+    askAboutInjury(command, scenarioState),
+  ),
+
+  medicalTags: withConsciousnessCheck((command, scenarioState) =>
     askAboutMedicalTags(command, scenarioState),
-  whatHappened: (command, scenarioState) =>
-    askWhatHappened(command, scenarioState),
+  ),
+
+  whatHappened: withConsciousnessCheck((_, scenarioState) => {
+    const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
+
+    if (!LORCapabilities.knowsEvents(levelOfResponsiveness)) {
+      const responseText = `The patient responds, "I... I don't know..."`
+      return { responseText, scenarioState }
+    }
+
+    const responseText = `The patient responds, "${scenarioState.patient.events}"`
+    return { responseText, scenarioState }
+  }),
 }

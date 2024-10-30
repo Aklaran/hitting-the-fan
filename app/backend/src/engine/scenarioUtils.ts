@@ -9,6 +9,8 @@ import {
   InstructTarget,
   instructTargetSchema,
   InventoryItem,
+  LevelOfResponsiveness,
+  LOR_VALUES,
   PerformTarget,
   performTargetSchema,
   QuestionTarget,
@@ -144,3 +146,32 @@ export const scenarioUtils = {
   getAilmentsByBodyPart,
   removeFromInventory,
 }
+
+// Level of Responsiveness
+
+export const LORCapabilities = {
+  isUnresponsive: (lor: LevelOfResponsiveness) =>
+    LOR_VALUES[lor] == LOR_VALUES.U,
+
+  respondsToPain: (lor: LevelOfResponsiveness) =>
+    LOR_VALUES[lor] >= LOR_VALUES.P,
+
+  respondsToSound: (lor: LevelOfResponsiveness) =>
+    LOR_VALUES[lor] >= LOR_VALUES.V,
+
+  isAwake: (lor: LevelOfResponsiveness) => LOR_VALUES[lor] >= LOR_VALUES.AO0,
+
+  knowsIdentity: (lor: LevelOfResponsiveness) =>
+    LOR_VALUES[lor] >= LOR_VALUES.AO1,
+
+  knowsLocation: (lor: LevelOfResponsiveness) =>
+    LOR_VALUES[lor] >= LOR_VALUES.AO2,
+
+  knowsTime: (lor: LevelOfResponsiveness) => LOR_VALUES[lor] >= LOR_VALUES.AO3,
+
+  knowsEvents: (lor: LevelOfResponsiveness) =>
+    LOR_VALUES[lor] >= LOR_VALUES.AO4,
+
+  isHigherThan: (lor: LevelOfResponsiveness, than: LevelOfResponsiveness) =>
+    LOR_VALUES[lor] > LOR_VALUES[than],
+} as const
