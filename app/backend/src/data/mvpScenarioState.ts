@@ -36,7 +36,8 @@ export const mvpScenarioState: ScenarioState = {
           unobstructed: 'The skin of the leg is exposed.',
         },
         obstructedState: 'obstructed',
-        palpationResponse: 'You press on the left leg.',
+        palpationResponse:
+          'You circle your hands around the left leg and press all the way down to the foot.',
       },
       {
         part: 'rightLeg',
@@ -45,7 +46,26 @@ export const mvpScenarioState: ScenarioState = {
           unobstructed: 'The skin of the leg is exposed',
         },
         obstructedState: 'obstructed',
-        palpationResponse: 'You press on the right leg.',
+        palpationResponse:
+          'You circle your hands around the right leg and press all the way down to the foot.',
+      },
+      {
+        part: 'rightFoot',
+        description: {
+          obstructed: 'The foot is covered by a shoe.',
+          unobstructed: 'The foot is exposed.',
+        },
+        obstructedState: 'obstructed',
+        palpationResponse: 'You press on the right foot.',
+      },
+      {
+        part: 'leftFoot',
+        description: {
+          obstructed: 'The foot is covered by a shoe.',
+          unobstructed: 'The foot is exposed.',
+        },
+        obstructedState: 'obstructed',
+        palpationResponse: 'You press on the left foot.',
       },
       {
         part: 'head',
@@ -105,6 +125,26 @@ export const mvpScenarioState: ScenarioState = {
         obstructedState: 'obstructed',
         palpationResponse:
           "You push in on either side of the patient's chest wall high and low and ask the patient to inhale, feeling for instability or asymmetry.",
+      },
+      {
+        part: 'stomach',
+        description: {
+          obstructed: 'The stomach is covered by clothing.',
+          unobstructed: 'The stomach looks normal...',
+        },
+        obstructedState: 'obstructed',
+        palpationResponse:
+          "You press and roll on all 4 quadrants of the patient's abdomen, asking if they feel any pain.",
+      },
+      {
+        part: 'hips',
+        description: {
+          obstructed: 'The hips is covered by clothing.',
+          unobstructed: 'The hips looks normal...',
+        },
+        obstructedState: 'obstructed',
+        palpationResponse:
+          "You press and roll on all 4 quadrants of the patient's abdomen, asking if they feel any pain.",
       },
     ],
     ailments: [

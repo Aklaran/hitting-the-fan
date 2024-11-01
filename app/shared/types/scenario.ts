@@ -36,6 +36,7 @@ export const bodyPartNames = z.enum([
   // TODO: 'back' and 'spine' are synonyms for each other. We should make a synonym system.
   'back',
   'spine',
+  'hips',
   'leftArm',
   'rightArm',
   'leftHand',
