@@ -185,7 +185,7 @@ export type Rhythm = z.infer<typeof rhythmSchema>
 export const effortSchema = z.enum(['easy', 'labored'])
 export type Effort = z.infer<typeof effortSchema>
 
-export const LOR_VALUES = {
+export const LOR_VALUES: Record<LevelOfResponsiveness, number> = {
   U: 0,
   P: 1,
   V: 2,
