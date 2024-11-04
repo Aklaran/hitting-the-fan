@@ -30,7 +30,7 @@ export const mvpScenarioState: ScenarioState = {
     coreTemperatureCelsius: 37,
     bodyParts: [
       {
-        part: 'leftLeg',
+        partName: 'leftLeg',
         description: {
           obstructed: 'The leg is covered by clothing.',
           unobstructed: 'The skin of the leg is exposed.',
@@ -40,7 +40,7 @@ export const mvpScenarioState: ScenarioState = {
           'You circle your hands around the left leg and press all the way down to the foot.',
       },
       {
-        part: 'rightLeg',
+        partName: 'rightLeg',
         description: {
           obstructed: 'The leg is covered by clothing.',
           unobstructed: 'The skin of the leg is exposed',
@@ -50,7 +50,7 @@ export const mvpScenarioState: ScenarioState = {
           'You circle your hands around the right leg and press all the way down to the foot.',
       },
       {
-        part: 'rightFoot',
+        partName: 'rightFoot',
         description: {
           obstructed: 'The foot is covered by a shoe.',
           unobstructed: 'The foot is exposed.',
@@ -59,7 +59,7 @@ export const mvpScenarioState: ScenarioState = {
         palpationResponse: 'You press on the right foot.',
       },
       {
-        part: 'leftFoot',
+        partName: 'leftFoot',
         description: {
           obstructed: 'The foot is covered by a shoe.',
           unobstructed: 'The foot is exposed.',
@@ -68,7 +68,7 @@ export const mvpScenarioState: ScenarioState = {
         palpationResponse: 'You press on the left foot.',
       },
       {
-        part: 'head',
+        partName: 'head',
         description: {
           obstructed: 'The head is covered by a hat.',
           unobstructed: 'The head is uncovered.',
@@ -78,7 +78,7 @@ export const mvpScenarioState: ScenarioState = {
           "You remove any headwear, run your fingers through the patient's hair, and check all orifices.",
       },
       {
-        part: 'neck',
+        partName: 'neck',
         description: {
           obstructed: 'The neck is covered by a buff.',
           unobstructed: 'The neck is uncovered.',
@@ -88,7 +88,7 @@ export const mvpScenarioState: ScenarioState = {
           "You check for tracheal alignment and press lightly on the patient's collarbones.",
       },
       {
-        part: 'spine',
+        partName: 'spine',
         description: {
           obstructed: 'The spine is covered by clothing.',
           unobstructed: 'The spine looks normal...',
@@ -98,7 +98,7 @@ export const mvpScenarioState: ScenarioState = {
           "You press on various locations on the patient's back.",
       },
       {
-        part: 'back',
+        partName: 'back',
         description: {
           obstructed: 'The back is covered by clothing.',
           unobstructed: 'The back looks normal...',
@@ -108,7 +108,7 @@ export const mvpScenarioState: ScenarioState = {
           "You press on various locations on the patient's back.",
       },
       {
-        part: 'mouth',
+        partName: 'mouth',
         description: {
           obstructed: 'The patient is chewing on gum.',
           unobstructed: 'The mouth looks normal.',
@@ -117,7 +117,7 @@ export const mvpScenarioState: ScenarioState = {
         palpationResponse: "You probably don't want to do that.",
       },
       {
-        part: 'chest',
+        partName: 'chest',
         description: {
           obstructed: 'The chest is covered by clothing.',
           unobstructed: 'The chest looks normal...',
@@ -127,7 +127,7 @@ export const mvpScenarioState: ScenarioState = {
           "You push in on either side of the patient's chest wall high and low and ask the patient to inhale, feeling for instability or asymmetry.",
       },
       {
-        part: 'stomach',
+        partName: 'stomach',
         description: {
           obstructed: 'The stomach is covered by clothing.',
           unobstructed: 'The stomach looks normal...',
@@ -137,7 +137,7 @@ export const mvpScenarioState: ScenarioState = {
           "You press and roll on all 4 quadrants of the patient's abdomen, asking if they feel any pain.",
       },
       {
-        part: 'hips',
+        partName: 'hips',
         description: {
           obstructed: 'The hips is covered by clothing.',
           unobstructed: 'The hips looks normal...',
@@ -158,7 +158,7 @@ export const mvpScenarioState: ScenarioState = {
           bleed: 'none',
           bodyParts: [
             {
-              part: 'leftLeg',
+              partName: 'leftFoot',
               description: {
                 obstructed: 'It looks like the foot is turned the wrong way...',
                 unobstructed:

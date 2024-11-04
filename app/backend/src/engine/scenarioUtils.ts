@@ -100,7 +100,7 @@ const getBodyPartByName = (
   bodyParts: BodyPart[],
   name: BodyPartName,
 ): BodyPart | undefined => {
-  return bodyParts.find((part) => part.part === name)
+  return bodyParts.find((part) => part.partName === name)
 }
 
 const getAilmentsByBodyPart = (ailments: Ailment[], bodyPart: BodyPart) => {

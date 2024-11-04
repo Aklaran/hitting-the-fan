@@ -48,7 +48,7 @@ const procedures: Record<
     // TODO: Make a util function to create a grammatically correct comma-separated list
     const bleedLocations = majorBleeds
       .flatMap((bleed) => bleed.effects.bodyParts)
-      .map((bodyPart) => bodyPart.part)
+      .map((bodyPart) => bodyPart.partName)
       .join(', ')
 
     responseText += ` You find concerning amounts of blood on the ${bleedLocations}.`

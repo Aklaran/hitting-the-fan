@@ -54,11 +54,11 @@ const askAboutInjury = (
   )
 
   if (injuries.length > 0) {
-    responseText = `The patient responds, "Yeah, I think I hurt my ${bodyPart.part}."`
+    responseText = `The patient responds, "Yeah, I think I hurt my ${bodyPart.partName}."`
     return { responseText, scenarioState }
   }
 
-  responseText = `The patient responds, "No, I don't think I hurt my ${bodyPart.part}."`
+  responseText = `The patient responds, "No, I don't think I hurt my ${bodyPart.partName}."`
   return { responseText, scenarioState }
 }
 

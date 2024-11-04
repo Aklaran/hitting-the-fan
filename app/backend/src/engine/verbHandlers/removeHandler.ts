@@ -50,7 +50,7 @@ const removeObstruction = (
   const newState = scenarioState
 
   const statePart = newState.patient.bodyParts.find(
-    (patientPart) => patientPart.part === bodyPart.part,
+    (patientPart) => patientPart.partName === bodyPart.partName,
   )
 
   if (!statePart) {
@@ -62,6 +62,6 @@ const removeObstruction = (
 
   statePart.obstructedState = obstructionSchema.Enum.unobstructed
 
-  const responseText = `You remove the obstruction from ${bodyPart.part}.`
+  const responseText = `You remove the obstruction from ${bodyPart.partName}.`
   return { responseText, scenarioState: newState }
 }

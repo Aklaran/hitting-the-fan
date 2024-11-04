@@ -112,7 +112,7 @@ const getVerbHandler = (verb: Verb): VerbHandler => {
 const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
   if (scenarioUtils.isBodyPartName(objectName)) {
     return scenarioState.patient.bodyParts.find(
-      (part) => part.part === objectName,
+      (part) => part.partName === objectName,
     )
   }
 
