@@ -21,7 +21,10 @@ export const mvpScenarioState: ScenarioState = {
       'The patient appears to have taken a gnarly lead whip and come down hard on their ankle.',
     age: 30,
     gender: 'male',
-    heartRate: 60,
+    circulation: {
+      rate: 60,
+      rhythm: 'regular',
+    },
     respiration: {
       rate: 20,
       rhythm: rhythmSchema.Enum.regular,
@@ -57,6 +60,11 @@ export const mvpScenarioState: ScenarioState = {
         },
         obstructedState: 'obstructed',
         palpationResponse: 'You press on the right foot.',
+        circulation: {
+          quality: 'strong',
+        },
+        sensation: 'normal',
+        motion: 'normal',
       },
       {
         partName: 'leftFoot',
@@ -66,6 +74,39 @@ export const mvpScenarioState: ScenarioState = {
         },
         obstructedState: 'obstructed',
         palpationResponse: 'You press on the left foot.',
+        circulation: {
+          quality: 'strong',
+        },
+        sensation: 'normal',
+        motion: 'normal',
+      },
+      {
+        partName: 'rightHand',
+        description: {
+          obstructed: 'The hand is covered by a glove.',
+          unobstructed: 'The hand is exposed.',
+        },
+        obstructedState: 'obstructed',
+        palpationResponse: 'You press on the right hand.',
+        circulation: {
+          quality: 'strong',
+        },
+        sensation: 'normal',
+        motion: 'normal',
+      },
+      {
+        partName: 'leftHand',
+        description: {
+          obstructed: 'The hand is covered by a glove.',
+          unobstructed: 'The hand is exposed.',
+        },
+        obstructedState: 'unobstructed',
+        palpationResponse: 'You press on the left hand.',
+        circulation: {
+          quality: 'strong',
+        },
+        sensation: 'normal',
+        motion: 'normal',
       },
       {
         partName: 'head',
@@ -166,6 +207,11 @@ export const mvpScenarioState: ScenarioState = {
               },
               palpationResponse:
                 "Pressing on the outside of the patient's ankle causes severe pain.",
+              circulation: {
+                quality: 'bounding',
+              },
+              sensation: 'tingling',
+              motion: 'immobile',
             },
           ],
         },

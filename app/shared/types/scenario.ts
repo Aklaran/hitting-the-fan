@@ -27,7 +27,15 @@ export type Distance = z.infer<typeof distanceSchema>
 
 // BODY PART //
 
-export const bodyPartNames = z.enum([
+export const extremityPartNames = z.enum([
+  'leftHand',
+  'rightHand',
+  'leftFoot',
+  'rightFoot',
+])
+export type ExtremityPartName = z.infer<typeof extremityPartNames>
+
+export const nonExtremityPartNames = z.enum([
   'head',
   'mouth',
   'neck',
@@ -39,20 +47,22 @@ export const bodyPartNames = z.enum([
   'hips',
   'leftArm',
   'rightArm',
-  'leftHand',
-  'rightHand',
   'leftLeg',
   'rightLeg',
-  'leftFoot',
-  'rightFoot',
+])
+export type NonExtremityPartName = z.infer<typeof nonExtremityPartNames>
+
+export const bodyPartNames = z.union([
+  extremityPartNames,
+  nonExtremityPartNames,
 ])
 export type BodyPartName = z.infer<typeof bodyPartNames>
 
 export const obstructionSchema = z.enum(['obstructed', 'unobstructed'])
 export type Obstruction = z.infer<typeof obstructionSchema>
 
-export const bodyPartSchema = z.object({
-  part: bodyPartNames,
+export const nonExtremityBodyPartSchema = z.object({
+  partName: nonExtremityPartNames,
   description: z.object({
     [obstructionSchema.Enum.obstructed]: z.string(),
     [obstructionSchema.Enum.unobstructed]: z.string(),
@@ -60,6 +70,78 @@ export const bodyPartSchema = z.object({
   palpationResponse: z.string(),
   obstructedState: obstructionSchema,
 })
+export type NonExtremityBodyPart = z.infer<typeof nonExtremityBodyPartSchema>
+
+// Lower value == higher priority
+// This is to allow for more values to be added without changing the map.
+export const PULSE_QUALITY_PRIORITIES = {
+  absent: 0,
+  weak: 1,
+  bounding: 2,
+  strong: 3,
+} as const
+
+export const pulseQualitySchema = z.enum([
+  'absent',
+  'weak',
+  'bounding',
+  'strong',
+])
+export type PulseQuality = z.infer<typeof pulseQualitySchema>
+
+// Lower value == higher priority
+// This is to allow for more values to be added without changing the map.
+export const SENSATION_PRIORITIES: Record<Sensation, number> = {
+  absent: 0,
+  numb: 1,
+  tingling: 2,
+  cold: 3,
+  hot: 4,
+  normal: 5,
+}
+
+export const sensationSchema = z.enum([
+  'absent',
+  'numb',
+  'tingling',
+  'cold',
+  'hot',
+  'normal',
+])
+export type Sensation = z.infer<typeof sensationSchema>
+
+export const MOTION_PRIORITIES: Record<Motion, number> = {
+  immobile: 0,
+  tremor: 1,
+  normal: 2,
+}
+
+// TODO: Get a better set of options for this
+export const motionSchema = z.enum(['normal', 'tremor', 'immobile'])
+export type Motion = z.infer<typeof motionSchema>
+
+export const csmSchema = z.union([
+  motionSchema,
+  sensationSchema,
+  pulseQualitySchema,
+])
+export type CSM = z.infer<typeof csmSchema>
+
+export const extremityBodyPartSchema = nonExtremityBodyPartSchema.extend({
+  partName: extremityPartNames,
+  // TODO: you can also measure pulse at the neck... maybe make a type for pulse measurable and union it for extremities?
+  circulation: z.object({
+    quality: pulseQualitySchema,
+  }),
+  sensation: sensationSchema,
+  motion: motionSchema,
+})
+export type Extremity = z.infer<typeof extremityBodyPartSchema>
+
+export const bodyPartSchema = z.union([
+  extremityBodyPartSchema,
+  nonExtremityBodyPartSchema,
+])
 export type BodyPart = z.infer<typeof bodyPartSchema>
 
 // AILMENT //
@@ -75,7 +157,12 @@ export const ailmentSchema = z.object({
     respiratoryRateMultiplier: z.number().positive().max(100),
     coreTemperatureCelsiusMultiplier: z.number().positive().max(100),
     bleed: bleedSchema,
-    bodyParts: z.array(bodyPartSchema.omit({ obstructedState: true })),
+    bodyParts: z.array(
+      z.union([
+        nonExtremityBodyPartSchema.omit({ obstructedState: true }),
+        extremityBodyPartSchema.omit({ obstructedState: true }),
+      ]),
+    ),
   }),
 })
 export type Ailment = z.infer<typeof ailmentSchema>
@@ -86,6 +173,11 @@ export const medicalTagSchema = z.object({
   description: z.string(),
 })
 export type MedicalTag = z.infer<typeof medicalTagSchema>
+
+export const RHYTHM_PRIORITIES: Record<Rhythm, number> = {
+  irregular: 0,
+  regular: 1,
+}
 
 export const rhythmSchema = z.enum(['regular', 'irregular'])
 export type Rhythm = z.infer<typeof rhythmSchema>
@@ -124,8 +216,10 @@ export const patientSchema = z.object({
   }),
   age: z.number().int().nonnegative().max(100),
   gender: z.enum(['male', 'female', 'other']),
-  // TODO: Add details about the heart rate
-  heartRate: z.number().int().nonnegative().max(200),
+  circulation: z.object({
+    rate: z.number().int().nonnegative().max(200),
+    rhythm: rhythmSchema,
+  }),
   respiration: z.object({
     rate: z.number().int().nonnegative().max(60),
     rhythm: rhythmSchema,
@@ -205,7 +299,9 @@ export const nounSchema = z.enum([
   'leg',
   'name',
   'environment',
-  ...bodyPartNames.options,
+  // HACK: Is there a better way to nested unwrap these zod enums?
+  ...bodyPartNames.options[0].options,
+  ...bodyPartNames.options[1].options,
   'pulse',
   'respiratoryRate',
   'in',
@@ -232,8 +328,8 @@ export const instructTargetSchema = z.enum([
 ])
 export type InstructTarget = z.infer<typeof instructTargetSchema>
 
-export const controlTargetSchema = bodyPartSchema.refine(
-  (bodyPart) => bodyPart.part === 'spine' || bodyPart.part === 'head',
+export const controlTargetSchema = nonExtremityBodyPartSchema.refine(
+  (bodyPart) => bodyPart.partName === 'spine' || bodyPart.partName === 'head',
   {
     message: "Body part must be 'spine' or 'head'",
   },
@@ -248,7 +344,9 @@ export const modifierSchema = z.enum([
   'loose',
   'tight',
   'obstruction',
-  ...bodyPartNames.options,
+  // HACK: Is there a better way to unwrap these nested zod enums?
+  ...bodyPartNames.options[0].options,
+  ...bodyPartNames.options[1].options,
 ])
 export type Modifier = z.infer<typeof modifierSchema>
 
@@ -263,6 +361,7 @@ export const commandSchema = z.object({
       environmentSchema,
       ailmentSchema,
       bodyPartSchema,
+      // TODO: Replace these generic options with specific ones
       z.number(),
       z.string(),
     ])

@@ -6,6 +6,9 @@ import {
   bodyPartSchema,
   ControlTarget,
   controlTargetSchema,
+  CSM,
+  ExtremityPartName,
+  extremityPartNames,
   InstructTarget,
   instructTargetSchema,
   InventoryItem,
@@ -68,6 +71,10 @@ const isBodyPartName = (str: string): str is BodyPartName => {
   return isSchema(bodyPartNames, str)
 }
 
+const isExtremityName = (str: string): str is ExtremityPartName => {
+  return isSchema(extremityPartNames, str)
+}
+
 const isViewable = (obj: unknown): obj is Viewable => {
   return isSchema(viewableSchema, obj)
 }
@@ -103,10 +110,23 @@ const getBodyPartByName = (
   return bodyParts.find((part) => part.partName === name)
 }
 
-const getAilmentsByBodyPart = (ailments: Ailment[], bodyPart: BodyPart) => {
+const getAilmentsByBodyPart = <T extends BodyPart>(
+  ailments: Ailment[],
+  bodyPart: T,
+): T[] => {
   return ailments
     .flatMap((ailment) => ailment.effects.bodyParts)
-    .filter((part) => part.part === bodyPart.part)
+    .filter((part): part is T => part.partName === bodyPart.partName)
+}
+
+const getMostProminentValue = <T extends BodyPart, K extends CSM>(
+  affectedParts: T[],
+  getValue: (part: T) => K,
+  priorities: Record<K, number>,
+) => {
+  return affectedParts.map(getValue).reduce((prev, curr) => {
+    return priorities[curr] < priorities[prev] ? curr : prev
+  })
 }
 
 const removeFromInventory = (
@@ -134,6 +154,7 @@ export const scenarioUtils = {
   isScenarioState,
   isBodyPart,
   isBodyPartName,
+  isExtremityName,
   isViewable,
   isWearable,
   isSchema,
@@ -144,6 +165,7 @@ export const scenarioUtils = {
   isRemoveTarget,
   getBodyPartByName,
   getAilmentsByBodyPart,
+  getMostProminentValue,
   removeFromInventory,
 }
 
