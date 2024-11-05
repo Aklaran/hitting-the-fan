@@ -16,6 +16,8 @@ import {
   LOR_VALUES,
   PerformTarget,
   performTargetSchema,
+  Position,
+  positionSchema,
   QuestionTarget,
   questionTargetSchema,
   RemoveTarget,
@@ -103,6 +105,10 @@ const isWearable = (obj: unknown): obj is Wearable => {
   return isSchema(wearableSchema, obj)
 }
 
+const isPosition = (obj: unknown): obj is Position => {
+  return isSchema(positionSchema, obj)
+}
+
 const getBodyPartByName = (
   bodyParts: BodyPart[],
   name: BodyPartName,
@@ -163,6 +169,7 @@ export const scenarioUtils = {
   isControlTarget,
   isPerformTarget,
   isRemoveTarget,
+  isPosition,
   getBodyPartByName,
   getAilmentsByBodyPart,
   getMostProminentValue,

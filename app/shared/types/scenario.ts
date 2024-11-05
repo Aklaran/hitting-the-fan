@@ -358,6 +358,7 @@ export const modifierSchema = z.enum([
   // HACK: Is there a better way to unwrap these nested zod enums?
   ...bodyPartNames.options[0].options,
   ...bodyPartNames.options[1].options,
+  ...positionSchema.options,
 ])
 export type Modifier = z.infer<typeof modifierSchema>
 

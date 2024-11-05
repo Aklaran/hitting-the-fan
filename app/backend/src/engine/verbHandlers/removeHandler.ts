@@ -47,6 +47,7 @@ const removeObstruction = (
     return { responseText, scenarioState }
   }
 
+  // FIXME: This is just making a reference to, and then destructively modifying, the old state!
   const newState = scenarioState
 
   const statePart = newState.patient.bodyParts.find(
