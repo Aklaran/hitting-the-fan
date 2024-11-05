@@ -208,6 +208,16 @@ export const levelOfResponsivenessSchema = z.enum([
 ])
 export type LevelOfResponsiveness = z.infer<typeof levelOfResponsivenessSchema>
 
+export const positionSchema = z.enum([
+  'standing',
+  'seated',
+  'supine',
+  'prone',
+  'rightLateralRecumbent',
+  'leftLateralRecumbent',
+])
+export type Position = z.infer<typeof positionSchema>
+
 export const patientSchema = z.object({
   name: z.string(),
   descriptions: z.object({
@@ -238,6 +248,7 @@ export const patientSchema = z.object({
   isSpineControlled: z.boolean(),
   medicalTag: medicalTagSchema.optional(),
   events: z.string(),
+  position: positionSchema,
 })
 export type Patient = z.infer<typeof patientSchema>
 

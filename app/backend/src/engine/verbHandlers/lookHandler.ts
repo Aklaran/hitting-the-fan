@@ -44,7 +44,10 @@ const lookAtBodyPart = (bodyPart: BodyPart, scenarioState: ScenarioState) => {
 }
 
 const lookAtPatient = (scenarioState: ScenarioState) => {
-  return scenarioState.patient.descriptions[
-    scenarioState.player.distanceToPatient
-  ]
+  const description =
+    scenarioState.patient.descriptions[scenarioState.player.distanceToPatient]
+
+  const position = scenarioState.patient.position
+
+  return description + ` The patient is ${position}.`
 }
