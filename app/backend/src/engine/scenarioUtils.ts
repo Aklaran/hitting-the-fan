@@ -170,6 +170,23 @@ const withDistanceCheck = (
   }
 }
 
+const withConsciousnessCheck = (
+  handler: (command: Command, scenarioState: ScenarioState) => VerbResponse,
+) => {
+  return (command: Command, scenarioState: ScenarioState): VerbResponse => {
+    const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
+
+    if (!LORCapabilities.isAwake(levelOfResponsiveness)) {
+      return {
+        responseText: 'The patient is knocked tf out.',
+        scenarioState,
+      }
+    }
+
+    return handler(command, scenarioState)
+  }
+}
+
 export const scenarioUtils = {
   appendLogEntry,
   isScenarioState,
@@ -190,6 +207,7 @@ export const scenarioUtils = {
   getMostProminentValue,
   removeFromInventory,
   withDistanceCheck,
+  withConsciousnessCheck,
 }
 
 // Level of Responsiveness

@@ -20,7 +20,10 @@ export const askHandler: VerbHandler = {
       return { responseText, scenarioState }
     }
 
-    return responseBank[command.object](command, scenarioState)
+    return scenarioUtils.withConsciousnessCheck(responseBank[command.object])(
+      command,
+      scenarioState,
+    )
   },
 }
 
@@ -82,29 +85,11 @@ const askAboutMedicalTags = (_: Command, scenarioState: ScenarioState) => {
   return { responseText, scenarioState }
 }
 
-const withConsciousnessCheck = (
-  handler: (command: Command, scenarioState: ScenarioState) => VerbResponse,
-) => {
-  return (command: Command, scenarioState: ScenarioState): VerbResponse => {
-    const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
-
-    if (!LORCapabilities.isAwake(levelOfResponsiveness)) {
-      return {
-        responseText: 'The patient is knocked tf out.',
-        scenarioState,
-      }
-    }
-
-    return handler(command, scenarioState)
-  }
-}
-
 const responseBank: Record<
   QuestionTarget,
   (command: Command, scenarioState: ScenarioState) => VerbResponse
 > = {
-  // TODO: Distance gate these (maybe make a snarky message)
-  name: withConsciousnessCheck((_, scenarioState) => {
+  name: (_, scenarioState) => {
     const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
 
     if (!LORCapabilities.knowsIdentity(levelOfResponsiveness)) {
@@ -114,9 +99,9 @@ const responseBank: Record<
 
     const responseText = `The patient responds, "My name ${scenarioState.patient.name}!"`
     return { responseText, scenarioState }
-  }),
+  },
 
-  age: withConsciousnessCheck((_, scenarioState) => {
+  age: (_, scenarioState) => {
     const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
 
     if (!LORCapabilities.knowsIdentity(levelOfResponsiveness)) {
@@ -126,9 +111,9 @@ const responseBank: Record<
 
     const responseText = `The patient responds, "I am ${scenarioState.patient.age} years old."`
     return { responseText, scenarioState }
-  }),
+  },
 
-  gender: withConsciousnessCheck((_, scenarioState) => {
+  gender: (_, scenarioState) => {
     const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
 
     if (!LORCapabilities.knowsIdentity(levelOfResponsiveness)) {
@@ -138,17 +123,14 @@ const responseBank: Record<
 
     const responseText = `The patient responds, "I am ${scenarioState.patient.gender}."`
     return { responseText, scenarioState }
-  }),
+  },
 
-  injury: withConsciousnessCheck((command, scenarioState) =>
-    askAboutInjury(command, scenarioState),
-  ),
+  injury: (command, scenarioState) => askAboutInjury(command, scenarioState),
 
-  medicalTags: withConsciousnessCheck((command, scenarioState) =>
+  medicalTags: (command, scenarioState) =>
     askAboutMedicalTags(command, scenarioState),
-  ),
 
-  whatHappened: withConsciousnessCheck((_, scenarioState) => {
+  whatHappened: (_, scenarioState) => {
     const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
 
     if (!LORCapabilities.knowsEvents(levelOfResponsiveness)) {
@@ -158,5 +140,5 @@ const responseBank: Record<
 
     const responseText = `The patient responds, "${scenarioState.patient.events}"`
     return { responseText, scenarioState }
-  }),
+  },
 }
