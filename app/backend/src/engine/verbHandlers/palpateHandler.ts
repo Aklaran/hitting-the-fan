@@ -18,22 +18,33 @@ const palpateBodyPart = (
 ): VerbResponse => {
   let responseText = 'You paw at the air. It feels like air. (NO OBJECT)'
 
-  if (scenarioUtils.isBodyPart(command.object)) {
-    responseText = command.object.palpationResponse
+  if (!scenarioUtils.isBodyPart(command.object)) {
+    responseText = "You... probably don't want to touch that."
+    return { responseText, scenarioState }
+  }
 
-    const ailments = scenarioUtils.getAilmentsByBodyPart(
-      scenarioState.patient.ailments,
-      command.object,
-    )
+  if (
+    ['back', 'spine'].includes(command.object.partName) &&
+    scenarioState.patient.position === 'supine'
+  ) {
+    responseText = "You can't reach the patient's back while they are supine."
+    return { responseText, scenarioState }
+  }
 
-    if (ailments && ailments.length > 0) {
-      responseText = [
-        responseText,
-        ...ailments.map((ailment) => ailment.palpationResponse),
-      ].join(' ')
-    } else {
-      responseText += ' Everything feels normal.'
-    }
+  responseText = command.object.palpationResponse
+
+  const ailments = scenarioUtils.getAilmentsByBodyPart(
+    scenarioState.patient.ailments,
+    command.object,
+  )
+
+  if (ailments && ailments.length > 0) {
+    responseText = [
+      responseText,
+      ...ailments.map((ailment) => ailment.palpationResponse),
+    ].join(' ')
+  } else {
+    responseText += ' Everything feels normal.'
   }
 
   return { responseText, scenarioState }
