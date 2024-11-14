@@ -32,30 +32,30 @@ const movePatient = (
   command: Command,
   scenarioState: ScenarioState,
 ): VerbResponse => {
-  // TODO: Distance gate
+  return scenarioUtils.withDistanceCheck((command, scenarioState) => {
+    let responseText = 'What position would you like to move the patient to?'
 
-  let responseText = 'What position would you like to move the patient to?'
+    if (!command.modifiers || !scenarioUtils.isPosition(command.modifiers[0])) {
+      return { responseText, scenarioState }
+    }
 
-  if (!command.modifiers || !scenarioUtils.isPosition(command.modifiers[0])) {
-    return { responseText, scenarioState }
-  }
+    const currentPosition = scenarioState.patient.position
+    const newPosition = command.modifiers[0]
 
-  const currentPosition = scenarioState.patient.position
-  const newPosition = command.modifiers[0]
+    responseText = `You move the patient from ${currentPosition} to ${newPosition}.`
 
-  responseText = `You move the patient from ${currentPosition} to ${newPosition}.`
+    // TODO: Check if patient is already in newPosition
 
-  // TODO: Check if patient is already in newPosition
+    // TODO(stretch): Check if you need to log roll the patient (e.g. supine->lateral)
 
-  // TODO(stretch): Check if you need to log roll the patient (e.g. supine->lateral)
+    const newState = {
+      ...scenarioState,
+      patient: {
+        ...scenarioState.patient,
+        position: newPosition,
+      },
+    }
 
-  const newState = {
-    ...scenarioState,
-    patient: {
-      ...scenarioState.patient,
-      position: newPosition,
-    },
-  }
-
-  return { responseText, scenarioState: newState }
+    return { responseText, scenarioState: newState }
+  })(command, scenarioState)
 }
