@@ -20,10 +20,9 @@ export const askHandler: VerbHandler = {
       return { responseText, scenarioState }
     }
 
-    return scenarioUtils.withConsciousnessCheck(responseBank[command.object])(
-      command,
-      scenarioState,
-    )
+    return scenarioUtils.withDistanceCheck(
+      scenarioUtils.withConsciousnessCheck(responseBank[command.object]),
+    )(command, scenarioState)
   },
 }
 
