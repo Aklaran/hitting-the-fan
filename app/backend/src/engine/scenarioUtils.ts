@@ -4,6 +4,7 @@ import {
   BodyPartName,
   bodyPartNames,
   bodyPartSchema,
+  Command,
   ControlTarget,
   controlTargetSchema,
   CSM,
@@ -25,6 +26,7 @@ import {
   ScenarioLogEntry,
   ScenarioState,
   scenarioStateSchema,
+  VerbResponse,
   Viewable,
   viewableSchema,
   Wearable,
@@ -155,6 +157,19 @@ const removeFromInventory = (
   }
 }
 
+const withDistanceCheck = (
+  handler: (command: Command, scenarioState: ScenarioState) => VerbResponse,
+) => {
+  return (command: Command, scenarioState: ScenarioState): VerbResponse => {
+    if (scenarioState.player.distanceToPatient === 'far') {
+      const responseText = 'You are too far away to do that.'
+      return { responseText, scenarioState }
+    }
+
+    return handler(command, scenarioState)
+  }
+}
+
 export const scenarioUtils = {
   appendLogEntry,
   isScenarioState,
@@ -174,6 +189,7 @@ export const scenarioUtils = {
   getAilmentsByBodyPart,
   getMostProminentValue,
   removeFromInventory,
+  withDistanceCheck,
 }
 
 // Level of Responsiveness
