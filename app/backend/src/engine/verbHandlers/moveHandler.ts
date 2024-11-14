@@ -42,9 +42,12 @@ const movePatient = (
     const currentPosition = scenarioState.patient.position
     const newPosition = command.modifiers[0]
 
-    responseText = `You move the patient from ${currentPosition} to ${newPosition}.`
+    if (currentPosition === newPosition) {
+      responseText = `The patient is already ${currentPosition}.`
+      return { responseText, scenarioState }
+    }
 
-    // TODO: Check if patient is already in newPosition
+    responseText = `You move the patient from ${currentPosition} to ${newPosition}.`
 
     // TODO(stretch): Check if you need to log roll the patient (e.g. supine->lateral)
 
