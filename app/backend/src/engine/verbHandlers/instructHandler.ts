@@ -1,14 +1,12 @@
 import {
-  Command,
   InstructTarget,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import { scenarioUtils } from '../scenarioUtils'
 
 export const instructHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  execute: scenarioUtils.withConsciousnessCheck((command, scenarioState) => {
     let responseText =
       'What would you like to instruct the patient to do? (NO OBJECT)'
 
@@ -42,7 +40,7 @@ export const instructHandler: VerbHandler = {
     }
 
     return { responseText, scenarioState: newState }
-  },
+  }),
 }
 
 const hasAlreadyReceivedInstruction = (
