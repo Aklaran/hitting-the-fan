@@ -140,4 +140,28 @@ const responseBank: Record<
     const responseText = `The patient responds, "${scenarioState.patient.events}"`
     return { responseText, scenarioState }
   },
+
+  time: (_, scenarioState) => {
+    const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
+
+    if (!LORCapabilities.knowsTime(levelOfResponsiveness)) {
+      const responseText = `The patient responds, "I... I don't know..."`
+      return { responseText, scenarioState }
+    }
+
+    const responseText = `The patient responds, "It's ${scenarioState.environment.time.toString()}."`
+    return { responseText, scenarioState }
+  },
+
+  place: (_, scenarioState) => {
+    const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
+
+    if (!LORCapabilities.knowsLocation(levelOfResponsiveness)) {
+      const responseText = `The patient responds, "I... I don't know..."`
+      return { responseText, scenarioState }
+    }
+
+    const responseText = `The patient responds, "${scenarioState.environment.place}."`
+    return { responseText, scenarioState }
+  },
 }

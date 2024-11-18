@@ -181,12 +181,32 @@ export const mvpScenarioState: ScenarioState = {
       {
         partName: 'hips',
         description: {
-          obstructed: 'The hips is covered by clothing.',
+          obstructed: 'The hips are covered by clothing.',
           unobstructed: 'The hips looks normal...',
         },
         obstructedState: 'obstructed',
         palpationResponse:
           "You press and roll on all 4 quadrants of the patient's abdomen, asking if they feel any pain.",
+      },
+      {
+        partName: 'leftArm',
+        description: {
+          obstructed: 'The left arm is covered by clothing.',
+          unobstructed: 'The left arm looks normal...',
+        },
+        obstructedState: 'obstructed',
+        palpationResponse:
+          "You circle your hands around the patient's left arm and press down to their hands, asking if they feel any pain.",
+      },
+      {
+        partName: 'rightArm',
+        description: {
+          obstructed: 'The right arm is covered by clothing.',
+          unobstructed: 'The right arm looks normal...',
+        },
+        obstructedState: 'obstructed',
+        palpationResponse:
+          "You circle your hands around the patient's right arm and press down to their hands, asking if they feel any pain.",
       },
     ],
     ailments: [
@@ -236,5 +256,7 @@ export const mvpScenarioState: ScenarioState = {
     description: "You're at the base of a mega alpine climb.",
     temperatureCelsius: 0,
     hazards: ['The cliff above is a total chossfest.'],
+    time: 'early in the afternoon on May 20th',
+    place: 'the base of a mega alpine climb.',
   },
 }
