@@ -1,6 +1,7 @@
 import {
+  CirculationCapableBodyPart,
   Command,
-  Extremity,
+  CSMCapableBodyPart,
   MOTION_PRIORITIES,
   PULSE_QUALITY_PRIORITIES,
   ScenarioState,
@@ -24,7 +25,10 @@ export const measureHandler: VerbHandler = {
         responseText = measureRespiratoryRate(scenarioState)
         break
       case 'pulse':
-        responseText = withExtremity(measurePulse)(command, scenarioState)
+        responseText = withCirculationCapablePart(measurePulse)(
+          command,
+          scenarioState,
+        )
         break
       case 'sensation':
         responseText = withExtremity(measureSensation)(command, scenarioState)
@@ -40,11 +44,45 @@ export const measureHandler: VerbHandler = {
   },
 }
 
+const withCirculationCapablePart = (
+  handler: (
+    scenarioState: ScenarioState,
+    part: CirculationCapableBodyPart,
+    partEffects: CirculationCapableBodyPart[],
+  ) => string,
+) => {
+  return (command: Command, scenarioState: ScenarioState) => {
+    if (
+      !command.modifiers ||
+      !scenarioUtils.isCirculationCapablePartName(command.modifiers[0])
+    ) {
+      return `Where would you like to take the pulse?`
+    }
+
+    const partName = command.modifiers[0]
+
+    const part = scenarioState.patient.bodyParts.find(
+      (part): part is CirculationCapableBodyPart => part.partName === partName,
+    )
+
+    if (!scenarioUtils.isBodyPart(part)) {
+      return `The patient doesn't seem to have a ${partName}. Odd.`
+    }
+
+    const partEffects = scenarioUtils.getAilmentsByBodyPart(
+      scenarioState.patient.ailments,
+      part,
+    )
+
+    return handler(scenarioState, part, partEffects)
+  }
+}
+
 const withExtremity = (
   handler: (
     scenarioState: ScenarioState,
-    part: Extremity,
-    partEffects: Extremity[],
+    part: CSMCapableBodyPart,
+    partEffects: CSMCapableBodyPart[],
   ) => string,
 ) => {
   return (command: Command, scenarioState: ScenarioState) => {
@@ -58,14 +96,13 @@ const withExtremity = (
     const partName = command.modifiers[0]
 
     const part = scenarioState.patient.bodyParts.find(
-      (part): part is Extremity => part.partName === partName,
+      (part): part is CSMCapableBodyPart => part.partName === partName,
     )
 
     if (!scenarioUtils.isBodyPart(part)) {
       return `The patient doesn't seem to have a ${partName}. Odd.`
     }
 
-    // TODO: How are we going to prioritize/mix the effects of multiple ailments on these measurements?
     const partEffects = scenarioUtils.getAilmentsByBodyPart(
       scenarioState.patient.ailments,
       part,
@@ -77,11 +114,9 @@ const withExtremity = (
 
 const measurePulse = (
   scenarioState: ScenarioState,
-  part: Extremity,
-  partEffects: Extremity[],
+  part: CirculationCapableBodyPart,
+  partEffects: CirculationCapableBodyPart[],
 ) => {
-  // TODO: Allow measurement of pulse at the neck
-
   // TODO: multiply heart rate by all the ailments, not just the one affecting this body part
   const baseRate = scenarioState.patient.circulation.rate
 
@@ -108,8 +143,8 @@ const measureRespiratoryRate = (scenarioState: ScenarioState) => {
 
 const measureSensation = (
   _: ScenarioState,
-  part: Extremity,
-  partEffects: Extremity[],
+  part: CSMCapableBodyPart,
+  partEffects: CSMCapableBodyPart[],
 ) => {
   const hasAilments = partEffects && partEffects.length > 0
 
@@ -128,8 +163,8 @@ const measureSensation = (
 
 const measureMotion = (
   _: ScenarioState,
-  part: Extremity,
-  partEffects: Extremity[],
+  part: CSMCapableBodyPart,
+  partEffects: CSMCapableBodyPart[],
 ) => {
   const hasAilments = partEffects && partEffects.length > 0
 

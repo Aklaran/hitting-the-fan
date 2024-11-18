@@ -4,12 +4,14 @@ import {
   BodyPartName,
   bodyPartNames,
   bodyPartSchema,
+  circulationCapablePartNameSchema,
+  CirculationOnlyPartName,
   Command,
   ControlTarget,
   controlTargetSchema,
   CSM,
-  ExtremityPartName,
-  extremityPartNames,
+  CSMCapablePartName,
+  csmCapablePartNames,
   InstructTarget,
   instructTargetSchema,
   InventoryItem,
@@ -75,8 +77,14 @@ const isBodyPartName = (str: string): str is BodyPartName => {
   return isSchema(bodyPartNames, str)
 }
 
-const isExtremityName = (str: string): str is ExtremityPartName => {
-  return isSchema(extremityPartNames, str)
+const isCirculationCapablePartName = (
+  str: string,
+): str is CirculationOnlyPartName => {
+  return isSchema(circulationCapablePartNameSchema, str)
+}
+
+const isExtremityName = (str: string): str is CSMCapablePartName => {
+  return isSchema(csmCapablePartNames, str)
 }
 
 const isViewable = (obj: unknown): obj is Viewable => {
@@ -124,7 +132,9 @@ const getAilmentsByBodyPart = <T extends BodyPart>(
 ): T[] => {
   return ailments
     .flatMap((ailment) => ailment.effects.bodyParts)
-    .filter((part): part is T => part.partName === bodyPart.partName)
+    .filter((part): part is T => {
+      return part.partName === bodyPart.partName
+    })
 }
 
 const getMostProminentValue = <T extends BodyPart, K extends CSM>(
@@ -192,6 +202,7 @@ export const scenarioUtils = {
   isScenarioState,
   isBodyPart,
   isBodyPartName,
+  isCirculationCapablePartName,
   isExtremityName,
   isViewable,
   isWearable,

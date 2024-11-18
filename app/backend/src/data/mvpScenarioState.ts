@@ -127,6 +127,7 @@ export const mvpScenarioState: ScenarioState = {
         obstructedState: 'unobstructed',
         palpationResponse:
           "You check for tracheal alignment and press lightly on the patient's collarbones.",
+        circulation: { quality: 'strong' },
       },
       {
         partName: 'spine',
