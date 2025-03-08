@@ -69,7 +69,7 @@ function FlashcardForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                <FormErrorMessage errors={field.state.meta.touchedErrors} />
+                <FormErrorMessage errors={field.state.meta.errors} />
               </>
             )}
           />
@@ -93,7 +93,7 @@ function FlashcardForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                <FormErrorMessage errors={field.state.meta.touchedErrors} />
+                <FormErrorMessage errors={field.state.meta.errors} />
               </>
             )}
           />

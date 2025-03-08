@@ -57,7 +57,7 @@ export function ScenarioPlayerInput({
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="What are you gonna do?"
             />
-            <FormErrorMessage errors={field.state.meta.touchedErrors} />
+            <FormErrorMessage errors={field.state.meta.errors} />
           </>
         )}
       />

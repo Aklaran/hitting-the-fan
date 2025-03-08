@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { trpc } from '@/lib/trpc'
 import { getZodStringValidationErrors } from '@/lib/zod'
-import Scenario, {
+import {
+  CreateScenarioSchema,
   createScenarioSchema,
   patientSchema,
 } from '@shared/types/scenario'
@@ -21,7 +22,7 @@ function ScenarioForm() {
 
   const navigate = useNavigate()
 
-  const form = useForm<Scenario>({
+  const form = useForm({
     defaultValues: {
       id: 0,
       title: '',
@@ -43,7 +44,10 @@ function ScenarioForm() {
           ailments: [],
           age: 0,
           gender: patientSchema.shape.gender.Values.male,
-          heartRate: 0,
+          circulation: {
+            rate: 60,
+            rhythm: 'regular',
+          },
           respiration: {
             rate: 0,
             rhythm: 'regular',
@@ -59,14 +63,17 @@ function ScenarioForm() {
           },
           events: '',
           levelOfResponsiveness: 'U',
+          position: 'seated',
         },
         environment: {
           description: '',
           temperatureCelsius: 0,
           hazards: [],
+          time: '',
+          place: '',
         },
       },
-    },
+    } as CreateScenarioSchema,
 
     onSubmit: async (values) => {
       const newScenario = values.value
@@ -113,7 +120,7 @@ function ScenarioForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                <FormErrorMessage errors={field.state.meta.touchedErrors} />
+                <FormErrorMessage errors={field.state.meta.errors} />
               </>
             )}
           />
@@ -137,7 +144,7 @@ function ScenarioForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                <FormErrorMessage errors={field.state.meta.touchedErrors} />
+                <FormErrorMessage errors={field.state.meta.errors} />
               </>
             )}
           />
