@@ -450,11 +450,15 @@ export const scenarioSchema = z.object({
 export const createScenarioSchema = scenarioSchema.omit({ id: true })
 export const getScenarioSchema = scenarioSchema.pick({ id: true })
 export const deleteScenarioSchema = scenarioSchema.pick({ id: true })
+export const getScenariosSchema = scenarioSchema.omit({
+  initialState: true,
+})
 
 export type Scenario = z.infer<typeof scenarioSchema>
 export type CreateScenarioSchema = z.infer<typeof createScenarioSchema>
 export type GetScenarioSchema = z.infer<typeof getScenarioSchema>
 export type DeleteScenarioSchema = z.infer<typeof deleteScenarioSchema>
+export type GetScenariosSchema = z.infer<typeof getScenariosSchema>
 
 export type ScenarioId = z.infer<typeof scenarioSchema.shape.id>
 

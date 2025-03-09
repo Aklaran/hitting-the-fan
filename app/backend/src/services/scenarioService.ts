@@ -4,6 +4,7 @@ import {
   CreateScenarioSchema,
   DeleteScenarioSchema,
   GetScenarioSchema,
+  GetScenariosSchema,
   ProcessAction,
   ScenarioState,
 } from '@shared/types/scenario'
@@ -23,7 +24,7 @@ const createScenario = async (input: CreateScenarioSchema, ctx: Context) => {
 const getScenarios = async (ctx: Context) => {
   const scenarios = await scenarioRepository.getScenarios(ctx)
 
-  return scenarios
+  return scenarios as GetScenariosSchema[]
 }
 
 const getScenario = async (input: GetScenarioSchema, ctx: Context) => {
