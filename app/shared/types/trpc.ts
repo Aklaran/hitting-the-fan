@@ -1,3 +1,3 @@
 import { AppRouter } from '@backend/routes/root'
 
-export default AppRouter
+export type { AppRouter as default }
