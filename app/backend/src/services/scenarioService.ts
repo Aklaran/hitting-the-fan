@@ -8,6 +8,7 @@ import {
   ProcessAction,
   ScenarioState,
 } from '@shared/types/scenario'
+import { UserId } from '@shared/types/user'
 import { TRPCError } from '@trpc/server'
 import { mvpScenarioState } from '../data/mvpScenarioState'
 import { scenarioEngine } from '../engine/scenarioEngine'
@@ -39,7 +40,7 @@ const deleteScenario = async (input: DeleteScenarioSchema, ctx: Context) => {
   return scenario
 }
 
-const getScenarioSession = async (userId: string, ctx: Context) => {
+const getScenarioSession = async (userId: UserId, ctx: Context) => {
   const existingScenarioSession =
     await scenarioSessionRepository.getScenarioSession(ctx.sessionId, ctx)
 

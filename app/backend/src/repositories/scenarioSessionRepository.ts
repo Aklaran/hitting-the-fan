@@ -1,9 +1,10 @@
 import { ScenarioState } from '@shared/types/scenario'
+import { UserId } from '@shared/types/user'
 import { Context } from '../lib/middleware/context'
 
 const createScenarioSession = async (
   scenarioId: number,
-  userId: string,
+  userId: UserId,
   initialState: ScenarioState,
   ctx: Context,
 ) => {

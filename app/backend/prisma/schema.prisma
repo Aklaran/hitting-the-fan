@@ -17,6 +17,24 @@ model session {
   @@index([expire], name: "IDX_session_expire")
 }
 
+// --- USERS --- //
+
+model User {
+  id Int @id @unique @default(autoincrement())
+  authId String
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  firstName String
+  lastName String
+  email String
+
+  // TODO: FK to sessions?
+  userFlashcards UserFlashcard[]
+
+  @@index([id])
+}
+
 // --- FLASHCARDS --- //
 
 model Flashcard {
@@ -43,7 +61,8 @@ model UserFlashcard {
   state          State     @default(New)
   last_review    DateTime?
 
-  userId   String
+  userId   Int
+  user User @relation(fields: [userId], references: [id])
 
   flashcardId Int
   flashcard Flashcard @relation(fields: [flashcardId], references: [id])
@@ -83,7 +102,7 @@ model ScenarioSession {
   id      Int    @id @unique @default(autoincrement())
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
-  userId String
+  userId Int
   sessionId String
   scenarioId Int
   scenario Scenario @relation(fields: [scenarioId], references: [id])

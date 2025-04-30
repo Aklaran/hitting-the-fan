@@ -13,7 +13,7 @@ function UserForm() {
       {data && (
         <>
           <div>
-            <strong>Name:</strong> {data.given_name} {data.family_name}
+            <strong>Name:</strong> {data.firstName} {data.lastName}
           </div>
           <div>
             <strong>Email:</strong> {data.email}

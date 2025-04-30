@@ -24,7 +24,7 @@ const createUserFlashcards = async (
   })
 }
 
-const getUserFlashcards = async (userId: string, ctx: Context) => {
+const getUserFlashcards = async (userId: UserId, ctx: Context) => {
   return await ctx.prisma.userFlashcard.findMany({
     where: { userId },
     orderBy: {
