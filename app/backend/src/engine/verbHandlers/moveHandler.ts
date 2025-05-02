@@ -18,7 +18,7 @@ export const moveHandler: VerbHandler = {
 
     switch (command.object) {
       case 'in':
-        return moveIn(scenarioState)
+        return moveIn(command, scenarioState)
       case scenarioState.patient:
         return movePatient(command, scenarioState)
     }
@@ -27,17 +27,22 @@ export const moveHandler: VerbHandler = {
   },
 }
 
-const moveIn = (scenarioState: ScenarioState): VerbResponse => {
-  const responseText = `You move towards the patient.`
-  scenarioState.player.distanceToPatient = distanceSchema.Enum.near
-  return { responseText, scenarioState }
+const moveIn = (
+  command: Command,
+  scenarioState: ScenarioState,
+): VerbResponse => {
+  return scenarioUtils.withDistanceCheck('far', (_, scenarioState) => {
+    const responseText = `You move towards the patient.`
+    scenarioState.player.distanceToPatient = distanceSchema.Enum.near
+    return { responseText, scenarioState }
+  })(command, scenarioState)
 }
 
 const movePatient = (
   command: Command,
   scenarioState: ScenarioState,
 ): VerbResponse => {
-  return scenarioUtils.withDistanceCheck((command, scenarioState) => {
+  return scenarioUtils.withDistanceCheck('near', (command, scenarioState) => {
     let responseText = 'What position would you like to move the patient to?'
 
     if (!command.modifiers || !scenarioUtils.isPosition(command.modifiers[0])) {

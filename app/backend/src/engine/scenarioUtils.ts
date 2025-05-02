@@ -12,6 +12,7 @@ import {
   CSM,
   CSMCapablePartName,
   csmCapablePartNames,
+  Distance,
   InstructTarget,
   instructTargetSchema,
   InventoryItem,
@@ -185,11 +186,23 @@ const removeFromInventory = (
 }
 
 const withDistanceCheck = (
+  expectedDistance: Distance,
   handler: (command: Command, scenarioState: ScenarioState) => VerbResponse,
 ) => {
   return (command: Command, scenarioState: ScenarioState): VerbResponse => {
-    if (scenarioState.player.distanceToPatient === 'far') {
+    if (
+      expectedDistance === 'near' &&
+      scenarioState.player.distanceToPatient === 'far'
+    ) {
       const responseText = 'You are too far away to do that.'
+      return { responseText, scenarioState }
+    }
+
+    if (
+      expectedDistance === 'far' &&
+      scenarioState.player.distanceToPatient === 'near'
+    ) {
+      const responseText = 'You are too close to do that.'
       return { responseText, scenarioState }
     }
 

@@ -21,6 +21,7 @@ export const askHandler: VerbHandler = {
     }
 
     return scenarioUtils.withDistanceCheck(
+      'near',
       scenarioUtils.withConsciousnessCheck(responseBank[command.object]),
     )(command, scenarioState)
   },

@@ -7,7 +7,7 @@ import {
 import { scenarioUtils } from '../scenarioUtils'
 
 export const palpateHandler: VerbHandler = {
-  execute: scenarioUtils.withDistanceCheck((command, scenarioState) =>
+  execute: scenarioUtils.withDistanceCheck('near', (command, scenarioState) =>
     palpateBodyPart(command, scenarioState),
   ),
 }

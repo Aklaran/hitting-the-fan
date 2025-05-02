@@ -12,41 +12,39 @@ import {
 import { scenarioUtils } from '../scenarioUtils'
 
 export const measureHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
-    let responseText = 'What do you want to measure? (NO OBJECT)'
+  execute: scenarioUtils.withDistanceCheck(
+    'near',
+    (command: Command, scenarioState: ScenarioState): VerbResponse => {
+      let responseText = 'What do you want to measure? (NO OBJECT)'
 
-    if (scenarioState.player.distanceToPatient === 'far') {
-      responseText = 'You are too far away to do that.'
+      if (!scenarioUtils.isMeasureTarget(command.object)) {
+        responseText = "You can't measure that."
+        return { responseText, scenarioState }
+      }
+
+      switch (command.object) {
+        case 'respiratoryRate':
+          responseText = measureRespiratoryRate(scenarioState)
+          break
+        case 'pulse':
+          responseText = withCirculationCapablePart(measurePulse)(
+            command,
+            scenarioState,
+          )
+          break
+        case 'sensation':
+          responseText = withExtremity(measureSensation)(command, scenarioState)
+          break
+        case 'motion':
+          responseText = withExtremity(measureMotion)(command, scenarioState)
+          break
+        default:
+          responseText = 'What do you want to measure? (NO OBJECT)'
+      }
+
       return { responseText, scenarioState }
-    }
-
-    if (!scenarioUtils.isMeasureTarget(command.object)) {
-      responseText = "You can't measure that."
-      return { responseText, scenarioState }
-    }
-
-    switch (command.object) {
-      case 'respiratoryRate':
-        responseText = measureRespiratoryRate(scenarioState)
-        break
-      case 'pulse':
-        responseText = withCirculationCapablePart(measurePulse)(
-          command,
-          scenarioState,
-        )
-        break
-      case 'sensation':
-        responseText = withExtremity(measureSensation)(command, scenarioState)
-        break
-      case 'motion':
-        responseText = withExtremity(measureMotion)(command, scenarioState)
-        break
-      default:
-        responseText = 'What do you want to measure? (NO OBJECT)'
-    }
-
-    return { responseText, scenarioState }
-  },
+    },
+  ),
 }
 
 const withCirculationCapablePart = (
