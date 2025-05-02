@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-// SCENARIO LOG //
+//#region Scenario Log
 
 export const scenarioLogEntrySchema = z.object({
   text: z.string(),
@@ -11,7 +11,9 @@ export type ScenarioLogEntry = z.infer<typeof scenarioLogEntrySchema>
 export const scenarioLogSchema = z.array(scenarioLogEntrySchema)
 export type ScenarioLog = z.infer<typeof scenarioLogSchema>
 
-// -- ENVIRONMENT -- //
+//#endregion
+
+//#region Environment
 
 export const environmentSchema = z.object({
   description: z.string(),
@@ -25,7 +27,9 @@ export type Environment = z.infer<typeof environmentSchema>
 export const distanceSchema = z.enum(['near', 'far'])
 export type Distance = z.infer<typeof distanceSchema>
 
-// -- PATIENT -- //
+//#endregion
+
+//#region Patient
 
 // BODY PART //
 
@@ -285,7 +289,9 @@ export const patientSchema = z.object({
 })
 export type Patient = z.infer<typeof patientSchema>
 
-// -- PLAYER -- //
+//#endregion
+
+//#region Player
 
 export const wearableSchema = z.enum(['gloves', 'mask'])
 export type Wearable = z.infer<typeof wearableSchema>
@@ -301,7 +307,9 @@ export const playerSchema = z.object({
 })
 export type Player = z.infer<typeof playerSchema>
 
-// -- SCENARIO STATE -- //
+//#endregion
+
+//#region Scenario State
 
 export const scenarioStateSchema = z.object({
   log: scenarioLogSchema,
@@ -311,7 +319,9 @@ export const scenarioStateSchema = z.object({
 })
 export type ScenarioState = z.infer<typeof scenarioStateSchema>
 
-// -- COMMAND -- //
+//#endregion
+
+//#region Command
 
 export const processActionSchema = z.object({
   action: z.string(),
@@ -432,7 +442,9 @@ export const verbHandlerSchema = z.object({
 })
 export type VerbHandler = z.infer<typeof verbHandlerSchema>
 
-// -- SCENARIO -- //
+//#endregion
+
+//#region Scenario
 
 export const scenarioSchema = z.object({
   id: z.number().int().positive().min(1),
@@ -461,5 +473,7 @@ export type DeleteScenarioSchema = z.infer<typeof deleteScenarioSchema>
 export type GetScenariosSchema = z.infer<typeof getScenariosSchema>
 
 export type ScenarioId = z.infer<typeof scenarioSchema.shape.id>
+
+//#endregion
 
 export default Scenario
