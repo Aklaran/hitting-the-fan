@@ -20,6 +20,11 @@ export const measureHandler: VerbHandler = {
       return { responseText, scenarioState }
     }
 
+    if (!scenarioUtils.isMeasureTarget(command.object)) {
+      responseText = "You can't measure that."
+      return { responseText, scenarioState }
+    }
+
     switch (command.object) {
       case 'respiratoryRate':
         responseText = measureRespiratoryRate(scenarioState)

@@ -9,7 +9,12 @@ import { scenarioUtils } from '../scenarioUtils'
 
 export const moveHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
-    const responseText = 'Where would you like to move? (NO OBJECT)'
+    const responseText =
+      "You cant move that. Or you can't move there. I'm truthfully not sure which you're trying to do."
+
+    if (!scenarioUtils.isMoveTarget(command.object)) {
+      return { responseText, scenarioState }
+    }
 
     switch (command.object) {
       case 'in':

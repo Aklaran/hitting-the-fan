@@ -348,6 +348,9 @@ export const verbSchema = z.enum([
 ])
 export type Verb = z.infer<typeof verbSchema>
 
+export const directionSchema = z.enum(['in'])
+export type Direction = z.infer<typeof directionSchema>
+
 export const nounSchema = z.enum([
   'patient',
   'leg',
@@ -395,6 +398,14 @@ export type ControlTarget = z.infer<typeof controlTargetSchema>
 export const performTargetSchema = z.enum(['bloodSweep'])
 export type PerformTarget = z.infer<typeof performTargetSchema>
 
+export const measureTargetSchema = z.enum([
+  'respiratoryRate',
+  'pulse',
+  'sensation',
+  'motion',
+])
+export type MeasureTarget = z.infer<typeof measureTargetSchema>
+
 export const modifierSchema = z.enum([
   'remove',
   'loose',
@@ -411,19 +422,29 @@ export type Modifier = z.infer<typeof modifierSchema>
 export const removeTargetSchema = z.enum([modifierSchema.Enum.obstruction])
 export type RemoveTarget = z.infer<typeof removeTargetSchema>
 
+export const moveTargetSchema = z.union([directionSchema, patientSchema])
+export type MoveTarget = z.infer<typeof moveTargetSchema>
+
+// Define the command object schema separately for better type inference
+export const commandObjectSchema = z.union([
+  patientSchema,
+  environmentSchema,
+  ailmentSchema,
+  bodyPartSchema,
+  questionTargetSchema,
+  instructTargetSchema,
+  controlTargetSchema,
+  performTargetSchema,
+  removeTargetSchema,
+  moveTargetSchema,
+  measureTargetSchema,
+  inventoryItemSchema,
+])
+export type CommandObject = z.infer<typeof commandObjectSchema>
+
 export const commandSchema = z.object({
   verb: verbSchema,
-  object: z
-    .union([
-      patientSchema,
-      environmentSchema,
-      ailmentSchema,
-      bodyPartSchema,
-      // TODO: Replace these generic options with specific ones
-      z.number(),
-      z.string(),
-    ])
-    .optional(),
+  object: commandObjectSchema.optional(),
   modifiers: z.array(modifierSchema).optional(),
 })
 export type Command = z.infer<typeof commandSchema>

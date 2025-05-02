@@ -15,8 +15,13 @@ import {
   InstructTarget,
   instructTargetSchema,
   InventoryItem,
+  inventoryItemSchema,
   LevelOfResponsiveness,
   LOR_VALUES,
+  MeasureTarget,
+  measureTargetSchema,
+  MoveTarget,
+  moveTargetSchema,
   PerformTarget,
   performTargetSchema,
   Position,
@@ -111,12 +116,24 @@ const isRemoveTarget = (obj: unknown): obj is RemoveTarget => {
   return isSchema(removeTargetSchema, obj)
 }
 
+const isMeasureTarget = (obj: unknown): obj is MeasureTarget => {
+  return isSchema(measureTargetSchema, obj)
+}
+
 const isWearable = (obj: unknown): obj is Wearable => {
   return isSchema(wearableSchema, obj)
 }
 
 const isPosition = (obj: unknown): obj is Position => {
   return isSchema(positionSchema, obj)
+}
+
+const isInventoryItem = (obj: unknown): obj is InventoryItem => {
+  return isSchema(inventoryItemSchema, obj)
+}
+
+const isMoveTarget = (obj: unknown): obj is MoveTarget => {
+  return isSchema(moveTargetSchema, obj)
 }
 
 const getBodyPartByName = (
@@ -212,7 +229,10 @@ export const scenarioUtils = {
   isControlTarget,
   isPerformTarget,
   isRemoveTarget,
+  isMeasureTarget,
   isPosition,
+  isInventoryItem,
+  isMoveTarget,
   getBodyPartByName,
   getAilmentsByBodyPart,
   getMostProminentValue,

@@ -1,14 +1,13 @@
 import {
   Command,
+  CommandObject,
   Modifier,
   modifierSchema,
   Noun,
   ProcessAction,
-  questionTargetSchema,
   ScenarioState,
   Verb,
   VerbHandler,
-  wearableSchema,
 } from '@shared/types/scenario'
 import logger from '@shared/util/logger'
 import { scenarioUtils } from './scenarioUtils'
@@ -107,9 +106,10 @@ const getVerbHandler = (verb: Verb): VerbHandler => {
   return verbHandlers[verb] || lookHandler
 }
 
-// TODO: I don't think this is actually doing anything for me,
-//       Let's revisit object resolution sometime.
-const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
+const resolveObject = (
+  objectName: Noun,
+  scenarioState: ScenarioState,
+): CommandObject | undefined => {
   if (scenarioUtils.isBodyPartName(objectName)) {
     return scenarioState.patient.bodyParts.find(
       (part) => part.partName === objectName,
@@ -117,31 +117,31 @@ const resolveObject = (objectName: Noun, scenarioState: ScenarioState) => {
   }
 
   if (scenarioUtils.isQuestionTarget(objectName)) {
-    return questionTargetSchema.Enum[objectName]
+    return objectName
   }
 
-  if (scenarioUtils.isWearable(objectName)) {
-    return wearableSchema.Enum[objectName]
+  if (scenarioUtils.isMeasureTarget(objectName)) {
+    return objectName
   }
 
-  switch (objectName) {
-    case 'patient':
-      return scenarioState.patient
-    case 'environment':
-      return scenarioState.environment
-    case 'pulse':
-      return 'pulse'
-    case 'respiratoryRate':
-      return 'respiratoryRate'
-    case 'in':
-      return 'in'
-    case 'hazards':
-      return scenarioState.environment
-    case 'mechanismOfInjury':
-      return scenarioState.patient
-    default:
-      return objectName
+  if (scenarioUtils.isInventoryItem(objectName)) {
+    return objectName
   }
+
+  if (scenarioUtils.isMoveTarget(objectName)) {
+    return objectName
+  }
+
+  if (objectName === 'environment' || objectName === 'hazards') {
+    return scenarioState.environment
+  }
+
+  if (objectName === 'patient' || objectName === 'mechanismOfInjury') {
+    return scenarioState.patient
+  }
+
+  // If we can't resolve the object, return undefined
+  return undefined
 }
 
 const resolveModifiers = (tokens: string[]): Modifier[] => {
