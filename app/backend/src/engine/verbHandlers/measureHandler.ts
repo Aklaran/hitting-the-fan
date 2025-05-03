@@ -144,7 +144,10 @@ const measurePulse = (
 
 const measureRespiratoryRate = (scenarioState: ScenarioState) => {
   const respiration = scenarioState.patient.respiration
-  return `You take the patient's respiratory rate by holding your hand to their back. It is ${respiration.rate} breaths per minute, ${respiration.effort}, and ${respiration.rhythm}.`
+  const respiratoryRate = scenarioUtils.calculateRespiratoryRate(
+    scenarioState.patient,
+  )
+  return `You take the patient's respiratory rate by holding your hand to their back. It is ${respiratoryRate} breaths per minute, ${respiration.effort}, and ${respiration.rhythm}.`
 }
 
 const measureSensation = (

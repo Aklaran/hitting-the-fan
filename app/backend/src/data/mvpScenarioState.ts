@@ -220,8 +220,14 @@ export const mvpScenarioState: ScenarioState = {
         name: 'Broken ankle',
         description: 'The boy broke is ankle maaaaan',
         effects: {
-          heartRateMultiplier: 1.3,
-          respiratoryRateMultiplier: 1.3,
+          circulation: {
+            heartRateMultiplier: 1.3,
+            rhythm: 'regular',
+          },
+          respiration: {
+            respiratoryRateMultiplier: 1.3,
+            rhythm: 'irregular',
+          },
           coreTemperatureCelsiusMultiplier: 1.3,
           bleed: 'none',
           bodyParts: [

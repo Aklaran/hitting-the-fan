@@ -98,6 +98,8 @@ export const pulseQualitySchema = z.enum([
 ])
 export type PulseQuality = z.infer<typeof pulseQualitySchema>
 
+// Specifically used for circulation at CSM-capable body parts..
+// since pulse quality changes by location but rate and rhythm do not.
 export const circulationSchema = z.object({
   quality: pulseQualitySchema,
 })
@@ -110,6 +112,17 @@ export const circulationOnlyBodyPartSchema = baseBodyPartSchema.extend({
 export type CirculationOnlyBodyPart = z.infer<
   typeof circulationOnlyBodyPartSchema
 >
+
+export const RHYTHM_PRIORITIES: Record<Rhythm, number> = {
+  irregular: 0,
+  regular: 1,
+}
+
+export const rhythmSchema = z.enum(['regular', 'irregular'])
+export type Rhythm = z.infer<typeof rhythmSchema>
+
+export const effortSchema = z.enum(['easy', 'labored'])
+export type Effort = z.infer<typeof effortSchema>
 
 export const skinTemperatureSchema = z.enum(['warm', 'cool', 'hot'])
 export type SkinTemperature = z.infer<typeof skinTemperatureSchema>
@@ -198,8 +211,14 @@ export const ailmentSchema = z.object({
   name: z.string(),
   description: z.string(),
   effects: z.object({
-    heartRateMultiplier: z.number().positive().max(100),
-    respiratoryRateMultiplier: z.number().positive().max(100),
+    circulation: z.object({
+      heartRateMultiplier: z.number().positive().max(100), // TODO: revisit if multipler, average, or max is the best way to go.
+      rhythm: rhythmSchema,
+    }),
+    respiration: z.object({
+      respiratoryRateMultiplier: z.number().positive().max(100),
+      rhythm: rhythmSchema,
+    }),
     coreTemperatureCelsiusMultiplier: z.number().positive().max(100),
     bleed: bleedSchema,
     bodyParts: z.array(
@@ -219,17 +238,6 @@ export const medicalTagSchema = z.object({
   description: z.string(),
 })
 export type MedicalTag = z.infer<typeof medicalTagSchema>
-
-export const RHYTHM_PRIORITIES: Record<Rhythm, number> = {
-  irregular: 0,
-  regular: 1,
-}
-
-export const rhythmSchema = z.enum(['regular', 'irregular'])
-export type Rhythm = z.infer<typeof rhythmSchema>
-
-export const effortSchema = z.enum(['easy', 'labored'])
-export type Effort = z.infer<typeof effortSchema>
 
 export const LOR_VALUES: Record<LevelOfResponsiveness, number> = {
   U: 0,

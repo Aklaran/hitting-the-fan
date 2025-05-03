@@ -215,7 +215,17 @@ const calculateHeartRate = (patient: Patient) => {
   const baseRate = patient.circulation.rate
 
   const multiplier = patient.ailments
-    .map((ailment) => ailment.effects.heartRateMultiplier)
+    .map((ailment) => ailment.effects.circulation.heartRateMultiplier)
+    .reduce((prev, curr) => prev * curr)
+
+  return Math.round(baseRate * multiplier)
+}
+
+const calculateRespiratoryRate = (patient: Patient) => {
+  const baseRate = patient.respiration.rate
+
+  const multiplier = patient.ailments
+    .map((ailment) => ailment.effects.respiration.respiratoryRateMultiplier)
     .reduce((prev, curr) => prev * curr)
 
   return Math.round(baseRate * multiplier)
@@ -287,6 +297,7 @@ export const scenarioUtils = {
   getEffectsOnBodyPart,
   getMostProminentValue,
   calculateHeartRate,
+  calculateRespiratoryRate,
   removeFromInventory,
   withDistanceCheck,
   withConsciousnessCheck,
