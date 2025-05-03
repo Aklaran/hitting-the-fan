@@ -23,7 +23,7 @@ export const measureHandler: VerbHandler = {
       }
 
       switch (command.object) {
-        case 'respiratoryRate':
+        case 'respiration':
           responseText = measureRespiratoryRate(scenarioState)
           break
         case 'pulse':
@@ -132,22 +132,25 @@ const measurePulse = (
 ) => {
   const heartRate = scenarioUtils.calculateHeartRate(scenarioState.patient)
 
-  const quality = scenarioUtils.getMostProminentValue(
+  const quality = scenarioUtils.getMostProminentBodyPartValue(
     partEffects,
     (part) => part.circulation.quality,
     PULSE_QUALITY_PRIORITIES,
   )
-  // TODO: Add rhythm
 
-  return `You take the patient's pulse at the ${part.partName}. It is ${heartRate} beats per minute and ${quality}.`
+  const rhythm = scenarioUtils.calculateHeartRhythm(scenarioState.patient)
+
+  return `You take the patient's pulse at the ${part.partName}. It is ${heartRate} beats per minute, ${rhythm}, and ${quality}.`
 }
 
 const measureRespiratoryRate = (scenarioState: ScenarioState) => {
-  const respiration = scenarioState.patient.respiration
-  const respiratoryRate = scenarioUtils.calculateRespiratoryRate(
-    scenarioState.patient,
-  )
-  return `You take the patient's respiratory rate by holding your hand to their back. It is ${respiratoryRate} breaths per minute, ${respiration.effort}, and ${respiration.rhythm}.`
+  const rate = scenarioUtils.calculateRespiratoryRate(scenarioState.patient)
+
+  const rhythm = scenarioUtils.calculateRespiratoryRhythm(scenarioState.patient)
+
+  const effort = scenarioUtils.calculateRespiratoryEffort(scenarioState.patient)
+
+  return `You take the patient's respiratory rate by holding your hand to their back. It is ${rate} breaths per minute, ${rhythm}, and ${effort}.`
 }
 
 const measureSensation = (
@@ -155,7 +158,7 @@ const measureSensation = (
   part: CSMCapableBodyPart,
   partEffects: CSMCapableBodyPart[],
 ) => {
-  const sensation = scenarioUtils.getMostProminentValue(
+  const sensation = scenarioUtils.getMostProminentBodyPartValue(
     partEffects,
     (part) => part.sensation,
     SENSATION_PRIORITIES,
@@ -175,7 +178,7 @@ const measureMotion = (
     return `You ask the patient to move their ${part.partName}. It is ${part.motion}.`
   }
 
-  const motion = scenarioUtils.getMostProminentValue(
+  const motion = scenarioUtils.getMostProminentBodyPartValue(
     partEffects,
     (part) => part.motion,
     MOTION_PRIORITIES,

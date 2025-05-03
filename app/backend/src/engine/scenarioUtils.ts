@@ -13,6 +13,8 @@ import {
   CSMCapablePartName,
   csmCapablePartNames,
   Distance,
+  Effort,
+  EFFORT_PRIORITIES,
   InstructTarget,
   instructTargetSchema,
   InventoryItem,
@@ -32,6 +34,8 @@ import {
   questionTargetSchema,
   RemoveTarget,
   removeTargetSchema,
+  Rhythm,
+  RHYTHM_PRIORITIES,
   ScenarioLogEntry,
   ScenarioState,
   scenarioStateSchema,
@@ -181,12 +185,22 @@ const getEffectsOnBodyPart = <T extends BodyPart>(
   return [bodyPart, ...ailmentEffects]
 }
 
-const getMostProminentValue = <T extends BodyPart, K extends CSM>(
+const getMostProminentBodyPartValue = <T extends BodyPart, K extends CSM>(
   affectedParts: T[],
   getValue: (part: T) => K,
   priorities: Record<K, number>,
 ) => {
   return affectedParts.map(getValue).reduce((prev, curr) => {
+    return priorities[curr] < priorities[prev] ? curr : prev
+  })
+}
+
+// REFACTOR: little hacky with this union type here, refactor if it gets bigger
+const getMostProminentValue = <T extends Rhythm | Effort>(
+  competingValues: T[],
+  priorities: Record<T, number>,
+) => {
+  return competingValues.reduce((prev, curr) => {
     return priorities[curr] < priorities[prev] ? curr : prev
   })
 }
@@ -221,6 +235,19 @@ const calculateHeartRate = (patient: Patient) => {
   return Math.round(baseRate * multiplier)
 }
 
+const calculateHeartRhythm = (patient: Patient) => {
+  const baseRhythm = patient.circulation.rhythm
+
+  const ailmentRhythms = patient.ailments.map(
+    (ailment) => ailment.effects.circulation.rhythm,
+  )
+
+  return getMostProminentValue(
+    [baseRhythm, ...ailmentRhythms],
+    RHYTHM_PRIORITIES,
+  )
+}
+
 const calculateRespiratoryRate = (patient: Patient) => {
   const baseRate = patient.respiration.rate
 
@@ -229,6 +256,32 @@ const calculateRespiratoryRate = (patient: Patient) => {
     .reduce((prev, curr) => prev * curr)
 
   return Math.round(baseRate * multiplier)
+}
+
+const calculateRespiratoryRhythm = (patient: Patient) => {
+  const baseRhythm = patient.respiration.rhythm
+
+  const ailmentRhythms = patient.ailments.map(
+    (ailment) => ailment.effects.respiration.rhythm,
+  )
+
+  return getMostProminentValue(
+    [baseRhythm, ...ailmentRhythms],
+    RHYTHM_PRIORITIES,
+  )
+}
+
+const calculateRespiratoryEffort = (patient: Patient) => {
+  const baseEffort = patient.respiration.effort
+
+  const ailmentEfforts = patient.ailments.map(
+    (ailment) => ailment.effects.respiration.effort,
+  )
+
+  return getMostProminentValue(
+    [baseEffort, ...ailmentEfforts],
+    EFFORT_PRIORITIES,
+  )
 }
 
 const withDistanceCheck = (
@@ -295,9 +348,12 @@ export const scenarioUtils = {
   getBodyPartByName,
   getAilmentsByBodyPart,
   getEffectsOnBodyPart,
-  getMostProminentValue,
+  getMostProminentBodyPartValue,
   calculateHeartRate,
+  calculateHeartRhythm,
   calculateRespiratoryRate,
+  calculateRespiratoryRhythm,
+  calculateRespiratoryEffort,
   removeFromInventory,
   withDistanceCheck,
   withConsciousnessCheck,

@@ -227,6 +227,7 @@ export const mvpScenarioState: ScenarioState = {
           respiration: {
             respiratoryRateMultiplier: 1.3,
             rhythm: 'irregular',
+            effort: 'easy',
           },
           coreTemperatureCelsiusMultiplier: 1.3,
           bleed: 'none',

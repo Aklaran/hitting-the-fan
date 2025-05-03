@@ -121,6 +121,11 @@ export const RHYTHM_PRIORITIES: Record<Rhythm, number> = {
 export const rhythmSchema = z.enum(['regular', 'irregular'])
 export type Rhythm = z.infer<typeof rhythmSchema>
 
+export const EFFORT_PRIORITIES: Record<Effort, number> = {
+  labored: 0,
+  easy: 1,
+}
+
 export const effortSchema = z.enum(['easy', 'labored'])
 export type Effort = z.infer<typeof effortSchema>
 
@@ -218,6 +223,7 @@ export const ailmentSchema = z.object({
     respiration: z.object({
       respiratoryRateMultiplier: z.number().positive().max(100),
       rhythm: rhythmSchema,
+      effort: effortSchema,
     }),
     coreTemperatureCelsiusMultiplier: z.number().positive().max(100),
     bleed: bleedSchema,
@@ -421,7 +427,7 @@ export const performTargetSchema = z.enum(['bloodSweep'])
 export type PerformTarget = z.infer<typeof performTargetSchema>
 
 export const measureTargetSchema = z.enum([
-  'respiratoryRate',
+  'respiration',
   'pulse',
   'sensation',
   'motion',
