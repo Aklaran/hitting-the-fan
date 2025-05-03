@@ -130,13 +130,12 @@ const measurePulse = (
   part: CirculationCapableBodyPart,
   partEffects: CirculationCapableBodyPart[],
 ) => {
-  // TODO: multiply heart rate by all the ailments, not just the one affecting this body part
-  const baseRate = scenarioState.patient.circulation.rate
+  const heartRate = scenarioUtils.calculateHeartRate(scenarioState.patient)
 
   const hasAilments = partEffects && partEffects.length > 0
 
   if (!hasAilments) {
-    return `You take the patient's pulse at the ${part.partName}. It is ${baseRate} beats per minute.`
+    return `You take the patient's pulse at the ${part.partName}. It is ${heartRate} beats per minute.`
   }
 
   const quality = scenarioUtils.getMostProminentValue(
@@ -146,7 +145,7 @@ const measurePulse = (
   )
   // TODO: Add rhythm
 
-  return `You take the patient's pulse at the wrist. It is ${baseRate} beats per minute and ${quality}.`
+  return `You take the patient's pulse at the ${part.partName}. It is ${heartRate} beats per minute and ${quality}.`
 }
 
 const measureRespiratoryRate = (scenarioState: ScenarioState) => {

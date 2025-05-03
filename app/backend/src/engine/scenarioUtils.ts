@@ -23,6 +23,7 @@ import {
   measureTargetSchema,
   MoveTarget,
   moveTargetSchema,
+  Patient,
   PerformTarget,
   performTargetSchema,
   Position,
@@ -185,6 +186,16 @@ const removeFromInventory = (
   }
 }
 
+const calculateHeartRate = (patient: Patient) => {
+  const baseRate = patient.circulation.rate
+
+  const multiplier = patient.ailments
+    .map((ailment) => ailment.effects.heartRateMultiplier)
+    .reduce((prev, curr) => prev * curr)
+
+  return Math.round(baseRate * multiplier)
+}
+
 const withDistanceCheck = (
   expectedDistance: Distance,
   handler: (command: Command, scenarioState: ScenarioState) => VerbResponse,
@@ -249,6 +260,7 @@ export const scenarioUtils = {
   getBodyPartByName,
   getAilmentsByBodyPart,
   getMostProminentValue,
+  calculateHeartRate,
   removeFromInventory,
   withDistanceCheck,
   withConsciousnessCheck,

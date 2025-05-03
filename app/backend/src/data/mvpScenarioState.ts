@@ -37,6 +37,7 @@ export const mvpScenarioState: ScenarioState = {
     },
     coreTemperatureCelsius: 37,
     bodyParts: [
+      // TODO: bake "normal" bodyparts into the model, only modify with ailments?
       {
         partName: 'leftLeg',
         description: {
