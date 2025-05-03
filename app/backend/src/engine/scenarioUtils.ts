@@ -145,6 +145,12 @@ const getBodyPartByName = (
   return bodyParts.find((part) => part.partName === name)
 }
 
+/**
+ * Gets all ailment effects that affect a specific body part
+ * @param ailments List of ailments to search through
+ * @param bodyPart The body part to find effects for
+ * @returns Array of body part effects from ailments that match the given body part
+ */
 const getAilmentsByBodyPart = <T extends BodyPart>(
   ailments: Ailment[],
   bodyPart: T,
@@ -154,6 +160,25 @@ const getAilmentsByBodyPart = <T extends BodyPart>(
     .filter((part): part is T => {
       return part.partName === bodyPart.partName
     })
+}
+
+/**
+ * Gets a body part and all ailment effects that affect it
+ * @param ailments List of ailments to search through
+ * @param bodyPart The body part to get effects for
+ * @returns Array containing the original body part and any matching effects from ailments
+ */
+const getEffectsOnBodyPart = <T extends BodyPart>(
+  ailments: Ailment[],
+  bodyPart: T,
+): T[] => {
+  const ailmentEffects = ailments
+    .flatMap((ailment) => ailment.effects.bodyParts)
+    .filter((part): part is T => {
+      return part.partName === bodyPart.partName
+    })
+
+  return [bodyPart, ...ailmentEffects]
 }
 
 const getMostProminentValue = <T extends BodyPart, K extends CSM>(
@@ -259,6 +284,7 @@ export const scenarioUtils = {
   isMoveTarget,
   getBodyPartByName,
   getAilmentsByBodyPart,
+  getEffectsOnBodyPart,
   getMostProminentValue,
   calculateHeartRate,
   removeFromInventory,

@@ -82,7 +82,7 @@ const withCirculationCapablePart = (
       return `The patient doesn't seem to have a ${partName}. Odd.`
     }
 
-    const partEffects = scenarioUtils.getAilmentsByBodyPart(
+    const partEffects = scenarioUtils.getEffectsOnBodyPart(
       scenarioState.patient.ailments,
       part,
     )
@@ -116,7 +116,7 @@ const withExtremity = (
       return `The patient doesn't seem to have a ${partName}. Odd.`
     }
 
-    const partEffects = scenarioUtils.getAilmentsByBodyPart(
+    const partEffects = scenarioUtils.getEffectsOnBodyPart(
       scenarioState.patient.ailments,
       part,
     )
@@ -131,12 +131,6 @@ const measurePulse = (
   partEffects: CirculationCapableBodyPart[],
 ) => {
   const heartRate = scenarioUtils.calculateHeartRate(scenarioState.patient)
-
-  const hasAilments = partEffects && partEffects.length > 0
-
-  if (!hasAilments) {
-    return `You take the patient's pulse at the ${part.partName}. It is ${heartRate} beats per minute.`
-  }
 
   const quality = scenarioUtils.getMostProminentValue(
     partEffects,
@@ -158,12 +152,6 @@ const measureSensation = (
   part: CSMCapableBodyPart,
   partEffects: CSMCapableBodyPart[],
 ) => {
-  const hasAilments = partEffects && partEffects.length > 0
-
-  if (!hasAilments) {
-    return `You squeeze on the patient's ${part.partName} and ask how it feels. They respond that it is ${part.sensation}.`
-  }
-
   const sensation = scenarioUtils.getMostProminentValue(
     partEffects,
     (part) => part.sensation,
