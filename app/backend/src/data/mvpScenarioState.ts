@@ -30,6 +30,11 @@ export const mvpScenarioState: ScenarioState = {
       rhythm: rhythmSchema.Enum.regular,
       effort: effortSchema.Enum.easy,
     },
+    skin: {
+      color: 'pink',
+      temperature: 'warm',
+      moisture: 'moist',
+    },
     coreTemperatureCelsius: 37,
     bodyParts: [
       {

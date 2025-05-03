@@ -38,6 +38,16 @@ export const measureHandler: VerbHandler = {
         case 'motion':
           responseText = withExtremity(measureMotion)(command, scenarioState)
           break
+        case 'skinTemperature':
+          responseText = measureSkinTemperature(scenarioState)
+          break
+        case 'skinColor':
+          responseText = measureSkinColor(scenarioState)
+          break
+        case 'skinMoisture':
+          responseText = measureSkinMoisture(scenarioState)
+          break
+
         default:
           responseText = 'What do you want to measure? (NO OBJECT)'
       }
@@ -182,4 +192,22 @@ const measureMotion = (
   )
 
   return `You ask the patient to move their ${part.partName}. It is ${motion}.`
+}
+
+const measureSkinTemperature = (scenarioState: ScenarioState) => {
+  const skinTemperature = scenarioState.patient.skin.temperature
+
+  return `The patient's skin is ${skinTemperature}.`
+}
+
+const measureSkinMoisture = (scenarioState: ScenarioState) => {
+  const skinMoisture = scenarioState.patient.skin.moisture
+
+  return `The patient's skin is ${skinMoisture}.`
+}
+
+const measureSkinColor = (scenarioState: ScenarioState) => {
+  const skinColor = scenarioState.patient.skin.color
+
+  return `The patient's skin is ${skinColor}.`
 }

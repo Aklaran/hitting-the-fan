@@ -111,6 +111,15 @@ export type CirculationOnlyBodyPart = z.infer<
   typeof circulationOnlyBodyPartSchema
 >
 
+export const skinTemperatureSchema = z.enum(['warm', 'cool', 'hot'])
+export type SkinTemperature = z.infer<typeof skinTemperatureSchema>
+
+export const skinColorSchema = z.enum(['pink', 'pale', 'red', 'ashen'])
+export type SkinColor = z.infer<typeof skinColorSchema>
+
+export const skinMoistureSchema = z.enum(['dry', 'moist', 'clammy', 'wet'])
+export type SkinMoisture = z.infer<typeof skinMoistureSchema>
+
 // Lower value == higher priority
 // This is to allow for more values to be added without changing the map.
 export const SENSATION_PRIORITIES: Record<Sensation, number> = {
@@ -272,6 +281,11 @@ export const patientSchema = z.object({
     rhythm: rhythmSchema,
     effort: effortSchema,
   }),
+  skin: z.object({
+    temperature: skinTemperatureSchema,
+    color: skinColorSchema,
+    moisture: skinMoistureSchema,
+  }),
   levelOfResponsiveness: levelOfResponsivenessSchema,
   coreTemperatureCelsius: z.number().int().nonnegative().max(45),
   bodyParts: z.array(bodyPartSchema),
@@ -403,6 +417,9 @@ export const measureTargetSchema = z.enum([
   'pulse',
   'sensation',
   'motion',
+  'skinTemperature',
+  'skinColor',
+  'skinMoisture',
 ])
 export type MeasureTarget = z.infer<typeof measureTargetSchema>
 
