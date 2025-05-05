@@ -8,7 +8,7 @@ export const mvpScenarioState: ScenarioState = {
   log: [{ text: 'Welcome to the game!', type: 'narrator' }],
   player: {
     distanceToPatient: 'far',
-    inventory: ['gloves'],
+    inventory: ['gloves', 'thermometer'],
     worn: [],
   },
   patient: {
@@ -21,6 +21,7 @@ export const mvpScenarioState: ScenarioState = {
       'The patient appears to have taken a gnarly lead whip and come down hard on their ankle.',
     age: 30,
     gender: 'male',
+    temperatureFahrenheit: 98.6,
     circulation: {
       rate: 60,
       rhythm: 'regular',

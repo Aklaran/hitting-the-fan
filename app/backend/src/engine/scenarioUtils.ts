@@ -365,6 +365,18 @@ const withConsciousnessCheck = (
   }
 }
 
+const withInventoryCheck = (
+  handler: (scenarioState: ScenarioState) => string,
+) => {
+  return (item: InventoryItem, scenarioState: ScenarioState): string => {
+    if (!scenarioState.player.inventory.includes(item)) {
+      return `You need a(n) ${item} to do that.`
+    }
+
+    return handler(scenarioState)
+  }
+}
+
 export const scenarioUtils = {
   appendLogEntry,
   isScenarioState,
@@ -400,6 +412,7 @@ export const scenarioUtils = {
   removeFromInventory,
   withDistanceCheck,
   withConsciousnessCheck,
+  withInventoryCheck,
 }
 
 // Level of Responsiveness

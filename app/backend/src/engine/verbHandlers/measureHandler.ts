@@ -50,6 +50,12 @@ export const measureHandler: VerbHandler = {
         case 'pupils':
           responseText = measurePupils(scenarioState)
           break
+        case 'temperature':
+          responseText = scenarioUtils.withInventoryCheck(measureTemperature)(
+            'thermometer',
+            scenarioState,
+          )
+          break
 
         default:
           responseText = "You don't know how to measure that."
@@ -216,4 +222,8 @@ const measurePupils = (scenarioState: ScenarioState) => {
   const shape = scenarioUtils.calculatePupilShape(scenarioState.patient)
 
   return `You look closely at the patient's eyes and take note of the shape. They are ${shape} and ${equality}. You ask the patient to close their eyes for 5 seconds and open them again. The eyes are ${reactivity} to light.`
+}
+
+const measureTemperature = (scenarioState: ScenarioState) => {
+  return `You measure the patient's temperature to be ${scenarioState.patient.temperatureFahrenheit} degrees Fahrenheit.`
 }

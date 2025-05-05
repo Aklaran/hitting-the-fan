@@ -336,6 +336,7 @@ export const patientSchema = z.object({
   }),
   age: z.number().int().nonnegative().max(100),
   gender: z.enum(['male', 'female', 'other']),
+  temperatureFahrenheit: z.number().nonnegative().max(116),
   circulation: z.object({
     rate: z.number().int().nonnegative().max(200),
     rhythm: rhythmSchema,
@@ -371,7 +372,10 @@ export type Patient = z.infer<typeof patientSchema>
 export const wearableSchema = z.enum(['gloves', 'mask'])
 export type Wearable = z.infer<typeof wearableSchema>
 
-export const inventoryItemSchema = z.enum([...wearableSchema.options])
+export const inventoryItemSchema = z.enum([
+  ...wearableSchema.options,
+  'thermometer',
+])
 export type InventoryItem = z.infer<typeof inventoryItemSchema>
 
 export const playerSchema = z.object({
@@ -482,6 +486,7 @@ export const measureTargetSchema = z.enum([
   'skinTemperature',
   'skinColor',
   'skinMoisture',
+  'temperature',
 ])
 export type MeasureTarget = z.infer<typeof measureTargetSchema>
 
