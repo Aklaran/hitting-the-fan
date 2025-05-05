@@ -13,7 +13,6 @@ import {
   CSMCapablePartName,
   csmCapablePartNames,
   Distance,
-  Effort,
   EFFORT_PRIORITIES,
   InstructTarget,
   instructTargetSchema,
@@ -30,11 +29,13 @@ import {
   performTargetSchema,
   Position,
   positionSchema,
+  PUPIL_EQUALITY_PRIORITIES,
+  PUPIL_REACTIVITY_PRIORITIES,
+  PUPIL_SHAPE_PRIORITIES,
   QuestionTarget,
   questionTargetSchema,
   RemoveTarget,
   removeTargetSchema,
-  Rhythm,
   RHYTHM_PRIORITIES,
   ScenarioLogEntry,
   ScenarioState,
@@ -195,8 +196,7 @@ const getMostProminentBodyPartValue = <T extends BodyPart, K extends CSM>(
   })
 }
 
-// REFACTOR: little hacky with this union type here, refactor if it gets bigger
-const getMostProminentValue = <T extends Rhythm | Effort>(
+const getMostProminentValue = <T extends string>(
   competingValues: T[],
   priorities: Record<T, number>,
 ) => {
@@ -284,6 +284,45 @@ const calculateRespiratoryEffort = (patient: Patient) => {
   )
 }
 
+const calculatePupilEquality = (patient: Patient) => {
+  const baseEquality = patient.pupils.equality
+
+  const ailmentEqualities = patient.ailments.map(
+    (ailment) => ailment.effects.pupils.equality,
+  )
+
+  return getMostProminentValue(
+    [baseEquality, ...ailmentEqualities],
+    PUPIL_EQUALITY_PRIORITIES,
+  )
+}
+
+const calculatePupilReactivity = (patient: Patient) => {
+  const baseReactivity = patient.pupils.reactivity
+
+  const ailmentReactivities = patient.ailments.map(
+    (ailment) => ailment.effects.pupils.reactivity,
+  )
+
+  return getMostProminentValue(
+    [baseReactivity, ...ailmentReactivities],
+    PUPIL_REACTIVITY_PRIORITIES,
+  )
+}
+
+const calculatePupilShape = (patient: Patient) => {
+  const baseShape = patient.pupils.shape
+
+  const ailmentShapes = patient.ailments.map(
+    (ailment) => ailment.effects.pupils.shape,
+  )
+
+  return getMostProminentValue(
+    [baseShape, ...ailmentShapes],
+    PUPIL_SHAPE_PRIORITIES,
+  )
+}
+
 const withDistanceCheck = (
   expectedDistance: Distance,
   handler: (command: Command, scenarioState: ScenarioState) => VerbResponse,
@@ -349,11 +388,15 @@ export const scenarioUtils = {
   getAilmentsByBodyPart,
   getEffectsOnBodyPart,
   getMostProminentBodyPartValue,
+  getMostProminentValue,
   calculateHeartRate,
   calculateHeartRhythm,
   calculateRespiratoryRate,
   calculateRespiratoryRhythm,
   calculateRespiratoryEffort,
+  calculatePupilEquality,
+  calculatePupilReactivity,
+  calculatePupilShape,
   removeFromInventory,
   withDistanceCheck,
   withConsciousnessCheck,

@@ -129,6 +129,8 @@ export const EFFORT_PRIORITIES: Record<Effort, number> = {
 export const effortSchema = z.enum(['easy', 'labored'])
 export type Effort = z.infer<typeof effortSchema>
 
+// TODO: How to do priorities for skin values?
+
 export const skinTemperatureSchema = z.enum(['warm', 'cool', 'hot'])
 export type SkinTemperature = z.infer<typeof skinTemperatureSchema>
 
@@ -137,6 +139,50 @@ export type SkinColor = z.infer<typeof skinColorSchema>
 
 export const skinMoistureSchema = z.enum(['dry', 'moist', 'clammy', 'wet'])
 export type SkinMoisture = z.infer<typeof skinMoistureSchema>
+
+export const skinSchema = z.object({
+  temperature: skinTemperatureSchema,
+  color: skinColorSchema,
+  moisture: skinMoistureSchema,
+})
+export type Skin = z.infer<typeof skinSchema>
+
+export const pupilShapeSchema = z.enum(['round', 'not... round?'])
+export type PupilShape = z.infer<typeof pupilShapeSchema>
+
+export const PUPIL_SHAPE_PRIORITIES: Record<PupilShape, number> = {
+  'not... round?': 0,
+  round: 1,
+}
+
+export const pupilEqualitySchema = z.enum(['equal', 'unequal'])
+export type pupilEquality = z.infer<typeof pupilEqualitySchema>
+
+export const PUPIL_EQUALITY_PRIORITIES: Record<pupilEquality, number> = {
+  unequal: 0,
+  equal: 1,
+}
+
+export const pupilReactivitySchema = z.enum([
+  'reactive',
+  'late reactive',
+  'unreactive',
+])
+export type PupilReactivity = z.infer<typeof pupilReactivitySchema>
+
+export const PUPIL_REACTIVITY_PRIORITIES: Record<PupilReactivity, number> = {
+  unreactive: 0,
+  'late reactive': 1,
+  reactive: 2,
+}
+
+export const pupilSchema = z.object({
+  shape: pupilShapeSchema,
+  equality: pupilEqualitySchema,
+  reactivity: pupilReactivitySchema,
+})
+
+export type Pupil = z.infer<typeof pupilSchema>
 
 // Lower value == higher priority
 // This is to allow for more values to be added without changing the map.
@@ -215,6 +261,8 @@ export type Bleed = z.infer<typeof bleedSchema>
 export const ailmentSchema = z.object({
   name: z.string(),
   description: z.string(),
+
+  // TODO: make effects optional
   effects: z.object({
     circulation: z.object({
       heartRateMultiplier: z.number().positive().max(100), // TODO: revisit if multipler, average, or max is the best way to go.
@@ -225,6 +273,8 @@ export const ailmentSchema = z.object({
       rhythm: rhythmSchema,
       effort: effortSchema,
     }),
+    skin: skinSchema,
+    pupils: pupilSchema,
     coreTemperatureCelsiusMultiplier: z.number().positive().max(100),
     bleed: bleedSchema,
     bodyParts: z.array(
@@ -295,11 +345,8 @@ export const patientSchema = z.object({
     rhythm: rhythmSchema,
     effort: effortSchema,
   }),
-  skin: z.object({
-    temperature: skinTemperatureSchema,
-    color: skinColorSchema,
-    moisture: skinMoistureSchema,
-  }),
+  skin: skinSchema,
+  pupils: pupilSchema,
   levelOfResponsiveness: levelOfResponsivenessSchema,
   coreTemperatureCelsius: z.number().int().nonnegative().max(45),
   bodyParts: z.array(bodyPartSchema),
@@ -429,6 +476,7 @@ export type PerformTarget = z.infer<typeof performTargetSchema>
 export const measureTargetSchema = z.enum([
   'respiration',
   'pulse',
+  'pupils',
   'sensation',
   'motion',
   'skinTemperature',

@@ -35,6 +35,11 @@ export const mvpScenarioState: ScenarioState = {
       temperature: 'warm',
       moisture: 'moist',
     },
+    pupils: {
+      equality: 'equal',
+      shape: 'round',
+      reactivity: 'reactive',
+    },
     coreTemperatureCelsius: 37,
     bodyParts: [
       // TODO: bake "normal" bodyparts into the model, only modify with ailments?
@@ -228,6 +233,16 @@ export const mvpScenarioState: ScenarioState = {
             respiratoryRateMultiplier: 1.3,
             rhythm: 'irregular',
             effort: 'easy',
+          },
+          pupils: {
+            equality: 'equal',
+            reactivity: 'reactive',
+            shape: 'round',
+          },
+          skin: {
+            color: 'pink',
+            moisture: 'dry',
+            temperature: 'cool',
           },
           coreTemperatureCelsiusMultiplier: 1.3,
           bleed: 'none',

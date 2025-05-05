@@ -47,9 +47,12 @@ export const measureHandler: VerbHandler = {
         case 'skinMoisture':
           responseText = measureSkinMoisture(scenarioState)
           break
+        case 'pupils':
+          responseText = measurePupils(scenarioState)
+          break
 
         default:
-          responseText = 'What do you want to measure? (NO OBJECT)'
+          responseText = "You don't know how to measure that."
       }
 
       return { responseText, scenarioState }
@@ -203,4 +206,14 @@ const measureSkinColor = (scenarioState: ScenarioState) => {
   const skinColor = scenarioState.patient.skin.color
 
   return `The patient's skin is ${skinColor}.`
+}
+
+const measurePupils = (scenarioState: ScenarioState) => {
+  const equality = scenarioUtils.calculatePupilEquality(scenarioState.patient)
+  const reactivity = scenarioUtils.calculatePupilReactivity(
+    scenarioState.patient,
+  )
+  const shape = scenarioUtils.calculatePupilShape(scenarioState.patient)
+
+  return `You look closely at the patient's eyes and take note of the shape. They are ${shape} and ${equality}. You ask the patient to close their eyes for 5 seconds and open them again. The eyes are ${reactivity} to light.`
 }
