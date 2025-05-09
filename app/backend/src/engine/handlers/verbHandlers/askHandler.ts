@@ -5,7 +5,7 @@ import {
   VerbHandler,
   VerbResponse,
 } from '@shared/types/scenario'
-import { LORCapabilities, scenarioUtils } from '../scenarioUtils'
+import { LORCapabilities, scenarioUtils } from '../../scenarioUtils'
 
 export const askHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {

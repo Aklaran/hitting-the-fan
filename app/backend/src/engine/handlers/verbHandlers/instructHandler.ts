@@ -3,7 +3,7 @@ import {
   ScenarioState,
   VerbHandler,
 } from '@shared/types/scenario'
-import { scenarioUtils } from '../scenarioUtils'
+import { scenarioUtils } from '../../scenarioUtils'
 
 export const instructHandler: VerbHandler = {
   execute: scenarioUtils.withConsciousnessCheck((command, scenarioState) => {

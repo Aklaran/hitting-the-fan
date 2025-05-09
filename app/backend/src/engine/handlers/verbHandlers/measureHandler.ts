@@ -9,7 +9,7 @@ import {
   VerbHandler,
   VerbResponse,
 } from '@shared/types/scenario'
-import { scenarioUtils } from '../scenarioUtils'
+import { scenarioUtils } from '../../scenarioUtils'
 
 export const measureHandler: VerbHandler = {
   execute: scenarioUtils.withDistanceCheck(

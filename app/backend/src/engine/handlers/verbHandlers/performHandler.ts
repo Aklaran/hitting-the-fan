@@ -5,7 +5,7 @@ import {
   VerbHandler,
   VerbResponse,
 } from '@shared/types/scenario'
-import { scenarioUtils } from '../scenarioUtils'
+import { scenarioUtils } from '../../scenarioUtils'
 
 export const performHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {

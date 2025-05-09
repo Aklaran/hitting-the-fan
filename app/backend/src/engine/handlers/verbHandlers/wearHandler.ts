@@ -5,10 +5,21 @@ import {
   VerbResponse,
   Wearable,
 } from '@shared/types/scenario'
-import { scenarioUtils } from '../scenarioUtils'
+import { scenarioUtils } from '../../scenarioUtils'
 
 export const wearHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+    /*
+      desired end state:
+
+      return createHandlerChain
+        .add(checkForCommandObject)
+        .add(checkIsWearable(command.object))
+        .add(checkIsNotWorn(command.object as Wearable))
+        .add(checkIsInInventory(command.object as Wearable)))
+        .add(wearItem(command.object))
+        .execute()
+    */
     let responseText = 'What would you like to wear? (NO OBJECT)'
 
     if (!command.object) {

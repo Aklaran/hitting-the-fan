@@ -7,7 +7,7 @@ import {
   VerbResponse,
 } from '@shared/types/scenario'
 import { TRPCError } from '@trpc/server'
-import { scenarioUtils } from '../scenarioUtils'
+import { scenarioUtils } from '../../scenarioUtils'
 
 export const removeHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
