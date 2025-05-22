@@ -3,66 +3,23 @@ import {
   ScenarioState,
   VerbHandler,
   VerbResponse,
-  Wearable,
 } from '@shared/types/scenario'
-import { scenarioUtils } from '../../scenarioUtils'
+import withWearable from '../enrichers/withWearable'
+import hasCommandObject from '../guards/hasCommandObject'
+import isInInventory from '../guards/isInInventory'
+import isNotWorn from '../guards/isNotWorn'
+import { enrich, guard, pipeHandlers, transform } from '../pipeline/handlerPipe'
+import { PipelineContext, WearableContext } from '../pipeline/pipelineContexts'
+import wearItem from '../transformers/wearItem'
 
 export const wearHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
-    /*
-      desired end state:
-
-      return createHandlerChain
-        .add(checkForCommandObject)
-        .add(checkIsWearable(command.object))
-        .add(checkIsNotWorn(command.object as Wearable))
-        .add(checkIsInInventory(command.object as Wearable)))
-        .add(wearItem(command.object))
-        .execute()
-    */
-    let responseText = 'What would you like to wear? (NO OBJECT)'
-
-    if (!command.object) {
-      return { responseText, scenarioState }
-    }
-
-    if (!scenarioUtils.isWearable(command.object)) {
-      responseText = 'Now why would you want to put that on?'
-      return { responseText, scenarioState }
-    }
-
-    if (scenarioState.player.worn.includes(command.object)) {
-      responseText = `You're already wearing the ${command.object}.`
-      return { responseText, scenarioState }
-    }
-
-    if (!scenarioState.player.inventory.includes(command.object)) {
-      responseText = `Now if only you had a ${command.object}...`
-      return { responseText, scenarioState }
-    }
-
-    let newState = scenarioUtils.removeFromInventory(
-      command.object,
-      scenarioState,
-    )
-
-    newState = wearItem(command.object, newState)
-
-    responseText = `You put on the ${command.object}.`
-
-    return { responseText, scenarioState: newState }
+    return pipeHandlers(
+      guard(hasCommandObject, `${command.object} doesn't exist here.`),
+      enrich<PipelineContext, WearableContext>(withWearable),
+      guard(isNotWorn, `You're already wearing a ${command.object}.`),
+      guard(isInInventory, `Now if only you had a ${command.object}...`),
+      transform(wearItem),
+    )(command, scenarioState, {})
   },
-}
-
-const wearItem = (
-  item: Wearable,
-  scenarioState: ScenarioState,
-): ScenarioState => {
-  return {
-    ...scenarioState,
-    player: {
-      ...scenarioState.player,
-      worn: [...scenarioState.player.worn, item],
-    },
-  }
 }

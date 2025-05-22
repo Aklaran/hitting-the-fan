@@ -41,6 +41,7 @@ import {
   ScenarioState,
   scenarioStateSchema,
   VerbResponse,
+  verbResponseSchema,
   Viewable,
   viewableSchema,
   Wearable,
@@ -125,6 +126,10 @@ const isRemoveTarget = (obj: unknown): obj is RemoveTarget => {
 
 const isMeasureTarget = (obj: unknown): obj is MeasureTarget => {
   return isSchema(measureTargetSchema, obj)
+}
+
+const isVerbResponse = (obj: unknown): obj is VerbResponse => {
+  return isSchema(verbResponseSchema, obj)
 }
 
 const isWearable = (obj: unknown): obj is Wearable => {
@@ -393,6 +398,7 @@ export const scenarioUtils = {
   isPerformTarget,
   isRemoveTarget,
   isMeasureTarget,
+  isVerbResponse,
   isPosition,
   isInventoryItem,
   isMoveTarget,

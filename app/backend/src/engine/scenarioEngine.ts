@@ -144,7 +144,6 @@ const resolveObject = (
     return scenarioState.patient
   }
 
-  // If we can't resolve the object, return undefined
   return undefined
 }
 
