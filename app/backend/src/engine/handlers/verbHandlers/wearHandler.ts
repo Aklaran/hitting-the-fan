@@ -15,10 +15,10 @@ import wearItem from '../transformers/wearItem'
 export const wearHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
     return pipeHandlers(
-      guard(hasCommandObject, `${command.object} doesn't exist here.`),
+      guard(hasCommandObject),
       enrich<PipelineContext, WearableContext>(withWearable),
-      guard(isNotWorn, `You're already wearing a ${command.object}.`),
-      guard(isInInventory, `Now if only you had a ${command.object}...`),
+      guard(isNotWorn),
+      guard(isInInventory),
       transform(wearItem),
     )(command, scenarioState, {})
   },

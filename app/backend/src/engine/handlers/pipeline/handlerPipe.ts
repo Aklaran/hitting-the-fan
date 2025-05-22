@@ -91,18 +91,27 @@ export function pipeHandlers<TContext>(
   }
 }
 
+export type GuardResponse = {
+  didPass: boolean
+  failureMessage: string
+}
+
 export const guard = <T>(
   check: (
     command: Command,
     scenarioState: ScenarioState,
     context: T,
-  ) => boolean,
-  message: string,
+  ) => GuardResponse,
+  overrideMessage?: string,
 ): Handler<T, T> => {
   return (command, scenarioState, context) => {
-    return check(command, scenarioState, context)
+    const checkResult = check(command, scenarioState, context)
+    return checkResult.didPass
       ? { command, scenarioState, context }
-      : { responseText: message, scenarioState }
+      : {
+          responseText: overrideMessage ?? checkResult.failureMessage,
+          scenarioState,
+        }
   }
 }
 
