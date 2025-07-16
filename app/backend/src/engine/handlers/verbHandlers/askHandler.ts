@@ -132,4 +132,13 @@ const responseBank: Record<
         return { responseText, scenarioState }
       }),
     )(command, scenarioState, context),
+
+  allergies: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
+      transform(() => {
+        const responseText = `The patient responds, "My allergies are: ${scenarioState.patient.allergies}."`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
 }

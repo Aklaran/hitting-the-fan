@@ -280,6 +280,7 @@ export const mvpScenarioState: ScenarioState = {
       'We were just climbing this pitch and I took a hard fall and came down on my ankle weird. I think it might be broken.',
     levelOfResponsiveness: 'AO4',
     position: 'supine',
+    allergies: ['dogs', 'cats'],
   },
   environment: {
     description: "You're at the base of a mega alpine climb.",

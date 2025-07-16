@@ -328,6 +328,16 @@ export const positionSchema = z.enum([
 ])
 export type Position = z.infer<typeof positionSchema>
 
+export const medicationSchema = z.enum(['zyrtec', 'advil', 'aspirin'])
+export type Medication = z.infer<typeof medicationSchema>
+
+export const allergySchema = z.enum([
+  ...medicationSchema.options,
+  'dogs',
+  'cats',
+])
+export type Allergy = z.infer<typeof allergySchema>
+
 export const patientSchema = z.object({
   name: z.string(),
   descriptions: z.object({
@@ -362,6 +372,7 @@ export const patientSchema = z.object({
   medicalTag: medicalTagSchema.optional(),
   events: z.string(),
   position: positionSchema,
+  allergies: allergySchema.array(),
 })
 export type Patient = z.infer<typeof patientSchema>
 
@@ -456,6 +467,7 @@ export const questionTargetSchema = z.enum([
   'whatHappened',
   'time',
   'place',
+  'allergies',
 ])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 
