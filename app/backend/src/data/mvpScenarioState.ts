@@ -281,6 +281,7 @@ export const mvpScenarioState: ScenarioState = {
     levelOfResponsiveness: 'AO4',
     position: 'supine',
     allergies: ['dogs', 'cats'],
+    medications: ['zyrtec'],
   },
   environment: {
     description: "You're at the base of a mega alpine climb.",

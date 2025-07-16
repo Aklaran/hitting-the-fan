@@ -373,6 +373,7 @@ export const patientSchema = z.object({
   events: z.string(),
   position: positionSchema,
   allergies: allergySchema.array(),
+  medications: medicationSchema.array(),
 })
 export type Patient = z.infer<typeof patientSchema>
 
@@ -468,6 +469,7 @@ export const questionTargetSchema = z.enum([
   'time',
   'place',
   'allergies',
+  'medications',
 ])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 

@@ -141,4 +141,13 @@ const responseBank: Record<
         return { responseText, scenarioState }
       }),
     )(command, scenarioState, context),
+
+  medications: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
+      transform(() => {
+        const responseText = `The patient responds, "I am taking ${scenarioState.patient.medications}."`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
 }
