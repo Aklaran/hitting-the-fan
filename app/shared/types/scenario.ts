@@ -519,7 +519,10 @@ export const controlTargetSchema = baseBodyPartSchema.refine(
 )
 export type ControlTarget = z.infer<typeof controlTargetSchema>
 
-export const performTargetSchema = z.enum(['bloodSweep'])
+export const performTargetSchema = z.enum([
+  'bloodSweep',
+  'focusedSpineAssessment',
+])
 export type PerformTarget = z.infer<typeof performTargetSchema>
 
 export const measureTargetSchema = z.enum([

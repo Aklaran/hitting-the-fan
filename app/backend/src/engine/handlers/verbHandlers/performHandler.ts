@@ -52,4 +52,11 @@ const procedures: Record<
     responseText += ` You find concerning amounts of blood on the ${bleedLocations}.`
     return { responseText, scenarioState }
   },
+
+  focusedSpineAssessment: (scenarioState) => {
+    const responseText =
+      'You inform the patient that you are going to perform a focused spine assessment. Proceed with the steps of the assessment.'
+
+    return { responseText, scenarioState }
+  },
 }
