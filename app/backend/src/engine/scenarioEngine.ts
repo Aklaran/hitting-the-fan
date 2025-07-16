@@ -136,6 +136,10 @@ const resolveObject = (
     return objectName
   }
 
+  if (scenarioUtils.isPerformTarget(objectName)) {
+    return objectName
+  }
+
   if (objectName === 'environment' || objectName === 'hazards') {
     return scenarioState.environment
   }

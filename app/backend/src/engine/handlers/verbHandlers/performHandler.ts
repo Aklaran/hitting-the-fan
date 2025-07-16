@@ -5,27 +5,25 @@ import {
   VerbHandler,
   VerbResponse,
 } from '@shared/types/scenario'
-import { scenarioUtils } from '../../scenarioUtils'
+import withPerformable from '../enrichers/withPerformable'
+import hasCommandObject from '../guards/hasCommandObject'
+import isDistanceFromPatient from '../guards/isDistanceFromPatient'
+import { enrich, guard, pipeHandlers, transform } from '../pipeline/handlerPipe'
+import {
+  PerformableContext,
+  PipelineContext,
+} from '../pipeline/pipelineContexts'
 
 export const performHandler: VerbHandler = {
   execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
-    let responseText = 'What would you like to perform? (NO OBJECT)'
-
-    if (!command.object || !command.modifiers) {
-      return { responseText, scenarioState }
-    }
-
-    if (scenarioState.player.distanceToPatient === 'far') {
-      responseText = 'You are too far away to perform that.'
-      return { responseText, scenarioState }
-    }
-
-    if (!scenarioUtils.isPerformTarget(command.object)) {
-      responseText = "You don't know how to perform that."
-      return { responseText, scenarioState }
-    }
-
-    return procedures[command.object](scenarioState)
+    return pipeHandlers(
+      guard<PipelineContext>(hasCommandObject),
+      guard(isDistanceFromPatient('near')),
+      enrich<PipelineContext, PerformableContext>(withPerformable),
+      transform((_, scenarioState, context) =>
+        procedures[context.performable](scenarioState),
+      ),
+    )(command, scenarioState, {})
   },
 }
 

@@ -3,6 +3,7 @@ import {
   bodyPartSchema,
   controlTargetSchema,
   medicalTagSchema,
+  performTargetSchema,
   questionTargetSchema,
   wearableSchema,
 } from '@shared/types/scenario'
@@ -45,3 +46,8 @@ export const ailmentContextSchema = z.object({
   ailment: ailmentSchema,
 })
 export type AilmentContext = z.infer<typeof ailmentContextSchema>
+
+export const performableContextSchema = z.object({
+  performable: performTargetSchema,
+})
+export type PerformableContext = z.infer<typeof performableContextSchema>
