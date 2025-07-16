@@ -263,6 +263,16 @@ export const ailmentSchema = z.object({
   description: z.string(),
 
   isChiefComplaint: z.boolean(),
+  provokers: z.string(),
+  palliatives: z.string(),
+  quality: z.string(),
+  region: z.string(),
+  radiation: z.string(),
+  referral: z.string(),
+  severity: z.string(),
+  onsetTime: z.string(),
+  intensityTrend: z.string(),
+
   // TODO: make effects optional
   effects: z.object({
     circulation: z.object({
@@ -482,6 +492,15 @@ export const questionTargetSchema = z.enum([
   'seizures',
   'heartConditions',
   'chiefComplaint',
+  'onset',
+  'provokers',
+  'palliatives',
+  'quality',
+  'region',
+  'radiation',
+  'referral',
+  'severity',
+  'intensityTrend',
 ])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 

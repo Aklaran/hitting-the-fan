@@ -219,6 +219,96 @@ const responseBank: Record<
         return { responseText, scenarioState }
       }),
     )(command, scenarioState, context),
+
+  onset: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.onsetTime}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  provokers: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.provokers}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  palliatives: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.palliatives}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  quality: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.quality}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  region: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.region}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  radiation: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.radiation}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  referral: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.referral}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  severity: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.severity}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  intensityTrend: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.intensityTrend}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
 }
 
 const askAboutDASH = (conditionName: string, hasCondition: boolean) => {

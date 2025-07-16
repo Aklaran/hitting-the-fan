@@ -226,6 +226,16 @@ export const mvpScenarioState: ScenarioState = {
         name: 'Broken ankle',
         description: 'The boy broke is ankle maaaaan',
         isChiefComplaint: true,
+        provokers: 'It hurts when I move it.',
+        palliatives: "It hurts less when I don't move it.",
+        quality: 'Sharp!',
+        region: 'My ankle.',
+        radiation: 'Nope, just my ankle.',
+        referral: 'Nope, just my ankle.',
+        severity: '8/10 pretty bad man.',
+        onsetTime: 'Just now, you saw it happen!',
+        intensityTrend:
+          "It's starting to hurt more now that you're pestering me about it.",
         effects: {
           circulation: {
             heartRateMultiplier: 1.3,
