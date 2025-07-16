@@ -8,6 +8,7 @@ import {
 import { LORCapabilities } from '../../scenarioUtils'
 import withAskable from '../enrichers/withAskable'
 import withBodyPart from '../enrichers/withBodyPart'
+import withChiefComplaint from '../enrichers/withChiefComplaint'
 import withInjuries from '../enrichers/withInjuries'
 import withMedicalTags from '../enrichers/withMedicalTags'
 import hasCommandObject from '../guards/hasCommandObject'
@@ -22,6 +23,7 @@ import {
   transform,
 } from '../pipeline/handlerPipe'
 import {
+  AilmentContext,
   AskableContext,
   BodyPartContext,
   InjuryContext,
@@ -204,6 +206,16 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
       transform(() => {
         const responseText = `The patient responds, "${scenarioState.patient.lastIntakeOutput}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  chiefComplaint: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.isAwake)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "My chief complaint is ${context.ailment.name}."`
         return { responseText, scenarioState }
       }),
     )(command, scenarioState, context),

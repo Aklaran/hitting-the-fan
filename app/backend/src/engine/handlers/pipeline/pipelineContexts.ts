@@ -1,4 +1,5 @@
 import {
+  ailmentSchema,
   bodyPartSchema,
   controlTargetSchema,
   medicalTagSchema,
@@ -39,3 +40,8 @@ export const injuryContextSchema = z.object({
   injuries: bodyPartSchema.array(),
 })
 export type InjuryContext = z.infer<typeof injuryContextSchema>
+
+export const ailmentContextSchema = z.object({
+  ailment: ailmentSchema,
+})
+export type AilmentContext = z.infer<typeof ailmentContextSchema>

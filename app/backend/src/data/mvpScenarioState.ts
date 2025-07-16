@@ -225,6 +225,7 @@ export const mvpScenarioState: ScenarioState = {
       {
         name: 'Broken ankle',
         description: 'The boy broke is ankle maaaaan',
+        isChiefComplaint: true,
         effects: {
           circulation: {
             heartRateMultiplier: 1.3,
