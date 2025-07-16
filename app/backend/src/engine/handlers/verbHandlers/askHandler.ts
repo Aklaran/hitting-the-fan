@@ -198,6 +198,15 @@ const responseBank: Record<
         return { responseText, scenarioState }
       }),
     )(command, scenarioState, context),
+
+  lastIntakeOutput: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      transform(() => {
+        const responseText = `The patient responds, "${scenarioState.patient.lastIntakeOutput}"`
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
 }
 
 const askAboutDASH = (conditionName: string, hasCondition: boolean) => {

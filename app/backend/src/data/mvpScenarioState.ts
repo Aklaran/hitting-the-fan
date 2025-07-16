@@ -286,6 +286,7 @@ export const mvpScenarioState: ScenarioState = {
     hasAsthma: false,
     hasSeizures: false,
     hasHeartConditions: false,
+    lastIntakeOutput: 'I pooped this morning!',
   },
   environment: {
     description: "You're at the base of a mega alpine climb.",
