@@ -374,6 +374,10 @@ export const patientSchema = z.object({
   position: positionSchema,
   allergies: allergySchema.array(),
   medications: medicationSchema.array(),
+  hasDiabetes: z.boolean(),
+  hasAsthma: z.boolean(),
+  hasSeizures: z.boolean(),
+  hasHeartConditions: z.boolean(),
 })
 export type Patient = z.infer<typeof patientSchema>
 
@@ -470,6 +474,10 @@ export const questionTargetSchema = z.enum([
   'place',
   'allergies',
   'medications',
+  'diabetes',
+  'asthma',
+  'seizures',
+  'heartConditions',
 ])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 

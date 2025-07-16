@@ -150,4 +150,58 @@ const responseBank: Record<
         return { responseText, scenarioState }
       }),
     )(command, scenarioState, context),
+
+  diabetes: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
+      transform(() => {
+        const responseText = askAboutDASH(
+          'diabetes',
+          scenarioState.patient.hasDiabetes,
+        )
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  asthma: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
+      transform(() => {
+        const responseText = askAboutDASH(
+          'asthma',
+          scenarioState.patient.hasAsthma,
+        )
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  seizures: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
+      transform(() => {
+        const responseText = askAboutDASH(
+          'seizures',
+          scenarioState.patient.hasSeizures,
+        )
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+
+  heartConditions: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
+      transform(() => {
+        const responseText = askAboutDASH(
+          'heartConditions',
+          scenarioState.patient.hasHeartConditions,
+        )
+        return { responseText, scenarioState }
+      }),
+    )(command, scenarioState, context),
+}
+
+const askAboutDASH = (conditionName: string, hasCondition: boolean) => {
+  return hasCondition
+    ? `The patient responds, "Yes, I have ${conditionName}"`
+    : `The patient responds, "No, I don't have ${conditionName}."`
 }
