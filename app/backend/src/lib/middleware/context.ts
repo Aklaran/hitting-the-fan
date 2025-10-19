@@ -35,7 +35,7 @@ async function getUser(
 
   if (isAuthenticated) {
     return await getAuthenticatedUser(sessionManager, prismaClient)
-  } else if (process.env.DEV_USER) {
+  } else if (process.env.DEV_USER == 'true') {
     return await getDevUser(prismaClient)
   } else {
     return [false, undefined]

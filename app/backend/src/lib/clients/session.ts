@@ -14,7 +14,7 @@ export const sessionOptions: SessionOptions = {
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
-    secure: false, // TODO: Set to true in production
+    secure: process.env.NODE_ENV == 'production',
     sameSite: 'lax',
   },
 }
