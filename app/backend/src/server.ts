@@ -5,7 +5,6 @@ import httpLogger from 'pino-http'
 
 import logger from '@shared/util/logger'
 import session from 'express-session'
-import path from 'path'
 import { sessionOptions } from './lib/clients/session'
 import { createContext } from './lib/middleware/context'
 import authRouter from './routes/auth'
@@ -69,19 +68,14 @@ app.use(
 
 app.use('/api/auth', authRouter)
 
-// Serve frontend via static files
-// TODO: Can I move this into a different file?
-
-// TODO: Can I use ts path aliases for this?
-const distPath = path.join(__dirname, '../../frontend/dist')
-
-app.use(express.static(distPath))
-app.use(express.static(path.join(distPath, 'index.html')))
-
-app.get('*', (_req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'))
+// Health check endpoint
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
+// -------------------------------
+// NOTE: Static files are served by Nginx in production
+// This backend only handles API routes under /api/*
 // -------------------------------
 
 const port = process.env.PORT || 3000
