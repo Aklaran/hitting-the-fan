@@ -13,7 +13,7 @@
     "---------------------------------------------------------------------------- Build": "",
     "build": "pnpm clean && pnpm build:backend && pnpm build:frontend",
     "build:backend": "cd app/backend && pnpm build",
-    "build:frontend": "cd app/frontend && pnpm build",
+    "build:frontend": "cd app/frontend && tsc --noEmit && pnpm build",
     "---------------------------------------------------------------------------- Setup": "",
     "---------------------------------------------------------------------------- Local Dev": "",
     "dev": "./bin/dev-watch.sh",
