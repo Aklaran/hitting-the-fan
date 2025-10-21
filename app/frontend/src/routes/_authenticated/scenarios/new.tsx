@@ -44,16 +44,27 @@ function ScenarioForm() {
           ailments: [],
           age: 0,
           gender: patientSchema.shape.gender.Values.male,
+          temperatureFahrenheit: 98.6,
           circulation: {
             rate: 60,
             rhythm: 'regular',
           },
           respiration: {
-            rate: 0,
+            rate: 12,
             rhythm: 'regular',
             effort: 'easy',
           },
-          coreTemperatureCelsius: 0,
+          skin: {
+            temperature: 'warm',
+            color: 'pink',
+            moisture: 'dry',
+          },
+          pupils: {
+            shape: 'round',
+            equality: 'equal',
+            reactivity: 'reactive',
+          },
+          coreTemperatureCelsius: 37,
           isSpineControlled: false,
           mechanismOfInjury: '',
           instructions: {
@@ -64,6 +75,13 @@ function ScenarioForm() {
           events: '',
           levelOfResponsiveness: 'U',
           position: 'seated',
+          allergies: [],
+          medications: [],
+          lastIntakeOutput: '',
+          hasDiabetes: false,
+          hasAsthma: false,
+          hasSeizures: false,
+          hasHeartConditions: false,
         },
         environment: {
           description: '',
