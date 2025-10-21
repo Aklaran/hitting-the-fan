@@ -19,7 +19,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "lib": ["ES6", "DOM"],
+    "lib": ["ES2020", "DOM"],
     "isolatedModules": true,
     "outDir": "./dist",
     "paths": {
