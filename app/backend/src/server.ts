@@ -1,7 +1,18 @@
 import * as trpcExpress from '@trpc/server/adapters/express'
-import 'dotenv/config'
+import { configDotenv } from 'dotenv'
 import express from 'express'
+import fs from 'fs'
+import path from 'path'
 import httpLogger from 'pino-http'
+
+// In production (Docker), env vars are injected by docker-compose's env_file
+// In development, load from .env file if it exists
+// This has to be called as early as possible (before session import)
+// So necessary env vars are provided to session options during local debugging
+const envPath = path.join(__dirname, '../../../.env')
+if (fs.existsSync(envPath)) {
+  configDotenv({ path: envPath })
+}
 
 import logger from '@shared/util/logger'
 import session from 'express-session'
@@ -68,14 +79,19 @@ app.use(
 
 app.use('/api/auth', authRouter)
 
-// Health check endpoint
-app.get('/api/health', (_req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() })
+// Serve frontend via static files
+// TODO: Can I move this into a different file?
+
+// TODO: Can I use ts path aliases for this?
+const distPath = path.join(__dirname, '../../frontend/dist')
+
+app.use(express.static(distPath))
+app.use(express.static(path.join(distPath, 'index.html')))
+
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'))
 })
 
-// -------------------------------
-// NOTE: Static files are served by Nginx in production
-// This backend only handles API routes under /api/*
 // -------------------------------
 
 const port = process.env.PORT || 3000

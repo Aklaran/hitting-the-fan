@@ -30,6 +30,7 @@
     "test:lint": "jest --config jest.lint.ts",
     "test:cypress": "cypress open",
     "---------------------------------------------------------------------------- Start": "",
+    "migrate": "cd app/backend && pnpm migrate",
     "start": "pnpm build && cd app/backend && pnpm start"
   },
   "dependencies": {

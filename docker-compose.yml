@@ -1,122 +1,46 @@
-version: '3.8'
-
 services:
-  # ============================================
-  # Nginx - Reverse Proxy & Static File Server
-  # ============================================
-  nginx:
-    image: nginx:alpine
-    container_name: htf-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./app/frontend/dist:/var/www/frontend/dist:ro
-      # For future SSL certificates
-      - ./ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - backend
-    networks:
-      - htf-network
-
-  # ============================================
-  # Backend - Node.js/Express/tRPC API
-  # ============================================
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
-    container_name: htf-backend
-    restart: unless-stopped
-    expose:
-      - "3000"
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
-      - SESSION_SECRET=${SESSION_SECRET}
-      - KINDE_DOMAIN=${KINDE_DOMAIN}
-      - KINDE_CLIENT_ID=${KINDE_CLIENT_ID}
-      - KINDE_CLIENT_SECRET=${KINDE_CLIENT_SECRET}
-      - KINDE_REDIRECT_URI=${KINDE_REDIRECT_URI}
-      - KINDE_LOGOUT_REDIRECT_URI=${KINDE_LOGOUT_REDIRECT_URI}
+    container_name: backend
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - ${ENV_FILE_PATH:-.env.staging}
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - htf-network
-    # Run migrations on startup
-    command: sh -c "npx prisma migrate deploy && node dist/server.js"
 
-  # ============================================
-  # PostgreSQL Database
-  # ============================================
   postgres:
+    container_name: postgres
     image: postgres:16-alpine
-    container_name: htf-postgres
     restart: unless-stopped
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=prisma
     expose:
       - "5432"
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - PGDATA=/var/lib/postgresql/data/pgdata
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     networks:
       - htf-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    # Optimize for low-memory environment
-    command:
-      - "postgres"
-      - "-c"
-      - "shared_buffers=128MB"
-      - "-c"
-      - "max_connections=100"
-      - "-c"
-      - "work_mem=4MB"
-
-  # ============================================
-  # Backup Service (runs daily)
-  # ============================================
-  backup:
-    image: prodrigestivill/postgres-backup-local
-    container_name: htf-backup
-    restart: unless-stopped
-    environment:
-      - POSTGRES_HOST=postgres
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - SCHEDULE=@daily
-      - BACKUP_KEEP_DAYS=7
-      - BACKUP_KEEP_WEEKS=4
-      - BACKUP_KEEP_MONTHS=6
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
     volumes:
-      - ./backups:/backups
-    depends_on:
-      - postgres
-    networks:
-      - htf-network
+      - postgres_data:/var/lib/postgresql/data
+    command: postgres -c listen_addresses='*'
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-# ============================================
-# Networks
-# ============================================
 networks:
   htf-network:
     driver: bridge
 
-# ============================================
-# Volumes
-# ============================================
 volumes:
   postgres_data:
     driver: local

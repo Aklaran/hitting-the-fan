@@ -8,6 +8,8 @@
     "build": "tsc",
     "start": "ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
+    "db:deploy": "migrate && generate",
+    "migrate": "prisma migrate deploy",
     "generate": "prisma generate"
   },
   "dependencies": {

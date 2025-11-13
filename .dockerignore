@@ -21,13 +21,14 @@ coverage
 *.spec.ts
 **/__tests__
 **/__mocks__
+cypress
 
 # Environment files
-.env
-.env.local
-.env.*.local
-.env.development
-.env.test
+**/.env
+**/.env.local
+**/.env.*.local
+**/.env.development
+**/.env.test
 
 # Git
 .git
@@ -68,3 +69,7 @@ logs
 backups
 ssl
 deploy.sh
+
+# AI Slop
+.claude
+
