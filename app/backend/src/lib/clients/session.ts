@@ -1,6 +1,5 @@
 import { SessionManager } from '@kinde-oss/kinde-typescript-sdk'
 import connectPgSimple from 'connect-pg-simple'
-import { Request } from 'express'
 import session, { SessionOptions } from 'express-session'
 
 export const sessionOptions: SessionOptions = {
@@ -11,7 +10,7 @@ export const sessionOptions: SessionOptions = {
   }),
   secret: process.env.SESSION_SECRET!,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false, // false is recommended for privacy, and we are forcing early session saves for anonymous users anyway
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV == 'production',
@@ -27,8 +26,25 @@ declare module 'express-session' {
   }
 }
 
+export interface ExtendedSessionManager extends SessionManager {
+  saveSession(): Promise<void>
+}
+
 // Conforms to Kinde SessionManager interface
-export const sessionManager = (req: Request): SessionManager => ({
+export const sessionManager = (
+  req: Express.Request,
+): ExtendedSessionManager => ({
+  async saveSession(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // If session is not present, treat as error early
+      if (!req.session) return reject(new Error('No session on request'))
+      req.session.save((err) => {
+        if (err) return reject(err)
+        resolve()
+      })
+    })
+  },
+
   async getSessionItem(key: string) {
     return req.session ? req.session[key] : null
   },
