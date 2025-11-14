@@ -42,7 +42,7 @@ const deleteScenario = async (input: DeleteScenarioSchema, ctx: Context) => {
 
 const getScenarioSession = async (userId: UserId, ctx: Context) => {
   const existingScenarioSession =
-    await scenarioSessionRepository.getScenarioSession(ctx.sessionId, ctx)
+    await scenarioSessionRepository.getScenarioSession(userId, ctx)
 
   if (existingScenarioSession) {
     return existingScenarioSession
@@ -85,7 +85,7 @@ const deleteSession = async (ctx: Context) => {
 
 const processAction = async (input: ProcessAction, ctx: Context) => {
   const scenarioSession = await scenarioSessionRepository.getScenarioSession(
-    ctx.sessionId,
+    ctx.user.id,
     ctx,
   )
 

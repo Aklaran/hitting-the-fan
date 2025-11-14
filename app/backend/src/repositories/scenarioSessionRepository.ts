@@ -20,10 +20,10 @@ const createScenarioSession = async (
   return scenarioSession
 }
 
-const getScenarioSession = async (sessionId: string, ctx: Context) => {
+const getScenarioSession = async (userId: number, ctx: Context) => {
   const scenarioSession = await ctx.prisma.scenarioSession.findFirst({
     where: {
-      sessionId,
+      userId,
     },
   })
 
