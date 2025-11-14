@@ -6,7 +6,7 @@ import { MyGrade } from '@shared/types/srs'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
-export const Route = createFileRoute('/_authenticated/flashcards/study')({
+export const Route = createFileRoute('/flashcards/study')({
   component: FlashcardStudyPage,
 })
 

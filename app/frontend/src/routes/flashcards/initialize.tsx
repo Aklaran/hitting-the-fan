@@ -2,7 +2,7 @@ import Button from '@/components/ui/button'
 import { trpc } from '@/lib/trpc'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_authenticated/flashcards/initialize')({
+export const Route = createFileRoute('/flashcards/initialize')({
   component: FlashcardInitialize,
 })
 

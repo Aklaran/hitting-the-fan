@@ -35,7 +35,7 @@ const flashcardsRouter = router({
     return await flashcardService.getFlashcards(ctx)
   }),
 
-  get: protectedProcedure
+  get: publicProcedure
     .input(getFlashcardSchema)
     .query(async ({ input, ctx }) => {
       return await flashcardService.getFlashcard(input, ctx)

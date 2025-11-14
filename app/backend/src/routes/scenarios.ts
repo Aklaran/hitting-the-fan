@@ -37,7 +37,7 @@ const scenariosRouter = router({
     return await scenarioService.getScenarios(ctx)
   }),
 
-  get: protectedProcedure
+  get: publicProcedure
     .input(getScenarioSchema)
     .query(async ({ input, ctx }) => {
       return await scenarioService.getScenario(input, ctx)
@@ -50,7 +50,7 @@ const scenariosRouter = router({
       return await scenarioService.deleteScenario(input, ctx)
     }),
 
-  getSessionState: protectedProcedure.query(async ({ ctx }) => {
+  getSessionState: publicProcedure.query(async ({ ctx }) => {
     const { user } = ctx
 
     if (!user) {
@@ -69,7 +69,7 @@ const scenariosRouter = router({
     return log
   }),
 
-  processAction: protectedProcedure
+  processAction: publicProcedure
     .input(processActionSchema)
     .mutation(async ({ input, ctx }) => {
       const updatedScenarioSession = await scenarioService.processAction(

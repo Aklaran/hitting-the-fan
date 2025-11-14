@@ -86,6 +86,6 @@ function ScenarioPlayPage() {
   )
 }
 
-export const Route = createFileRoute('/_authenticated/scenarios/play')({
+export const Route = createFileRoute('/scenarios/play')({
   component: ScenarioPlayPage,
 })

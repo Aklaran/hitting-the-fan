@@ -1,10 +1,10 @@
-import { protectedProcedure, router } from '@backend/lib/clients/trpc'
+import { publicProcedure, router } from '@backend/lib/clients/trpc'
 import { studyFlashcardSchema } from '@shared/types/srs'
 import { TRPCError } from '@trpc/server'
 import srsService from '../services/srsService'
 
 const srsRouter = router({
-  initialize: protectedProcedure.mutation(async ({ ctx }) => {
+  initialize: publicProcedure.mutation(async ({ ctx }) => {
     const { user } = ctx
 
     if (!user) {
@@ -31,7 +31,7 @@ const srsRouter = router({
     }
   }),
 
-  getScheduledCards: protectedProcedure.query(async ({ ctx }) => {
+  getScheduledCards: publicProcedure.query(async ({ ctx }) => {
     const { user } = ctx
 
     // TODO: Is there a way that I could not force-unwrap user
@@ -39,13 +39,13 @@ const srsRouter = router({
     return await srsService.getScheduledCards(user!.id, ctx)
   }),
 
-  getNextScheduledCard: protectedProcedure.query(async ({ ctx }) => {
+  getNextScheduledCard: publicProcedure.query(async ({ ctx }) => {
     const { user } = ctx
 
     return await srsService.getNextScheduledCard(user!.id, ctx)
   }),
 
-  studyCard: protectedProcedure
+  studyCard: publicProcedure
     .input(studyFlashcardSchema)
     .mutation(async ({ ctx, input }) => {
       return await srsService.studyCard(input, ctx)
