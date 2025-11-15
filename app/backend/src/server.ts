@@ -72,7 +72,30 @@ app.use(session(sessionOptions))
 
 app.use(
   '/api/trpc',
-  trpcExpress.createExpressMiddleware({ router: appRouter, createContext }),
+  trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext,
+    onError: ({ error, req, path, type, input, ctx }) => {
+      logger.error({
+        error: {
+          message: error.message,
+          code: error.code,
+          stack: error.stack,
+          cause: error.cause?.message,
+        },
+        req: {
+          id: req.id,
+          method: req.method,
+          url: decodeURIComponent(req.url),
+        },
+        path,
+        type,
+        input,
+        userId: ctx?.user?.id,
+        sessionId: ctx?.sessionId,
+      })
+    },
+  }),
 )
 
 // Kinde Auth
