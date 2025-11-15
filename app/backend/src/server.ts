@@ -66,6 +66,10 @@ app.use(
   }),
 )
 
+// Trust exactly 1 proxy, which is our nginx running on the same machine
+// see https://expressjs.com/en/guide/behind-proxies.html
+app.set('trust proxy', 1)
+
 // This has to come before tRPC middleware
 // Because session has to exist before tRPC can use it
 app.use(session(sessionOptions))
