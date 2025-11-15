@@ -27,6 +27,9 @@ export const NavBar = () => {
   )
 }
 function AccountActionNavSection() {
+  // We're not doing accounts for now; everyone will be anonymous
+  return null
+
   // TODO: Lol if only I had this in context. Can always give it another try!
   const { data, isError, error } = trpc.user.isAuthenticated.useQuery()
 
