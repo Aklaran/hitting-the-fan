@@ -31,8 +31,9 @@
     "test:cypress": "cypress open",
     "---------------------------------------------------------------------------- Start": "",
     "migrate": "cd app/backend && pnpm migrate",
-    "start": "pnpm build && cd app/backend && pnpm start"
     "migrate:dev": "cd app/backend && pnpm migrate:dev",
+    "seed": "cd app/backend && pnpm seed",
+    "start": "pnpm build && cd app/backend && pnpm start",
     "---------------------------------------------------------------------------- Deploy": "",
     "deploy": "docker buildx build --platform linux/amd64,linux/arm64 -t aklaran/hitting-the-fan:latest --push ."
   },

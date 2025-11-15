@@ -1,3 +1,4 @@
+import { scenarioUtils } from '@backend/engine/scenarioUtils'
 import { Context } from '@backend/lib/middleware/context'
 import scenarioRepository from '@backend/repositories/scenarioRepository'
 import {
@@ -10,13 +11,10 @@ import {
 } from '@shared/types/scenario'
 import { UserId } from '@shared/types/user'
 import { TRPCError } from '@trpc/server'
-import { mvpScenarioState } from '../data/mvpScenarioState'
 import { scenarioEngine } from '../engine/scenarioEngine'
 import scenarioSessionRepository from '../repositories/scenarioSessionRepository'
 
 const createScenario = async (input: CreateScenarioSchema, ctx: Context) => {
-  input.initialState = mvpScenarioState
-
   const createdScenario = await scenarioRepository.createScenario(input, ctx)
 
   return createdScenario
@@ -58,21 +56,17 @@ const getScenarioSession = async (userId: UserId, ctx: Context) => {
     })
   }
 
-  // TODO: Use the DB state when I'm done devving
-  // if (!scenarioUtils.isScenarioState(scenario.initialState)) {
-  //   throw new TRPCError({
-  //     code: 'PRECONDITION_FAILED',
-  //     message: 'Invalid scenario state.',
-  //   })
-  // }
-
-  // const initialState = scenario.initialState as ScenarioState
-  const initialState = mvpScenarioState
+  if (!scenarioUtils.isScenarioState(scenario.initialState)) {
+    throw new TRPCError({
+      code: 'PRECONDITION_FAILED',
+      message: 'Invalid scenario state.',
+    })
+  }
 
   const scenarioSession = await scenarioSessionRepository.createScenarioSession(
     scenario.id,
     userId,
-    initialState,
+    scenario.initialState,
     ctx,
   )
 

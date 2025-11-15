@@ -9,8 +9,13 @@
     "start": "ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
     "db:deploy": "migrate && generate",
-    "migrate": "prisma migrate deploy",
+    "migrate": "prisma migrate deploy && pnpm seed",
+    "migrate:dev": "prisma migrate dev",
+    "seed": "prisma db seed",
     "generate": "prisma generate"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed/seed.ts"
   },
   "dependencies": {
     "@kinde-oss/kinde-typescript-sdk": "^2.9.1",
