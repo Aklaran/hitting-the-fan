@@ -20,6 +20,7 @@ function FlashcardForm() {
 
   const form = useForm({
     defaultValues: {
+      key: '',
       question: '',
       answer: '',
     },
@@ -50,6 +51,31 @@ function FlashcardForm() {
         }}
       >
         <div>
+
+        <form.Field
+            name="key"
+            validators={{
+              onChange: ({ value }) => {
+                const schema = createFlashcardSchema.shape.key
+                return getZodStringValidationErrors(value, schema)
+              },
+            }}
+            children={(field) => (
+              <>
+                <Label htmlFor={field.name}>Key</Label>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  type="text"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FormErrorMessage errors={field.state.meta.errors} />
+              </>
+            )}
+          />
+
           <form.Field
             name="question"
             validators={{

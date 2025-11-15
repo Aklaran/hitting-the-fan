@@ -601,6 +601,9 @@ export type VerbHandler = z.infer<typeof verbHandlerSchema>
 
 export const scenarioSchema = z.object({
   id: z.number().int().positive().min(1),
+  key: z.string({ required_error: 'Key is required.' }).min(3, {
+    message: 'Key must be at least 3 characters long.',
+  }),
   title: z.string({ required_error: 'Title is required.' }).min(3, {
     message: 'Title must be at least 3 characters long.',
   }),

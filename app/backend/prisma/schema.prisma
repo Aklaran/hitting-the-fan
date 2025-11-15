@@ -44,13 +44,13 @@ model User {
 
 model Flashcard {
   id         Int   @id @unique @default(autoincrement())
-
+  key        String @unique
   created_at DateTime @default(now()) @db.Timestamptz(6)
-
   question   String
   answer     String
-
   userFlashcards UserFlashcard[]
+
+  @@index([key])
 }
 
 model UserFlashcard {
@@ -95,12 +95,15 @@ enum Rating {
 
 model Scenario {
   id      Int    @id @unique @default(autoincrement())
+  key        String @unique
 
   title String
   openingPrompt String
   initialState Json
 
   ScenarioSession ScenarioSession[]
+
+  @@index([key])
 }
 
 model ScenarioSession {

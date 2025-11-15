@@ -25,6 +25,7 @@ function ScenarioForm() {
   const form = useForm({
     defaultValues: {
       id: 0,
+      key: '',
       title: '',
       openingPrompt: '',
       initialState: {
@@ -143,6 +144,30 @@ function ScenarioForm() {
             )}
           />
 
+          <form.Field
+            name="key"
+            validators={{
+              onChange: ({ value }) => {
+                const schema = createScenarioSchema.shape.key
+                return getZodStringValidationErrors(value, schema)
+              },
+            }}
+            children={(field) => (
+              <>
+                <Label htmlFor={field.name}>Key</Label>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  type="text"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FormErrorMessage errors={field.state.meta.errors} />
+              </>
+            )}
+          />
+          
           <form.Field
             name="openingPrompt"
             validators={{
