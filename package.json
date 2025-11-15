@@ -32,6 +32,7 @@
     "---------------------------------------------------------------------------- Start": "",
     "migrate": "cd app/backend && pnpm migrate",
     "start": "pnpm build && cd app/backend && pnpm start"
+    "migrate:dev": "cd app/backend && pnpm migrate:dev",
   },
   "dependencies": {
     "@trpc/server": "11.0.0-rc.373",
