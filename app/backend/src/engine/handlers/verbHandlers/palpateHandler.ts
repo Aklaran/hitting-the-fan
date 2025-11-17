@@ -20,7 +20,7 @@ const palpateBodyPart = (
 
   if (!scenarioUtils.isBodyPart(command.object)) {
     responseText = "You... probably don't want to touch that."
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'parse_failure' }
   }
 
   if (
@@ -28,7 +28,7 @@ const palpateBodyPart = (
     scenarioState.patient.position === 'supine'
   ) {
     responseText = "You can't reach the patient's back while they are supine."
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'guard_failure' }
   }
 
   responseText = command.object.palpationResponse
@@ -47,5 +47,5 @@ const palpateBodyPart = (
     responseText += ' Everything feels normal.'
   }
 
-  return { responseText, scenarioState }
+  return { responseText, scenarioState, result: 'success' }
 }

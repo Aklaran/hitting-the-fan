@@ -23,6 +23,10 @@ export const surveyHandler: VerbHandler = {
       ].join(' ')
     }
 
-    return { responseText, scenarioState }
+    return {
+      responseText,
+      scenarioState,
+      result: command.object ? 'success' : 'parse_failure',
+    }
   },
 }

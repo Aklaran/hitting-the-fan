@@ -15,6 +15,7 @@ const withChiefComplaint = <T extends AskableContext>(
     return {
       responseText: 'DATA ERROR: too many chief complaints',
       scenarioState,
+      result: 'unexpected_error',
     }
   }
 

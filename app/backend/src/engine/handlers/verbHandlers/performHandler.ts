@@ -40,7 +40,7 @@ const procedures: Record<
 
     if (!majorBleeds || majorBleeds.length === 0) {
       responseText += ' You do not find any concerning amounts of blood.'
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'success' }
     }
 
     // TODO: Make a util function to create a grammatically correct comma-separated list
@@ -50,13 +50,13 @@ const procedures: Record<
       .join(', ')
 
     responseText += ` You find concerning amounts of blood on the ${bleedLocations}.`
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'success' }
   },
 
   focusedSpineAssessment: (scenarioState) => {
     const responseText =
       'You inform the patient that you are going to perform a focused spine assessment. Proceed with the steps of the assessment.'
 
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'success' }
   },
 }

@@ -581,10 +581,18 @@ export const commandSchema = z.object({
 })
 export type Command = z.infer<typeof commandSchema>
 
+export const actionResultSchema = z.enum([
+  'success',
+  'parse_failure',
+  'guard_failure',
+  'unexpected_error',
+])
+export type ActionResult = z.infer<typeof actionResultSchema>
+
 export const actionResponseSchema = z.object({
   responseText: z.string(),
   scenarioState: scenarioStateSchema,
-  result: z.enum(['success', 'parse_failure', 'guard_failure']),
+  result: actionResultSchema.default('success'),
 })
 export type ActionResponse = z.infer<typeof actionResponseSchema>
 
@@ -595,7 +603,23 @@ export const verbHandlerSchema = z.object({
     .returns(actionResponseSchema),
 })
 export type VerbHandler = z.infer<typeof verbHandlerSchema>
+//#endregion
 
+//#region Logging
+export const actionLogSchema = z.object({
+  timestamp: z.date(),
+  userId: z.string(),
+  sessionId: z.string(),
+  scenarioKey: z.string(),
+
+  rawInput: z.string(),
+  command: commandSchema,
+  actionResult: actionResultSchema,
+  narratorResponse: z.string(),
+
+  duration: z.number().int().positive(),
+})
+export type ActionLog = z.infer<typeof actionLogSchema>
 //#endregion
 
 //#region Scenario

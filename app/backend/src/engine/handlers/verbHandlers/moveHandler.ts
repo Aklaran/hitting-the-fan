@@ -13,7 +13,7 @@ export const moveHandler: VerbHandler = {
       "You cant move that. Or you can't move there. I'm truthfully not sure which you're trying to do."
 
     if (!scenarioUtils.isMoveTarget(command.object)) {
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'parse_failure' }
     }
 
     switch (command.object) {
@@ -23,7 +23,7 @@ export const moveHandler: VerbHandler = {
         return movePatient(command, scenarioState)
     }
 
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'unexpected_error' }
   },
 }
 
@@ -34,7 +34,7 @@ const moveIn = (
   return scenarioUtils.withDistanceCheck('far', (_, scenarioState) => {
     const responseText = `You move towards the patient.`
     scenarioState.player.distanceToPatient = distanceSchema.Enum.near
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'success' }
   })(command, scenarioState)
 }
 
@@ -46,7 +46,7 @@ const movePatient = (
     let responseText = 'What position would you like to move the patient to?'
 
     if (!command.modifiers || !scenarioUtils.isPosition(command.modifiers[0])) {
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'parse_failure' }
     }
 
     const currentPosition = scenarioState.patient.position
@@ -54,7 +54,7 @@ const movePatient = (
 
     if (currentPosition === newPosition) {
       responseText = `The patient is already ${currentPosition}.`
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'guard_failure' }
     }
 
     responseText = `You move the patient from ${currentPosition} to ${newPosition}.`
@@ -69,6 +69,6 @@ const movePatient = (
       },
     }
 
-    return { responseText, scenarioState: newState }
+    return { responseText, scenarioState: newState, result: 'success' }
   })(command, scenarioState)
 }

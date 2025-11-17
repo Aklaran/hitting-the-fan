@@ -10,7 +10,7 @@ const withControllable = <T>(
 ): OptionalActionResponse<T & ControllableContext> => {
   if (!scenarioUtils.isControlTarget(command.object)) {
     const responseText = `You can't control that.`
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'guard_failure' }
   }
 
   return {

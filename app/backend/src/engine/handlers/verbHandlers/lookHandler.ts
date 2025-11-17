@@ -19,7 +19,7 @@ export const lookHandler: VerbHandler = {
       responseText = command.object.description
     }
 
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'success' }
   },
 }
 

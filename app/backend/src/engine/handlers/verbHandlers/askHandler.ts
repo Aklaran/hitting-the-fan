@@ -53,7 +53,7 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
       transform(() => {
         const responseText = `The patient responds, "My name ${scenarioState.patient.name}!"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -62,7 +62,7 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
       transform(() => {
         const responseText = `The patient responds, "I am ${scenarioState.patient.age} years old."`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -71,7 +71,7 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
       transform(() => {
         const responseText = `The patient responds, "I am ${scenarioState.patient.gender}."`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -82,11 +82,11 @@ const responseBank: Record<
       transform((_command, scenarioState, context) => {
         if (context.injuries.length > 0) {
           const responseText = `The patient responds, "Yeah, I think I hurt my ${context.bodyPart.partName}."`
-          return { responseText, scenarioState }
+          return { responseText, scenarioState, result: 'success' }
         }
 
         const responseText = `The patient responds, "No, I don't think I hurt my ${context.bodyPart.partName}."`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -104,7 +104,7 @@ const responseBank: Record<
         let responseText = `The patient responds, "Yes, I have medical tags." They remove them and hand them to you. `
         responseText += `The tags read: ${context.medicalTags.description}`
 
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -113,7 +113,7 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
       transform(() => {
         const responseText = `The patient responds, "${scenarioState.patient.events}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -122,7 +122,7 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsTime)),
       transform(() => {
         const responseText = `The patient responds, "It's ${scenarioState.environment.time.toString()}."`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -131,7 +131,7 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsLocation)),
       transform(() => {
         const responseText = `The patient responds, "${scenarioState.environment.place}."`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -140,7 +140,7 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
       transform(() => {
         const responseText = `The patient responds, "My allergies are: ${scenarioState.patient.allergies}."`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -149,7 +149,7 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsIdentity)),
       transform(() => {
         const responseText = `The patient responds, "I am taking ${scenarioState.patient.medications}."`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -161,7 +161,7 @@ const responseBank: Record<
           'diabetes',
           scenarioState.patient.hasDiabetes,
         )
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -173,7 +173,7 @@ const responseBank: Record<
           'asthma',
           scenarioState.patient.hasAsthma,
         )
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -185,7 +185,7 @@ const responseBank: Record<
           'seizures',
           scenarioState.patient.hasSeizures,
         )
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -197,7 +197,7 @@ const responseBank: Record<
           'heartConditions',
           scenarioState.patient.hasHeartConditions,
         )
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -206,7 +206,7 @@ const responseBank: Record<
       guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
       transform(() => {
         const responseText = `The patient responds, "${scenarioState.patient.lastIntakeOutput}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -216,7 +216,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "My chief complaint is ${context.ailment.name}."`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -226,7 +226,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "${context.ailment.onsetTime}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -236,7 +236,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "${context.ailment.provokers}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -246,7 +246,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "${context.ailment.palliatives}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -256,7 +256,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "${context.ailment.quality}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -266,7 +266,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "${context.ailment.region}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -276,7 +276,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "${context.ailment.radiation}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -286,7 +286,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "${context.ailment.referral}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -296,7 +296,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "${context.ailment.severity}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 
@@ -306,7 +306,7 @@ const responseBank: Record<
       enrich<AskableContext, AilmentContext>(withChiefComplaint),
       transform((_, scenarioState, context) => {
         const responseText = `The patient responds, "${context.ailment.intensityTrend}"`
-        return { responseText, scenarioState }
+        return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
 }

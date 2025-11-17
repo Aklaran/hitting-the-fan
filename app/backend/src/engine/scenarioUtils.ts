@@ -338,7 +338,7 @@ const withDistanceCheck = (
       scenarioState.player.distanceToPatient === 'far'
     ) {
       const responseText = 'You are too far away to do that.'
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'guard_failure' }
     }
 
     if (
@@ -346,7 +346,7 @@ const withDistanceCheck = (
       scenarioState.player.distanceToPatient === 'near'
     ) {
       const responseText = 'You are too close to do that.'
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'guard_failure' }
     }
 
     return handler(command, scenarioState)
@@ -363,6 +363,7 @@ const withConsciousnessCheck = (
       return {
         responseText: 'The patient is knocked tf out.',
         scenarioState,
+        result: 'guard_failure',
       }
     }
 

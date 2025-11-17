@@ -9,7 +9,7 @@ const withMedicalTags = <T>(
 ): OptionalActionResponse<T & MedicalTagsContext> => {
   if (!scenarioState.patient.medicalTag) {
     const responseText = 'The patient does not have medical tags.'
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'guard_failure' }
   }
 
   return {

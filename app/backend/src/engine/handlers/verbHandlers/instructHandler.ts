@@ -11,19 +11,19 @@ export const instructHandler: VerbHandler = {
       'What would you like to instruct the patient to do? (NO OBJECT)'
 
     if (!command.object) {
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'parse_failure' }
     }
 
     if (!scenarioUtils.isInstructTarget(command.object)) {
       responseText = `You probably don't want to tell your patient to do that...`
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'parse_failure' }
     }
 
     const instruction = command.object
 
     if (hasAlreadyReceivedInstruction(scenarioState, instruction)) {
       const responseText = repeatResponseBank[instruction]
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'guard_failure' }
     }
 
     responseText = responseBank[instruction](scenarioState)
@@ -39,7 +39,7 @@ export const instructHandler: VerbHandler = {
       },
     }
 
-    return { responseText, scenarioState: newState }
+    return { responseText, scenarioState: newState, result: 'success' }
   }),
 }
 

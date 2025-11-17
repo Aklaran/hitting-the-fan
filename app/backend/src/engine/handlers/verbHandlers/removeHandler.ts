@@ -14,7 +14,7 @@ export const removeHandler: VerbHandler = {
     let responseText = 'What would you like to remove? (NO OBJECT)'
 
     if (!command.object || !command.modifiers) {
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'parse_failure' }
     }
 
     // HACK: Just assuming that we will always want to
@@ -23,7 +23,7 @@ export const removeHandler: VerbHandler = {
 
     if (scenarioState.player.distanceToPatient === 'far') {
       responseText = 'You are too far away to do that.'
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'guard_failure' }
     }
 
     if (
@@ -31,7 +31,7 @@ export const removeHandler: VerbHandler = {
       !scenarioUtils.isBodyPart(command.object)
     ) {
       responseText = `You can't remove that...`
-      return { responseText, scenarioState }
+      return { responseText, scenarioState, result: 'parse_failure' }
     }
 
     return removeObstruction(command.object, scenarioState)
@@ -44,7 +44,7 @@ const removeObstruction = (
 ): ActionResponse => {
   if (bodyPart.obstructedState == obstructionSchema.Enum.unobstructed) {
     const responseText = 'The obstruction has already been removed.'
-    return { responseText, scenarioState }
+    return { responseText, scenarioState, result: 'guard_failure' }
   }
 
   // FIXME: This is just making a reference to, and then destructively modifying, the old state!
@@ -64,5 +64,5 @@ const removeObstruction = (
   statePart.obstructedState = obstructionSchema.Enum.unobstructed
 
   const responseText = `You remove the obstruction from ${bodyPart.partName}.`
-  return { responseText, scenarioState: newState }
+  return { responseText, scenarioState: newState, result: 'success' }
 }

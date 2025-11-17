@@ -87,6 +87,7 @@ export function pipeHandlers<TContext>(
     return {
       responseText: 'UNEXPECTED ERROR: Reached the end of handler chain',
       scenarioState: current.scenarioState,
+      result: 'unexpected_error',
     }
   }
 }
@@ -111,6 +112,7 @@ export const guard = <T>(
       : {
           responseText: overrideMessage ?? checkResult.failureMessage,
           scenarioState,
+          result: 'guard_failure',
         }
   }
 }

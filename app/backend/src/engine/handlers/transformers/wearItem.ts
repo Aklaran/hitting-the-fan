@@ -22,7 +22,7 @@ const wearItem = (
     },
   }
 
-  return { responseText, scenarioState: newState }
+  return { responseText, scenarioState: newState, result: 'success' }
 }
 
 export default wearItem
