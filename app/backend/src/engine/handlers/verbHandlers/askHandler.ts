@@ -1,9 +1,9 @@
 import {
+  ActionResponse,
   Command,
   QuestionTarget,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import { LORCapabilities } from '../../scenarioUtils'
 import withAskable from '../enrichers/withAskable'
@@ -32,7 +32,7 @@ import {
 } from '../pipeline/pipelineContexts'
 
 export const askHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  execute: (command: Command, scenarioState: ScenarioState): ActionResponse => {
     return pipeHandlers(
       guard<PipelineContext>(hasCommandObject),
       guard(isDistanceFromPatient('near')),

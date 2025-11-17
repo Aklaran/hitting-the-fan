@@ -1,12 +1,12 @@
 import { scenarioUtils } from '@backend/engine/scenarioUtils'
-import { Command, ScenarioState, VerbResponse } from '@shared/types/scenario'
+import { ActionResponse, Command, ScenarioState } from '@shared/types/scenario'
 import { WearableContext } from '../pipeline/pipelineContexts'
 
 const wearItem = (
   _command: Command,
   scenarioState: ScenarioState,
   context: WearableContext,
-): VerbResponse => {
+): ActionResponse => {
   const responseText = `You put on the ${context.wearable}.`
 
   let newState = scenarioUtils.removeFromInventory(

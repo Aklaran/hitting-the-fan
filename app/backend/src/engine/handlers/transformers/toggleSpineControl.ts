@@ -1,4 +1,4 @@
-import { Command, ScenarioState, VerbResponse } from '@shared/types/scenario'
+import { ActionResponse, Command, ScenarioState } from '@shared/types/scenario'
 import { ControllableContext } from '../pipeline/pipelineContexts'
 
 const controlSpine = (
@@ -6,7 +6,7 @@ const controlSpine = (
   scenarioState: ScenarioState,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _context: ControllableContext,
-): VerbResponse => {
+): ActionResponse => {
   if (command.modifiers && command.modifiers.includes('remove')) {
     return removeSpineControl(scenarioState)
   }
@@ -16,7 +16,7 @@ const controlSpine = (
 
 export default controlSpine
 
-const applySpineControl = (scenarioState: ScenarioState): VerbResponse => {
+const applySpineControl = (scenarioState: ScenarioState): ActionResponse => {
   if (scenarioState.patient.isSpineControlled) {
     const responseText = "You are already controlling the patient's spine."
     return { responseText, scenarioState }
@@ -35,7 +35,7 @@ const applySpineControl = (scenarioState: ScenarioState): VerbResponse => {
   return { responseText, scenarioState: newState }
 }
 
-const removeSpineControl = (scenarioState: ScenarioState): VerbResponse => {
+const removeSpineControl = (scenarioState: ScenarioState): ActionResponse => {
   if (!scenarioState.patient.isSpineControlled) {
     const responseText = "You aren't controlling the patient's spine."
     return { responseText, scenarioState }

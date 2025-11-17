@@ -1,8 +1,8 @@
 import {
+  ActionResponse,
   Command,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import withWearable from '../enrichers/withWearable'
 import hasCommandObject from '../guards/hasCommandObject'
@@ -13,7 +13,7 @@ import { PipelineContext, WearableContext } from '../pipeline/pipelineContexts'
 import wearItem from '../transformers/wearItem'
 
 export const wearHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  execute: (command: Command, scenarioState: ScenarioState): ActionResponse => {
     return pipeHandlers(
       guard(hasCommandObject),
       enrich<PipelineContext, WearableContext>(withWearable),

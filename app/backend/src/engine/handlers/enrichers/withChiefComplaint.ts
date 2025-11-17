@@ -1,12 +1,12 @@
 import { Command, ScenarioState } from '@shared/types/scenario'
-import { OptionalVerbResponse } from '../pipeline/handlerPipe'
+import { OptionalActionResponse } from '../pipeline/handlerPipe'
 import { AilmentContext, AskableContext } from '../pipeline/pipelineContexts'
 
 const withChiefComplaint = <T extends AskableContext>(
   command: Command,
   scenarioState: ScenarioState,
   context: T,
-): OptionalVerbResponse<T & AilmentContext> => {
+): OptionalActionResponse<T & AilmentContext> => {
   const chiefComplaints = scenarioState.patient.ailments.filter(
     (ailment) => ailment.isChiefComplaint,
   )

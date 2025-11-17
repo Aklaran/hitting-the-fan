@@ -1,14 +1,14 @@
 import {
+  ActionResponse,
   Command,
   distanceSchema,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import { scenarioUtils } from '../../scenarioUtils'
 
 export const moveHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  execute: (command: Command, scenarioState: ScenarioState): ActionResponse => {
     const responseText =
       "You cant move that. Or you can't move there. I'm truthfully not sure which you're trying to do."
 
@@ -30,7 +30,7 @@ export const moveHandler: VerbHandler = {
 const moveIn = (
   command: Command,
   scenarioState: ScenarioState,
-): VerbResponse => {
+): ActionResponse => {
   return scenarioUtils.withDistanceCheck('far', (_, scenarioState) => {
     const responseText = `You move towards the patient.`
     scenarioState.player.distanceToPatient = distanceSchema.Enum.near
@@ -41,7 +41,7 @@ const moveIn = (
 const movePatient = (
   command: Command,
   scenarioState: ScenarioState,
-): VerbResponse => {
+): ActionResponse => {
   return scenarioUtils.withDistanceCheck('near', (command, scenarioState) => {
     let responseText = 'What position would you like to move the patient to?'
 

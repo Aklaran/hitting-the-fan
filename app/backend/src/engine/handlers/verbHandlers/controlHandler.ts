@@ -1,8 +1,8 @@
 import {
+  ActionResponse,
   Command,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import withControllable from '../enrichers/withControllable'
 import hasCommandObject from '../guards/hasCommandObject'
@@ -15,7 +15,7 @@ import {
 import toggleSpineControl from '../transformers/toggleSpineControl'
 
 export const controlHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  execute: (command: Command, scenarioState: ScenarioState): ActionResponse => {
     return pipeHandlers(
       guard<PipelineContext>(hasCommandObject, 'no obj'),
       guard(isDistanceFromPatient('near')),

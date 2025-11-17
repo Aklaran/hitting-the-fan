@@ -1,14 +1,14 @@
 import {
+  ActionResponse,
   BodyPart,
   Command,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import { scenarioUtils } from '../../scenarioUtils'
 
 export const lookHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  execute: (command: Command, scenarioState: ScenarioState): ActionResponse => {
     let responseText = 'You stare vacantly into space. (NO OBJECT)'
 
     if (scenarioUtils.isBodyPart(command.object)) {

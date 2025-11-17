@@ -1,8 +1,8 @@
 import {
+  ActionResponse,
   Command,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import { scenarioUtils } from '../../scenarioUtils'
 
@@ -15,7 +15,7 @@ export const palpateHandler: VerbHandler = {
 const palpateBodyPart = (
   command: Command,
   scenarioState: ScenarioState,
-): VerbResponse => {
+): ActionResponse => {
   let responseText = 'You paw at the air. It feels like air. (NO OBJECT)'
 
   if (!scenarioUtils.isBodyPart(command.object)) {

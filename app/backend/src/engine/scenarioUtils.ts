@@ -1,4 +1,6 @@
 import {
+  ActionResponse,
+  actionResponseSchema,
   Ailment,
   BodyPart,
   BodyPartName,
@@ -40,8 +42,6 @@ import {
   ScenarioLogEntry,
   ScenarioState,
   scenarioStateSchema,
-  VerbResponse,
-  verbResponseSchema,
   Viewable,
   viewableSchema,
   Wearable,
@@ -128,8 +128,8 @@ const isMeasureTarget = (obj: unknown): obj is MeasureTarget => {
   return isSchema(measureTargetSchema, obj)
 }
 
-const isVerbResponse = (obj: unknown): obj is VerbResponse => {
-  return isSchema(verbResponseSchema, obj)
+const isActionResponse = (obj: unknown): obj is ActionResponse => {
+  return isSchema(actionResponseSchema, obj)
 }
 
 const isWearable = (obj: unknown): obj is Wearable => {
@@ -330,9 +330,9 @@ const calculatePupilShape = (patient: Patient) => {
 
 const withDistanceCheck = (
   expectedDistance: Distance,
-  handler: (command: Command, scenarioState: ScenarioState) => VerbResponse,
+  handler: (command: Command, scenarioState: ScenarioState) => ActionResponse,
 ) => {
-  return (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  return (command: Command, scenarioState: ScenarioState): ActionResponse => {
     if (
       expectedDistance === 'near' &&
       scenarioState.player.distanceToPatient === 'far'
@@ -354,9 +354,9 @@ const withDistanceCheck = (
 }
 
 const withConsciousnessCheck = (
-  handler: (command: Command, scenarioState: ScenarioState) => VerbResponse,
+  handler: (command: Command, scenarioState: ScenarioState) => ActionResponse,
 ) => {
-  return (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  return (command: Command, scenarioState: ScenarioState): ActionResponse => {
     const levelOfResponsiveness = scenarioState.patient.levelOfResponsiveness
 
     if (!LORCapabilities.isAwake(levelOfResponsiveness)) {
@@ -398,7 +398,7 @@ export const scenarioUtils = {
   isPerformTarget,
   isRemoveTarget,
   isMeasureTarget,
-  isVerbResponse,
+  isActionResponse,
   isPosition,
   isInventoryItem,
   isMoveTarget,

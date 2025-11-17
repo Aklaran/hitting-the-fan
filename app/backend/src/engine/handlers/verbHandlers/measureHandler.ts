@@ -1,4 +1,5 @@
 import {
+  ActionResponse,
   CirculationCapableBodyPart,
   Command,
   CSMCapableBodyPart,
@@ -7,14 +8,13 @@ import {
   ScenarioState,
   SENSATION_PRIORITIES,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import { scenarioUtils } from '../../scenarioUtils'
 
 export const measureHandler: VerbHandler = {
   execute: scenarioUtils.withDistanceCheck(
     'near',
-    (command: Command, scenarioState: ScenarioState): VerbResponse => {
+    (command: Command, scenarioState: ScenarioState): ActionResponse => {
       let responseText = 'What do you want to measure? (NO OBJECT)'
 
       if (!scenarioUtils.isMeasureTarget(command.object)) {

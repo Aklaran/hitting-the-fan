@@ -1,9 +1,9 @@
 import {
+  ActionResponse,
   Command,
   PerformTarget,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import withPerformable from '../enrichers/withPerformable'
 import hasCommandObject from '../guards/hasCommandObject'
@@ -15,7 +15,7 @@ import {
 } from '../pipeline/pipelineContexts'
 
 export const performHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  execute: (command: Command, scenarioState: ScenarioState): ActionResponse => {
     return pipeHandlers(
       guard<PipelineContext>(hasCommandObject),
       guard(isDistanceFromPatient('near')),
@@ -29,7 +29,7 @@ export const performHandler: VerbHandler = {
 
 const procedures: Record<
   PerformTarget,
-  (scenarioState: ScenarioState) => VerbResponse
+  (scenarioState: ScenarioState) => ActionResponse
 > = {
   bloodSweep: (scenarioState) => {
     let responseText =

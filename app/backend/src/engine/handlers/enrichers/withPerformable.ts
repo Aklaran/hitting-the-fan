@@ -1,13 +1,13 @@
 import { scenarioUtils } from '@backend/engine/scenarioUtils'
 import { Command, ScenarioState } from '@shared/types/scenario'
-import { OptionalVerbResponse } from '../pipeline/handlerPipe'
+import { OptionalActionResponse } from '../pipeline/handlerPipe'
 import { PerformableContext } from '../pipeline/pipelineContexts'
 
 const withPerformable = <T>(
   command: Command,
   scenarioState: ScenarioState,
   context: T,
-): OptionalVerbResponse<T & PerformableContext> => {
+): OptionalActionResponse<T & PerformableContext> => {
   if (!scenarioUtils.isPerformTarget(command.object)) {
     const responseText = "You don't know how to perform that."
     return { responseText, scenarioState }

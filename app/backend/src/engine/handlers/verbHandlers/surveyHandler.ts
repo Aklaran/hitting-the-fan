@@ -1,12 +1,12 @@
 import {
+  ActionResponse,
   Command,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 
 export const surveyHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  execute: (command: Command, scenarioState: ScenarioState): ActionResponse => {
     let responseText = 'What would you like to survey? (NO OBJECT)'
 
     if (command.object === scenarioState.patient) {

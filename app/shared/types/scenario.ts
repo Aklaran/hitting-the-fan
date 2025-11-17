@@ -581,17 +581,18 @@ export const commandSchema = z.object({
 })
 export type Command = z.infer<typeof commandSchema>
 
-export const verbResponseSchema = z.object({
+export const actionResponseSchema = z.object({
   responseText: z.string(),
   scenarioState: scenarioStateSchema,
+  result: z.enum(['success', 'parse_failure', 'guard_failure']),
 })
-export type VerbResponse = z.infer<typeof verbResponseSchema>
+export type ActionResponse = z.infer<typeof actionResponseSchema>
 
 export const verbHandlerSchema = z.object({
   execute: z
     .function()
     .args(commandSchema, scenarioStateSchema)
-    .returns(verbResponseSchema),
+    .returns(actionResponseSchema),
 })
 export type VerbHandler = z.infer<typeof verbHandlerSchema>
 

@@ -1,11 +1,11 @@
-import { Command, ScenarioState, VerbResponse } from '@shared/types/scenario'
+import { ActionResponse, Command, ScenarioState } from '@shared/types/scenario'
 import { scenarioUtils } from '../../scenarioUtils'
 
-// OptionalVerbResponse allows handlers to short-circuit the pipeline.
-// ..If a handler ever returns a VerbResponse, the pipeline ends immediately.
+// OptionalActionResponse allows handlers to short-circuit the pipeline.
+// ..If a handler ever returns a ActionResponse, the pipeline ends immediately.
 // ..Otherwise, they return the input to the next handler.
-export type OptionalVerbResponse<T> =
-  | VerbResponse
+export type OptionalActionResponse<T> =
+  | ActionResponse
   | { command: Command; scenarioState: ScenarioState; context: T }
 
 // Handler and OuterHandler are distinct from VerbHandler in that they accept
@@ -15,13 +15,13 @@ export type Handler<TContext, TExtendedContext> = (
   command: Command,
   scenarioState: ScenarioState,
   context: TContext,
-) => OptionalVerbResponse<TExtendedContext>
+) => OptionalActionResponse<TExtendedContext>
 
 export type OuterHandler<TContext> = (
   command: Command,
   scenarioState: ScenarioState,
   context: TContext,
-) => VerbResponse
+) => ActionResponse
 
 // Make type-safe pipes for variable number of parameters *like a gorilla*
 // ..Inspired by RxJS approach (https://github.com/ReactiveX/rxjs/blob/f174d38554d404f21f98ab1079a101e80d777e95/src/internal/util/pipe.ts)
@@ -65,9 +65,9 @@ export function pipeHandlers<TContext>(
     command: Command,
     scenarioState: ScenarioState,
     context: TContext,
-  ): VerbResponse => {
+  ): ActionResponse => {
     let current:
-      | VerbResponse
+      | ActionResponse
       | { command: Command; scenarioState: ScenarioState; context: TContext } =
       {
         command,
@@ -79,7 +79,7 @@ export function pipeHandlers<TContext>(
     for (const handler of handlers) {
       current = handler(current.command, current.scenarioState, current.context)
 
-      if (scenarioUtils.isVerbResponse(current)) {
+      if (scenarioUtils.isActionResponse(current)) {
         return current
       }
     }
@@ -120,7 +120,7 @@ export const enrich = <T, U>(
     command: Command,
     scenarioState: ScenarioState,
     context: T,
-  ) => OptionalVerbResponse<T & U>,
+  ) => OptionalActionResponse<T & U>,
 ): Handler<T, T & U> => {
   return enricher
 }
@@ -130,7 +130,7 @@ export const transform = <T>(
     command: Command,
     scenarioState: ScenarioState,
     context: T,
-  ) => OptionalVerbResponse<T>,
+  ) => OptionalActionResponse<T>,
 ): Handler<T, T> => {
   return handler
 }

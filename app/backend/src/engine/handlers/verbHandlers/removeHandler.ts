@@ -1,16 +1,16 @@
 import {
+  ActionResponse,
   BodyPart,
   Command,
   obstructionSchema,
   ScenarioState,
   VerbHandler,
-  VerbResponse,
 } from '@shared/types/scenario'
 import { TRPCError } from '@trpc/server'
 import { scenarioUtils } from '../../scenarioUtils'
 
 export const removeHandler: VerbHandler = {
-  execute: (command: Command, scenarioState: ScenarioState): VerbResponse => {
+  execute: (command: Command, scenarioState: ScenarioState): ActionResponse => {
     let responseText = 'What would you like to remove? (NO OBJECT)'
 
     if (!command.object || !command.modifiers) {
@@ -41,7 +41,7 @@ export const removeHandler: VerbHandler = {
 const removeObstruction = (
   bodyPart: BodyPart,
   scenarioState: ScenarioState,
-): VerbResponse => {
+): ActionResponse => {
   if (bodyPart.obstructedState == obstructionSchema.Enum.unobstructed) {
     const responseText = 'The obstruction has already been removed.'
     return { responseText, scenarioState }
