@@ -81,7 +81,7 @@ const scenariosRouter = router({
       return log
     }),
 
-  deleteSession: protectedProcedure.mutation(async ({ ctx }) => {
+  deleteSession: publicProcedure.mutation(async ({ ctx }) => {
     return await scenarioService.deleteSession(ctx)
   }),
 })
