@@ -19,7 +19,7 @@ export const measureHandler: VerbHandler = {
 
       if (!scenarioUtils.isMeasureTarget(command.object)) {
         responseText = "You can't measure that."
-        return { responseText, scenarioState, result: 'parse_failure' }
+        return { responseText, scenarioState, result: 'invalid_command' }
       }
 
       switch (command.object) {

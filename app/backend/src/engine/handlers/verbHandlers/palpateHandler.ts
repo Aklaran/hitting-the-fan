@@ -20,7 +20,7 @@ const palpateBodyPart = (
 
   if (!scenarioUtils.isBodyPart(command.object)) {
     responseText = "You... probably don't want to touch that."
-    return { responseText, scenarioState, result: 'parse_failure' }
+    return { responseText, scenarioState, result: 'invalid_command' }
   }
 
   if (

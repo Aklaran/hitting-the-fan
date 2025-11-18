@@ -31,7 +31,7 @@ export const removeHandler: VerbHandler = {
       !scenarioUtils.isBodyPart(command.object)
     ) {
       responseText = `You can't remove that...`
-      return { responseText, scenarioState, result: 'parse_failure' }
+      return { responseText, scenarioState, result: 'invalid_command' }
     }
 
     return removeObstruction(command.object, scenarioState)
@@ -47,10 +47,8 @@ const removeObstruction = (
     return { responseText, scenarioState, result: 'guard_failure' }
   }
 
-  // FIXME: This is just making a reference to, and then destructively modifying, the old state!
-  const newState = scenarioState
-
-  const statePart = newState.patient.bodyParts.find(
+  // Find the body part to ensure it exists before creating new state
+  const statePart = scenarioState.patient.bodyParts.find(
     (patientPart) => patientPart.partName === bodyPart.partName,
   )
 
@@ -61,7 +59,18 @@ const removeObstruction = (
     })
   }
 
-  statePart.obstructedState = obstructionSchema.Enum.unobstructed
+  // Create immutable copy with updated obstruction state
+  const newState: ScenarioState = {
+    ...scenarioState,
+    patient: {
+      ...scenarioState.patient,
+      bodyParts: scenarioState.patient.bodyParts.map((part) =>
+        part.partName === bodyPart.partName
+          ? { ...part, obstructedState: obstructionSchema.Enum.unobstructed }
+          : part,
+      ),
+    },
+  }
 
   const responseText = `You remove the obstruction from ${bodyPart.partName}.`
   return { responseText, scenarioState: newState, result: 'success' }

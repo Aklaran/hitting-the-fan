@@ -584,6 +584,7 @@ export type Command = z.infer<typeof commandSchema>
 export const actionResultSchema = z.enum([
   'success',
   'parse_failure',
+  'invalid_command',
   'guard_failure',
   'unexpected_error',
 ])
@@ -595,6 +596,18 @@ export const actionResponseSchema = z.object({
   result: actionResultSchema.default('success'),
 })
 export type ActionResponse = z.infer<typeof actionResponseSchema>
+
+export const createCommandResultSchema = z.discriminatedUnion('result', [
+  z.object({
+    result: z.literal('success'),
+    command: commandSchema,
+  }),
+  z.object({
+    result: z.literal('parse_failure'),
+    response: actionResponseSchema,
+  }),
+])
+export type CreateCommandResult = z.infer<typeof createCommandResultSchema>
 
 export const verbHandlerSchema = z.object({
   execute: z
@@ -613,7 +626,9 @@ export const actionLogSchema = z.object({
   scenarioId: z.number().int().positive().min(1),
 
   rawInput: z.string(),
-  command: commandSchema,
+  verb: verbSchema,
+  objectType: z.string(),
+  modifiers: z.array(modifierSchema).optional(),
   actionResult: actionResultSchema,
   narratorResponse: z.string(),
 

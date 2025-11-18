@@ -13,7 +13,7 @@ export const moveHandler: VerbHandler = {
       "You cant move that. Or you can't move there. I'm truthfully not sure which you're trying to do."
 
     if (!scenarioUtils.isMoveTarget(command.object)) {
-      return { responseText, scenarioState, result: 'parse_failure' }
+      return { responseText, scenarioState, result: 'invalid_command' }
     }
 
     switch (command.object) {

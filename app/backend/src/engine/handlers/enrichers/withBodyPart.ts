@@ -13,7 +13,7 @@ const withBodyPart = <T>(
     !scenarioUtils.isBodyPartName(command.modifiers[0])
   ) {
     const responseText = 'Please provide a body part to ask about.'
-    return { responseText, scenarioState, result: 'parse_failure' }
+    return { responseText, scenarioState, result: 'invalid_command' }
   }
 
   const bodyPartName = command.modifiers[0]
@@ -25,7 +25,7 @@ const withBodyPart = <T>(
 
   if (!bodyPart) {
     const responseText = `The patient doesn't have a ${bodyPartName}. Weird.`
-    return { responseText, scenarioState, result: 'parse_failure' }
+    return { responseText, scenarioState, result: 'invalid_command' }
   }
 
   return {

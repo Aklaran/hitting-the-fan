@@ -1,8 +1,10 @@
 import {
   ActionLog,
   ActionResponse,
+  ActionResult,
   Command,
   CommandObject,
+  CreateCommandResult,
   Modifier,
   modifierSchema,
   Noun,
@@ -85,88 +87,107 @@ const processAction = (
     userId,
     sessionId,
     scenarioId,
-    (
-      input: ProcessAction,
-      actionLog: Partial<ActionLog>,
-      scenarioState: ScenarioState,
-    ): ActionResponse => {
-      const { action } = input
-
-      const initialState = scenarioUtils.appendLogEntry(
-        scenarioState,
-        action,
-        'player',
-      )
-
-      const command = createCommand(action, initialState)
-
-      if (scenarioUtils.isActionResponse(command)) {
-        const finalState = scenarioUtils.appendLogEntry(
-          command.scenarioState,
-          command.responseText,
-          'narrator',
-        )
-
-        return {
-          responseText: command.responseText,
-          scenarioState: finalState,
-          result: command.result,
-        }
-      }
-
-      actionLog.command = command
-
-      const verbHandler = getVerbHandler(command.verb)
-
-      try {
-        const executionResponse = verbHandler.execute(command, initialState)
-
-        const finalState = scenarioUtils.appendLogEntry(
-          executionResponse.scenarioState,
-          executionResponse.responseText,
-          'narrator',
-        )
-
-        return {
-          responseText: executionResponse.responseText,
-          scenarioState: finalState,
-          result: executionResponse.result,
-        }
-      } catch (error) {
-        const err = error as Error
-
-        logger.error(
-          `Error in ${command.verb} verb handler: ${err.message}, ${err.stack}`,
-        )
-
-        const finalState = scenarioUtils.appendLogEntry(
-          initialState,
-          "I'm sorry, but I encountered an error while processing your request.",
-          'narrator',
-        )
-
-        return {
-          responseText:
-            "I'm sorry, but I encountered an error while processing your request.",
-          scenarioState: finalState,
-          result: 'unexpected_error',
-        }
-      }
-    },
+    processActionCore,
   )(input, {}, scenarioState)
+}
+
+const processActionCore = (
+  input: ProcessAction,
+  actionLog: Partial<ActionLog>,
+  scenarioState: ScenarioState,
+): ActionResponse => {
+  const { action } = input
+
+  const initialState = scenarioUtils.appendLogEntry(
+    scenarioState,
+    action,
+    'player',
+  )
+
+  const createCommandResult = createCommand(action, initialState)
+
+  if (createCommandResult.result === 'parse_failure') {
+    return appendNarratorResponse(
+      createCommandResult.response.scenarioState,
+      createCommandResult.response.responseText,
+      createCommandResult.response.result,
+    )
+  }
+
+  const command = createCommandResult.command
+
+  actionLog.verb = command.verb
+  actionLog.objectType = serializeCommandObjectForLog(command.object)
+  actionLog.modifiers = command.modifiers
+
+  const verbHandler = getVerbHandler(command.verb)
+
+  try {
+    const executionResponse = verbHandler.execute(command, initialState)
+
+    return appendNarratorResponse(
+      executionResponse.scenarioState,
+      executionResponse.responseText,
+      executionResponse.result,
+    )
+  } catch (error) {
+    const err = error as Error
+
+    logger.error(
+      `Error in ${command.verb} verb handler: ${err.message}, ${err.stack}`,
+    )
+
+    return appendNarratorResponse(
+      initialState,
+      "I'm sorry, but I encountered an error while processing your request.",
+      'unexpected_error',
+    )
+  }
+}
+
+const serializeCommandObjectForLog = (obj?: CommandObject): string => {
+  if (!obj) return 'undefined'
+
+  if (typeof obj === 'string') return obj
+
+  if ('partName' in obj) return `bodyPart:${obj.partName}`
+  if ('name' in obj && 'age' in obj) return `patient:${obj.name}:${obj.age}`
+  if ('description' in obj) return `environment:${obj.description}`
+
+  return 'unknown'
+}
+
+const appendNarratorResponse = (
+  scenarioState: ScenarioState,
+  responseText: string,
+  actionResult: ActionResult,
+): ActionResponse => {
+  const newState = scenarioUtils.appendLogEntry(
+    scenarioState,
+    responseText,
+    'narrator',
+  )
+  return {
+    responseText,
+    scenarioState: newState,
+    result: actionResult,
+  }
 }
 
 const createCommand = (
   action: string,
   scenarioState: ScenarioState,
-): Command | ActionResponse => {
+): CreateCommandResult => {
   const tokens = action.split(' ')
 
   if (tokens.length === 0) {
     return {
-      responseText: 'You did not provide an action.',
-      scenarioState,
       result: 'parse_failure',
+      response: {
+        responseText: 'You did not provide an action.',
+        scenarioState,
+        result: 'parse_failure',
+      },
     }
   }
 
@@ -174,9 +195,12 @@ const createCommand = (
 
   if (!scenarioUtils.isVerb(verb)) {
     return {
-      responseText: `"${verb}" is not a valid verb.`,
-      scenarioState,
       result: 'parse_failure',
+      response: {
+        responseText: `"${verb}" is not a valid verb.`,
+        scenarioState,
+        result: 'parse_failure',
+      },
     }
   }
 
@@ -184,23 +208,32 @@ const createCommand = (
 
   if (!scenarioUtils.isNoun(objectName)) {
     return {
-      responseText: `"${objectName}" is not a valid object.`,
-      scenarioState,
       result: 'parse_failure',
+      response: {
+        responseText: `"${objectName}" is not a valid object.`,
+        scenarioState,
+        result: 'parse_failure',
+      },
     }
   }
 
   const object = resolveObject(objectName, scenarioState)
 
   if (scenarioUtils.isActionResponse(object)) {
-    return object
+    return {
+      result: 'parse_failure',
+      response: object,
+    }
   }
 
   // HACK: Only look for modifiers from the 2nd elem of tokens onward
   const modifiers = resolveModifiers(tokens.slice(2), scenarioState)
 
   if (scenarioUtils.isActionResponse(modifiers)) {
-    return modifiers
+    return {
+      result: 'parse_failure',
+      response: modifiers,
+    }
   }
 
   const command: Command = {
@@ -209,7 +242,10 @@ const createCommand = (
     modifiers,
   }
 
-  return command
+  return {
+    result: 'success',
+    command,
+  }
 }
 
 const getVerbHandler = (verb: Verb): VerbHandler => {

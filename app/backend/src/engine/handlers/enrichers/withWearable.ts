@@ -10,7 +10,7 @@ const withWearable = <T>(
 ): OptionalActionResponse<T & WearableContext> => {
   if (!scenarioUtils.isWearable(command.object)) {
     const responseText = 'Now why would you want to put that on?'
-    return { responseText, scenarioState, result: 'parse_failure' }
+    return { responseText, scenarioState, result: 'invalid_command' }
   }
 
   return {

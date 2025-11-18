@@ -11,7 +11,7 @@ const withAskable = <T>(
   if (!scenarioUtils.isQuestionTarget(command.object)) {
     const responseText =
       "You probably don't want to ask your patient about that..."
-    return { responseText, scenarioState, result: 'parse_failure' }
+    return { responseText, scenarioState, result: 'invalid_command' }
   }
 
   return {

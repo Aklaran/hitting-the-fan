@@ -10,7 +10,7 @@ const withPerformable = <T>(
 ): OptionalActionResponse<T & PerformableContext> => {
   if (!scenarioUtils.isPerformTarget(command.object)) {
     const responseText = "You don't know how to perform that."
-    return { responseText, scenarioState, result: 'parse_failure' }
+    return { responseText, scenarioState, result: 'invalid_command' }
   }
 
   return {

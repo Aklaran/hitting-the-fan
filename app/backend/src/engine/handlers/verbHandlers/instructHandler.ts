@@ -16,7 +16,7 @@ export const instructHandler: VerbHandler = {
 
     if (!scenarioUtils.isInstructTarget(command.object)) {
       responseText = `You probably don't want to tell your patient to do that...`
-      return { responseText, scenarioState, result: 'parse_failure' }
+      return { responseText, scenarioState, result: 'invalid_command' }
     }
 
     const instruction = command.object
