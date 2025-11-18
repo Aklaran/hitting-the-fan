@@ -466,6 +466,7 @@ export const nounSchema = z.enum([
   // HACK: Is there a better way to nested unwrap these zod enums?
   ...bodyPartNames.options[0].options,
   ...bodyPartNames.options[1].options,
+  ...bodyPartNames.options[2].options,
   'pulse',
   'respiratoryRate',
   'in',
