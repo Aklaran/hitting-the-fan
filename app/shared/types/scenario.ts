@@ -608,9 +608,9 @@ export type VerbHandler = z.infer<typeof verbHandlerSchema>
 //#region Logging
 export const actionLogSchema = z.object({
   timestamp: z.date(),
-  userId: z.string(),
+  userId: z.number().int().positive().min(1),
   sessionId: z.string(),
-  scenarioKey: z.string(),
+  scenarioId: z.number().int().positive().min(1),
 
   rawInput: z.string(),
   command: commandSchema,

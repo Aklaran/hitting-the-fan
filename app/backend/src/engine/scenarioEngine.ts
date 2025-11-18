@@ -1,14 +1,18 @@
 import {
+  ActionLog,
+  ActionResponse,
   Command,
   CommandObject,
   Modifier,
   modifierSchema,
   Noun,
   ProcessAction,
+  ScenarioId,
   ScenarioState,
   Verb,
   VerbHandler,
 } from '@shared/types/scenario'
+import { UserId } from '@shared/types/user'
 import logger from '@shared/util/logger'
 import { askHandler } from './handlers/verbHandlers/askHandler'
 import { controlHandler } from './handlers/verbHandlers/controlHandler'
@@ -37,64 +41,170 @@ const verbHandlers: Record<Verb, VerbHandler> = {
   perform: performHandler,
 }
 
+const withActionLog = (
+  userId: UserId,
+  sessionId: string,
+  scenarioId: ScenarioId,
+  action: (
+    input: ProcessAction,
+    actionLog: Partial<ActionLog>,
+    scenarioState: ScenarioState,
+  ) => ActionResponse,
+) => {
+  return (
+    input: ProcessAction,
+    actionLog: Partial<ActionLog>,
+    scenarioState: ScenarioState,
+  ) => {
+    actionLog.timestamp = new Date()
+    actionLog.userId = userId
+    actionLog.sessionId = sessionId
+    actionLog.scenarioId = scenarioId
+
+    const response = action(input, actionLog, scenarioState)
+
+    actionLog.rawInput = input.action
+    actionLog.actionResult = response.result
+    actionLog.narratorResponse = response.responseText
+    actionLog.duration = new Date().getTime() - actionLog.timestamp!.getTime()
+
+    logger.info(actionLog, 'Action Processed')
+
+    return response
+  }
+}
+
 const processAction = (
+  userId: UserId,
+  sessionId: string,
+  scenarioId: ScenarioId,
   input: ProcessAction,
   scenarioState: ScenarioState,
-): ScenarioState => {
-  const { action } = input
+): ActionResponse => {
+  return withActionLog(
+    userId,
+    sessionId,
+    scenarioId,
+    (
+      input: ProcessAction,
+      actionLog: Partial<ActionLog>,
+      scenarioState: ScenarioState,
+    ): ActionResponse => {
+      const { action } = input
 
-  const initialState = scenarioUtils.appendLogEntry(
-    scenarioState,
-    action,
-    'player',
-  )
+      const initialState = scenarioUtils.appendLogEntry(
+        scenarioState,
+        action,
+        'player',
+      )
 
-  const command = createCommand(action, initialState)
+      const command = createCommand(action, initialState)
 
-  const verbHandler = getVerbHandler(command.verb)
+      if (scenarioUtils.isActionResponse(command)) {
+        const finalState = scenarioUtils.appendLogEntry(
+          command.scenarioState,
+          command.responseText,
+          'narrator',
+        )
 
-  try {
-    const executionResponse = verbHandler.execute(command, initialState)
+        return {
+          responseText: command.responseText,
+          scenarioState: finalState,
+          result: command.result,
+        }
+      }
 
-    const finalState = scenarioUtils.appendLogEntry(
-      executionResponse.scenarioState,
-      executionResponse.responseText,
-      'narrator',
-    )
+      actionLog.command = command
 
-    return finalState
-  } catch (error) {
-    const err = error as Error
+      const verbHandler = getVerbHandler(command.verb)
 
-    logger.error(
-      `Error in ${command.verb} verb handler: ${err.message}, ${err.stack}`,
-    )
+      try {
+        const executionResponse = verbHandler.execute(command, initialState)
 
-    const finalState = scenarioUtils.appendLogEntry(
-      initialState,
-      "I'm sorry, but I encountered an error while processing your request.",
-      'narrator',
-    )
+        const finalState = scenarioUtils.appendLogEntry(
+          executionResponse.scenarioState,
+          executionResponse.responseText,
+          'narrator',
+        )
 
-    return finalState
-  }
+        return {
+          responseText: executionResponse.responseText,
+          scenarioState: finalState,
+          result: executionResponse.result,
+        }
+      } catch (error) {
+        const err = error as Error
+
+        logger.error(
+          `Error in ${command.verb} verb handler: ${err.message}, ${err.stack}`,
+        )
+
+        const finalState = scenarioUtils.appendLogEntry(
+          initialState,
+          "I'm sorry, but I encountered an error while processing your request.",
+          'narrator',
+        )
+
+        return {
+          responseText:
+            "I'm sorry, but I encountered an error while processing your request.",
+          scenarioState: finalState,
+          result: 'unexpected_error',
+        }
+      }
+    },
+  )(input, {}, scenarioState)
 }
 
 const createCommand = (
   action: string,
   scenarioState: ScenarioState,
-): Command => {
+): Command | ActionResponse => {
   const tokens = action.split(' ')
 
-  const objectName = tokens[1] as Noun
+  if (tokens.length === 0) {
+    return {
+      responseText: 'You did not provide an action.',
+      scenarioState,
+      result: 'parse_failure',
+    }
+  }
+
+  const verb = tokens[0].toLowerCase()
+
+  if (!scenarioUtils.isVerb(verb)) {
+    return {
+      responseText: `"${verb}" is not a valid verb.`,
+      scenarioState,
+      result: 'parse_failure',
+    }
+  }
+
+  const objectName = tokens[1]
+
+  if (!scenarioUtils.isNoun(objectName)) {
+    return {
+      responseText: `"${objectName}" is not a valid object.`,
+      scenarioState,
+      result: 'parse_failure',
+    }
+  }
+
   const object = resolveObject(objectName, scenarioState)
 
-  // HACK: Only look for modifiers from the 2nd elem of tokens onward
-  const modifiers = resolveModifiers(tokens.slice(2))
+  if (scenarioUtils.isActionResponse(object)) {
+    return object
+  }
 
-  // TODO: Gracefully handle the case of an unknown verb
+  // HACK: Only look for modifiers from the 2nd elem of tokens onward
+  const modifiers = resolveModifiers(tokens.slice(2), scenarioState)
+
+  if (scenarioUtils.isActionResponse(modifiers)) {
+    return modifiers
+  }
+
   const command: Command = {
-    verb: tokens[0].toLowerCase() as Verb,
+    verb,
     object,
     modifiers,
   }
@@ -109,11 +219,21 @@ const getVerbHandler = (verb: Verb): VerbHandler => {
 const resolveObject = (
   objectName: Noun,
   scenarioState: ScenarioState,
-): CommandObject | undefined => {
+): CommandObject | ActionResponse => {
   if (scenarioUtils.isBodyPartName(objectName)) {
-    return scenarioState.patient.bodyParts.find(
+    const bodyPart = scenarioState.patient.bodyParts.find(
       (part) => part.partName === objectName,
     )
+
+    if (!bodyPart) {
+      return {
+        responseText: `The patient does not have a ${objectName}.`,
+        scenarioState,
+        result: 'parse_failure',
+      }
+    }
+
+    return bodyPart
   }
 
   if (scenarioUtils.isQuestionTarget(objectName)) {
@@ -148,14 +268,34 @@ const resolveObject = (
     return scenarioState.patient
   }
 
-  return undefined
+  return {
+    responseText: `"${objectName}" is not a valid object.`,
+    scenarioState,
+    result: 'parse_failure',
+  }
 }
 
-const resolveModifiers = (tokens: string[]): Modifier[] => {
-  // TODO: notify the player if they passed in invalid modifiers
-  return tokens.filter(
+const resolveModifiers = (
+  tokens: string[],
+  scenarioState: ScenarioState,
+): Modifier[] | ActionResponse => {
+  if (tokens.length === 0) {
+    return []
+  }
+
+  const modifiers = tokens.filter(
     (token): token is Modifier => modifierSchema.safeParse(token).success,
   )
+
+  if (modifiers.length === 0) {
+    return {
+      responseText: `"${tokens.join(' ')}" is not a valid modifier.`,
+      scenarioState,
+      result: 'parse_failure',
+    }
+  }
+
+  return modifiers
 }
 
 export const scenarioEngine = {

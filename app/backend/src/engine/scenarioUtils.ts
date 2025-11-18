@@ -26,6 +26,8 @@ import {
   measureTargetSchema,
   MoveTarget,
   moveTargetSchema,
+  Noun,
+  nounSchema,
   Patient,
   PerformTarget,
   performTargetSchema,
@@ -42,6 +44,8 @@ import {
   ScenarioLogEntry,
   ScenarioState,
   scenarioStateSchema,
+  Verb,
+  verbSchema,
   Viewable,
   viewableSchema,
   Wearable,
@@ -146,6 +150,14 @@ const isInventoryItem = (obj: unknown): obj is InventoryItem => {
 
 const isMoveTarget = (obj: unknown): obj is MoveTarget => {
   return isSchema(moveTargetSchema, obj)
+}
+
+const isVerb = (str: string): str is Verb => {
+  return isSchema(verbSchema, str)
+}
+
+const isNoun = (str: string): str is Noun => {
+  return isSchema(nounSchema, str)
 }
 
 const getBodyPartByName = (
@@ -403,6 +415,8 @@ export const scenarioUtils = {
   isPosition,
   isInventoryItem,
   isMoveTarget,
+  isVerb,
+  isNoun,
   getBodyPartByName,
   getAilmentsByBodyPart,
   getEffectsOnBodyPart,
