@@ -489,6 +489,7 @@ export const questionTargetSchema = z.enum([
   'intensityTrend',
   'normality',
   'happenedBefore',
+  'mechanismOfInjury',
 ])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 

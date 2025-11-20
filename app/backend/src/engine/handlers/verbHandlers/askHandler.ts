@@ -329,6 +329,16 @@ const responseBank: Record<
         return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
+
+  mechanismOfInjury: (command, scenarioState, context) =>
+    pipeHandlers(
+      guard(hasLevelOfResponsiveness(LORCapabilities.knowsEvents)),
+      enrich<AskableContext, AilmentContext>(withChiefComplaint),
+      transform((_, scenarioState, context) => {
+        const responseText = `The patient responds, "${context.ailment.mechanismOfInjury}"`
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 }
 
 const askAboutDASH = (conditionName: string, hasCondition: boolean) => {
