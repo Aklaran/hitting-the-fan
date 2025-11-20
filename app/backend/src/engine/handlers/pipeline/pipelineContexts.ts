@@ -2,6 +2,7 @@ import {
   ailmentSchema,
   bodyPartSchema,
   controlTargetSchema,
+  measureTargetSchema,
   medicalTagSchema,
   performTargetSchema,
   questionTargetSchema,
@@ -51,3 +52,8 @@ export const performableContextSchema = z.object({
   performable: performTargetSchema,
 })
 export type PerformableContext = z.infer<typeof performableContextSchema>
+
+export const measureableContextSchema = z.object({
+  measureable: measureTargetSchema,
+})
+export type MeasureableContext = z.infer<typeof measureableContextSchema>

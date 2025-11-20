@@ -1,8 +1,7 @@
 import {
   ActionResponse,
-  CirculationCapableBodyPart,
   Command,
-  CSMCapableBodyPart,
+  MeasureTarget,
   MOTION_PRIORITIES,
   PULSE_QUALITY_PRIORITIES,
   ScenarioState,
@@ -10,134 +9,142 @@ import {
   VerbHandler,
 } from '@shared/types/scenario'
 import { scenarioUtils } from '../../scenarioUtils'
+import withCirculationCapableBodyPart, {
+  CirculationCapableBodyPartContext,
+} from '../enrichers/withCirculationCapableBodyPart'
+import withExtremity, { ExtremityContext } from '../enrichers/withExtremity'
+import withMeasureable from '../enrichers/withMeasureable'
+import hasCommandObject from '../guards/hasCommandObject'
+import isDistanceFromPatient from '../guards/isDistanceFromPatient'
+import {
+  enrich,
+  guard,
+  Handler,
+  pipeHandlers,
+  transform,
+} from '../pipeline/handlerPipe'
+import {
+  MeasureableContext,
+  PipelineContext,
+} from '../pipeline/pipelineContexts'
 
 export const measureHandler: VerbHandler = {
-  execute: scenarioUtils.withDistanceCheck(
-    'near',
-    (command: Command, scenarioState: ScenarioState): ActionResponse => {
-      let responseText = 'What do you want to measure? (NO OBJECT)'
-
-      if (!scenarioUtils.isMeasureTarget(command.object)) {
-        responseText = "You can't measure that."
-        return { responseText, scenarioState, result: 'invalid_command' }
-      }
-
-      switch (command.object) {
-        case 'respiration':
-          responseText = measureRespiratoryRate(scenarioState)
-          break
-        case 'pulse':
-          responseText = withCirculationCapablePart(measurePulse)(
-            command,
-            scenarioState,
-          )
-          break
-        case 'sensation':
-          responseText = withExtremity(measureSensation)(command, scenarioState)
-          break
-        case 'motion':
-          responseText = withExtremity(measureMotion)(command, scenarioState)
-          break
-        case 'skinTemperature':
-          responseText = measureSkinTemperature(scenarioState)
-          break
-        case 'skinColor':
-          responseText = measureSkinColor(scenarioState)
-          break
-        case 'skinMoisture':
-          responseText = measureSkinMoisture(scenarioState)
-          break
-        case 'pupils':
-          responseText = measurePupils(scenarioState)
-          break
-        case 'temperature':
-          responseText = scenarioUtils.withInventoryCheck(measureTemperature)(
-            'thermometer',
-            scenarioState,
-          )
-          break
-
-        default:
-          responseText = "You don't know how to measure that."
-      }
-
-      return { responseText, scenarioState, result: 'success' }
-    },
-  ),
+  execute: (command: Command, scenarioState: ScenarioState): ActionResponse => {
+    return pipeHandlers(
+      guard<PipelineContext>(hasCommandObject),
+      guard(isDistanceFromPatient('near')),
+      enrich<PipelineContext, MeasureableContext>(withMeasureable),
+      transform<MeasureableContext>((command, scenarioState, context) => {
+        return responseBank[context.measureable](
+          command,
+          scenarioState,
+          context,
+        )
+      }),
+    )(command, scenarioState, {})
+  },
 }
 
-const withCirculationCapablePart = (
-  handler: (
-    scenarioState: ScenarioState,
-    part: CirculationCapableBodyPart,
-    partEffects: CirculationCapableBodyPart[],
-  ) => string,
-) => {
-  return (command: Command, scenarioState: ScenarioState) => {
-    if (
-      !command.modifiers ||
-      !scenarioUtils.isCirculationCapablePartName(command.modifiers[0])
-    ) {
-      return `Where would you like to take the pulse?`
-    }
+const responseBank: Record<
+  MeasureTarget,
+  Handler<MeasureableContext, MeasureableContext>
+> = {
+  respiration: (command, scenarioState, context) =>
+    pipeHandlers(
+      transform(() => {
+        const responseText = measureRespiratoryRate(scenarioState)
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 
-    const partName = command.modifiers[0]
+  pulse: (command, scenarioState, context) =>
+    pipeHandlers(
+      enrich<MeasureableContext, CirculationCapableBodyPartContext>(
+        withCirculationCapableBodyPart,
+      ),
+      transform((_, scenarioState, context) => {
+        const responseText = measurePulse(
+          scenarioState,
+          context.bodyPart,
+          context.partEffects,
+        )
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 
-    const part = scenarioState.patient.bodyParts.find(
-      (part): part is CirculationCapableBodyPart => part.partName === partName,
-    )
+  sensation: (command, scenarioState, context) =>
+    pipeHandlers(
+      enrich<MeasureableContext, ExtremityContext>(withExtremity),
+      transform((_, scenarioState, context) => {
+        const responseText = measureSensation(
+          scenarioState,
+          context.bodyPart,
+          context.partEffects,
+        )
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 
-    if (!scenarioUtils.isBodyPart(part)) {
-      return `The patient doesn't seem to have a ${partName}. Odd.`
-    }
+  motion: (command, scenarioState, context) =>
+    pipeHandlers(
+      enrich<MeasureableContext, ExtremityContext>(withExtremity),
+      transform((_, scenarioState, context) => {
+        const responseText = measureMotion(
+          scenarioState,
+          context.bodyPart,
+          context.partEffects,
+        )
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 
-    const partEffects = scenarioUtils.getEffectsOnBodyPart(
-      scenarioState.patient.ailments,
-      part,
-    )
+  skinTemperature: (command, scenarioState, context) =>
+    pipeHandlers(
+      transform(() => {
+        const responseText = measureSkinTemperature(scenarioState)
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 
-    return handler(scenarioState, part, partEffects)
-  }
-}
+  skinColor: (command, scenarioState, context) =>
+    pipeHandlers(
+      transform(() => {
+        const responseText = measureSkinColor(scenarioState)
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 
-const withExtremity = (
-  handler: (
-    scenarioState: ScenarioState,
-    part: CSMCapableBodyPart,
-    partEffects: CSMCapableBodyPart[],
-  ) => string,
-) => {
-  return (command: Command, scenarioState: ScenarioState) => {
-    if (
-      !command.modifiers ||
-      !scenarioUtils.isExtremityName(command.modifiers[0])
-    ) {
-      return `Where would you like to take the pulse?`
-    }
+  skinMoisture: (command, scenarioState, context) =>
+    pipeHandlers(
+      transform(() => {
+        const responseText = measureSkinMoisture(scenarioState)
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 
-    const partName = command.modifiers[0]
+  pupils: (command, scenarioState, context) =>
+    pipeHandlers(
+      transform(() => {
+        const responseText = measurePupils(scenarioState)
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 
-    const part = scenarioState.patient.bodyParts.find(
-      (part): part is CSMCapableBodyPart => part.partName === partName,
-    )
-
-    if (!scenarioUtils.isBodyPart(part)) {
-      return `The patient doesn't seem to have a ${partName}. Odd.`
-    }
-
-    const partEffects = scenarioUtils.getEffectsOnBodyPart(
-      scenarioState.patient.ailments,
-      part,
-    )
-
-    return handler(scenarioState, part, partEffects)
-  }
+  temperature: (command, scenarioState, context) =>
+    pipeHandlers(
+      transform(() => {
+        const responseText = scenarioUtils.withInventoryCheck(
+          measureTemperature,
+        )('thermometer', scenarioState)
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context),
 }
 
 const measurePulse = (
   scenarioState: ScenarioState,
-  part: CirculationCapableBodyPart,
-  partEffects: CirculationCapableBodyPart[],
+  part: CirculationCapableBodyPartContext['bodyPart'],
+  partEffects: CirculationCapableBodyPartContext['partEffects'],
 ) => {
   const heartRate = scenarioUtils.calculateHeartRate(scenarioState.patient)
 
@@ -164,8 +171,8 @@ const measureRespiratoryRate = (scenarioState: ScenarioState) => {
 
 const measureSensation = (
   _: ScenarioState,
-  part: CSMCapableBodyPart,
-  partEffects: CSMCapableBodyPart[],
+  part: ExtremityContext['bodyPart'],
+  partEffects: ExtremityContext['partEffects'],
 ) => {
   const sensation = scenarioUtils.getMostProminentBodyPartValue(
     partEffects,
@@ -178,8 +185,8 @@ const measureSensation = (
 
 const measureMotion = (
   _: ScenarioState,
-  part: CSMCapableBodyPart,
-  partEffects: CSMCapableBodyPart[],
+  part: ExtremityContext['bodyPart'],
+  partEffects: ExtremityContext['partEffects'],
 ) => {
   const hasAilments = partEffects && partEffects.length > 0
 
