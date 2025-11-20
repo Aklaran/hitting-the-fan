@@ -33,6 +33,10 @@ export type Distance = z.infer<typeof distanceSchema>
 
 // BODY PART //
 
+// TODO: Get a better set of options for this
+export const motionSchema = z.enum(['normal', 'tremor', 'immobile'])
+export type Motion = z.infer<typeof motionSchema>
+
 export const csmCapablePartNames = z.enum([
   'leftHand',
   'rightHand',
@@ -72,6 +76,7 @@ export type Obstruction = z.infer<typeof obstructionSchema>
 
 export const baseBodyPartSchema = z.object({
   partName: basicPartNames,
+  motion: motionSchema,
   description: z.object({
     [obstructionSchema.Enum.obstructed]: z.string(),
     [obstructionSchema.Enum.unobstructed]: z.string(),
@@ -210,10 +215,6 @@ export const MOTION_PRIORITIES: Record<Motion, number> = {
   tremor: 1,
   normal: 2,
 }
-
-// TODO: Get a better set of options for this
-export const motionSchema = z.enum(['normal', 'tremor', 'immobile'])
-export type Motion = z.infer<typeof motionSchema>
 
 export const csmSchema = z.union([
   motionSchema,

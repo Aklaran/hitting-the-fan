@@ -49,6 +49,7 @@ const mvpScenario: CreateScenarioSchema = {
         // TODO: bake "normal" bodyparts into the model, only modify with ailments?
         {
           partName: 'leftLeg',
+          motion: 'normal',
           description: {
             obstructed: 'The leg is covered by clothing.',
             unobstructed: 'The skin of the leg is exposed.',
@@ -59,6 +60,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'rightLeg',
+          motion: 'normal',
           description: {
             obstructed: 'The leg is covered by clothing.',
             unobstructed: 'The skin of the leg is exposed',
@@ -125,6 +127,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'head',
+          motion: 'normal',
           description: {
             obstructed: 'The head is covered by a hat.',
             unobstructed: 'The head is uncovered.',
@@ -135,6 +138,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'neck',
+          motion: 'normal',
           description: {
             obstructed: 'The neck is covered by a buff.',
             unobstructed: 'The neck is uncovered.',
@@ -146,6 +150,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'spine',
+          motion: 'normal',
           description: {
             obstructed: 'The spine is covered by clothing.',
             unobstructed: 'The spine looks normal...',
@@ -156,6 +161,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'back',
+          motion: 'normal',
           description: {
             obstructed: 'The back is covered by clothing.',
             unobstructed: 'The back looks normal...',
@@ -166,6 +172,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'mouth',
+          motion: 'normal',
           description: {
             obstructed: 'The patient is chewing on gum.',
             unobstructed: 'The mouth looks normal.',
@@ -175,6 +182,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'chest',
+          motion: 'normal',
           description: {
             obstructed: 'The chest is covered by clothing.',
             unobstructed: 'The chest looks normal...',
@@ -185,6 +193,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'stomach',
+          motion: 'normal',
           description: {
             obstructed: 'The stomach is covered by clothing.',
             unobstructed: 'The stomach looks normal...',
@@ -195,6 +204,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'hips',
+          motion: 'normal',
           description: {
             obstructed: 'The hips are covered by clothing.',
             unobstructed: 'The hips looks normal...',
@@ -205,6 +215,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'leftArm',
+          motion: 'normal',
           description: {
             obstructed: 'The left arm is covered by clothing.',
             unobstructed: 'The left arm looks normal...',
@@ -215,6 +226,7 @@ const mvpScenario: CreateScenarioSchema = {
         },
         {
           partName: 'rightArm',
+          motion: 'normal',
           description: {
             obstructed: 'The right arm is covered by clothing.',
             unobstructed: 'The right arm looks normal...',
