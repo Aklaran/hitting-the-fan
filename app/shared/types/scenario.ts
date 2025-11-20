@@ -564,6 +564,7 @@ export const nounSchema = z.enum([
   ...instructTargetSchema.options,
   ...performTargetSchema.options,
   ...removeTargetSchema.options,
+  ...measureTargetSchema.options,
 ])
 export type Noun = z.infer<typeof nounSchema>
 
