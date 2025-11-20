@@ -273,6 +273,7 @@ export const ailmentSchema = z.object({
   onsetTime: z.string(),
   intensityTrend: z.string(),
   normality: z.string(),
+  happenedBefore: z.string(),
 
   // TODO: make effects optional
   effects: z.object({
@@ -486,6 +487,7 @@ export const questionTargetSchema = z.enum([
   'severity',
   'intensityTrend',
   'normality',
+  'happenedBefore',
 ])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 

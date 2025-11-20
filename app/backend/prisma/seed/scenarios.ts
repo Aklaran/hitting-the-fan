@@ -239,10 +239,11 @@ const mvpScenario: CreateScenarioSchema = {
           referral: 'Nope, just my ankle.',
           severity: '8/10 pretty bad man.',
           onsetTime: 'Just now, you saw it happen!',
-          normality:
-            "No man, my ankle isn't usually broken, believe it or not.",
           intensityTrend:
             "It's starting to hurt more now that you're pestering me about it.",
+          normality:
+            "No man, my ankle isn't usually broken, believe it or not.",
+          happenedBefore: "Yeah I've broken this ankle before.",
           effects: {
             circulation: {
               heartRateMultiplier: 1.3,
