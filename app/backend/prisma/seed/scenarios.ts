@@ -22,8 +22,6 @@ const mvpScenario: CreateScenarioSchema = {
         near: 'A man on the ground, whimpering like a puppy and holding his leg. From close up, you can see that something is wrong with his ankle.',
         far: 'A man on the ground, whimpering like a puppy and holding his leg.',
       },
-      mechanismOfInjury:
-        'The patient appears to have taken a gnarly lead whip and come down hard on their ankle.',
       age: 30,
       gender: 'male',
       temperatureFahrenheit: 98.6,
@@ -231,6 +229,7 @@ const mvpScenario: CreateScenarioSchema = {
           name: 'Broken ankle',
           description: 'The boy broke is ankle maaaaan',
           isChiefComplaint: true,
+          mechanismOfInjury: 'I was climbing a wall and fell down.',
           provokers: 'It hurts when I move it.',
           palliatives: "It hurts less when I don't move it.",
           quality: 'Sharp!',

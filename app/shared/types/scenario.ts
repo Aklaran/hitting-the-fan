@@ -262,6 +262,8 @@ export const ailmentSchema = z.object({
   name: z.string(),
   description: z.string(),
 
+  mechanismOfInjury: z.string(),
+
   isChiefComplaint: z.boolean(),
   provokers: z.string(),
   palliatives: z.string(),
@@ -375,7 +377,6 @@ export const patientSchema = z.object({
   coreTemperatureCelsius: z.number().int().nonnegative().max(45),
   bodyParts: z.array(bodyPartSchema),
   ailments: z.array(ailmentSchema),
-  mechanismOfInjury: z.string(),
   instructions: z.object({
     dontMove: z.boolean(),
     acceptCare: z.boolean(),

@@ -300,7 +300,7 @@ const resolveObject = (
     return scenarioState.environment
   }
 
-  if (objectName === 'patient' || objectName === 'mechanismOfInjury') {
+  if (objectName === 'patient') {
     return scenarioState.patient
   }
 
