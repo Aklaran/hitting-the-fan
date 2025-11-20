@@ -22,6 +22,7 @@
     "---------------------------------------------------------------------------- Code Gen": "",
     "generate:watch": "./bin/generate-watch.sh",
     "generate": "cd app/backend && pnpm generate",
+    "seed:watch": "./bin/seed-watch.sh",
     "---------------------------------------------------------------------------- Lint": "",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "---------------------------------------------------------------------------- Test": "",
