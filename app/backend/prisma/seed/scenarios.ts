@@ -239,6 +239,8 @@ const mvpScenario: CreateScenarioSchema = {
           referral: 'Nope, just my ankle.',
           severity: '8/10 pretty bad man.',
           onsetTime: 'Just now, you saw it happen!',
+          normality:
+            "No man, my ankle isn't usually broken, believe it or not.",
           intensityTrend:
             "It's starting to hurt more now that you're pestering me about it.",
           effects: {

@@ -272,6 +272,7 @@ export const ailmentSchema = z.object({
   severity: z.string(),
   onsetTime: z.string(),
   intensityTrend: z.string(),
+  normality: z.string(),
 
   // TODO: make effects optional
   effects: z.object({
@@ -458,24 +459,6 @@ export type Verb = z.infer<typeof verbSchema>
 export const directionSchema = z.enum(['in'])
 export type Direction = z.infer<typeof directionSchema>
 
-export const nounSchema = z.enum([
-  'patient',
-  'leg',
-  'name',
-  'environment',
-  // HACK: Is there a better way to nested unwrap these zod enums?
-  ...bodyPartNames.options[0].options,
-  ...bodyPartNames.options[1].options,
-  ...bodyPartNames.options[2].options,
-  'pulse',
-  'respiratoryRate',
-  'in',
-  'hazards',
-  'mechanismOfInjury',
-  ...inventoryItemSchema.options,
-])
-export type Noun = z.infer<typeof nounSchema>
-
 export const questionTargetSchema = z.enum([
   'name',
   'age',
@@ -502,6 +485,7 @@ export const questionTargetSchema = z.enum([
   'referral',
   'severity',
   'intensityTrend',
+  'normality',
 ])
 export type QuestionTarget = z.infer<typeof questionTargetSchema>
 
@@ -557,6 +541,27 @@ export type RemoveTarget = z.infer<typeof removeTargetSchema>
 
 export const moveTargetSchema = z.union([directionSchema, patientSchema])
 export type MoveTarget = z.infer<typeof moveTargetSchema>
+
+export const nounSchema = z.enum([
+  'patient',
+  'leg',
+  'name',
+  'environment',
+  // HACK: Is there a better way to nested unwrap these zod enums?
+  ...bodyPartNames.options[0].options,
+  ...bodyPartNames.options[1].options,
+  ...bodyPartNames.options[2].options,
+  'pulse',
+  'respiratoryRate',
+  'in',
+  'hazards',
+  'mechanismOfInjury',
+  ...questionTargetSchema.options,
+  ...instructTargetSchema.options,
+  ...performTargetSchema.options,
+  ...removeTargetSchema.options,
+])
+export type Noun = z.infer<typeof nounSchema>
 
 // Define the command object schema separately for better type inference
 export const commandObjectSchema = z.union([
