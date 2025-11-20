@@ -28,12 +28,18 @@ const withBodyPart = <T>(
     return { responseText, scenarioState, result: 'invalid_command' }
   }
 
+  const partEffects = scenarioUtils.getEffectsOnBodyPart(
+    scenarioState.patient.ailments,
+    bodyPart,
+  )
+
   return {
     command,
     scenarioState,
     context: {
       ...context,
       bodyPart,
+      partEffects,
     },
   }
 }
