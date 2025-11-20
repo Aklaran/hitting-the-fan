@@ -6,36 +6,68 @@ import { LogLevel } from '@shared/constants/logLevels'
 // Log Level
 //
 
-// TODO: Enable log levels
+const isDevelopment = process.env.NODE_ENV !== 'production'
 
-// const DEFAULT_LOG_LEVEL_PROD = LogLevel.INFO;
-// const DEFAULT_LOG_LEVEL_LOCAL = LogLevel.DEBUG;
+// Get log level from environment variable, or default based on environment
+const getLogLevel = (): LogLevel => {
+  const envLogLevel = process.env.LOG_LEVEL?.toLowerCase()
 
-// const isLocalEnvironment = environment === EnvironmentName.LOCAL;
+  // If LOG_LEVEL is set, validate and use it
+  if (envLogLevel) {
+    const validLevels = Object.values(LogLevel) as string[]
+    if (validLevels.includes(envLogLevel)) {
+      return envLogLevel as LogLevel
+    }
+    // If invalid, warn and fall back to default
+    console.warn(
+      `Invalid LOG_LEVEL "${envLogLevel}". Valid levels are: ${validLevels.join(', ')}. Falling back to default.`,
+    )
+  }
 
-// const DEFAULT_LOG_LEVEL = isLocalEnvironment
-//   ? DEFAULT_LOG_LEVEL_LOCAL
-//   : DEFAULT_LOG_LEVEL_PROD;
+  // Default based on environment
+  return isDevelopment ? LogLevel.DEBUG : LogLevel.INFO
+}
 
-const logLevel = LogLevel.DEBUG
+const logLevel = getLogLevel()
 
 //
 // Transport
 //
 
-// const PROD_TRANSPORT = {
-//   target: "pino/file",
-//   options: { destination: 1 },
-// };
+const getTransport = () => {
+  if (isDevelopment) {
+    return {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+      },
+    }
+  }
 
-const LOCAL_TRANSPORT = {
-  target: 'pino-pretty',
-  options: {
-    colorize: true,
-  },
+  // Production: use both pino-pretty (stdout) and file transport
+  const logFilePath = process.env.LOG_FILE_PATH || '/var/log/htf/htf.log'
+
+  return {
+    targets: [
+      {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          destination: 1, // stdout
+        },
+      },
+      {
+        target: 'pino/file',
+        options: {
+          destination: logFilePath,
+          mkdir: true, // Create directory if it doesn't exist
+        },
+      },
+    ],
+  }
 }
 
-const transport = LOCAL_TRANSPORT
+const transport = getTransport()
 
 //
 // Logger
