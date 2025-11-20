@@ -1,15 +1,19 @@
+import { scenarioUtils } from '@backend/engine/scenarioUtils'
 import {
   ActionResponse,
   Command,
+  MOTION_PRIORITIES,
   PerformTarget,
   ScenarioState,
   VerbHandler,
 } from '@shared/types/scenario'
+import withBodyPart from '../enrichers/withBodyPart'
 import withPerformable from '../enrichers/withPerformable'
 import hasCommandObject from '../guards/hasCommandObject'
 import isDistanceFromPatient from '../guards/isDistanceFromPatient'
 import { enrich, guard, pipeHandlers, transform } from '../pipeline/handlerPipe'
 import {
+  BodyPartContext,
   PerformableContext,
   PipelineContext,
 } from '../pipeline/pipelineContexts'
@@ -21,7 +25,7 @@ export const performHandler: VerbHandler = {
       guard(isDistanceFromPatient('near')),
       enrich<PipelineContext, PerformableContext>(withPerformable),
       transform((_, scenarioState, context) =>
-        procedures[context.performable](scenarioState),
+        procedures[context.performable](command, scenarioState, context),
       ),
     )(command, scenarioState, {})
   },
@@ -29,9 +33,13 @@ export const performHandler: VerbHandler = {
 
 const procedures: Record<
   PerformTarget,
-  (scenarioState: ScenarioState) => ActionResponse
+  (
+    command: Command,
+    scenarioState: ScenarioState,
+    context: PerformableContext,
+  ) => ActionResponse
 > = {
-  bloodSweep: (scenarioState) => {
+  bloodSweep: (_command, scenarioState) => {
     let responseText =
       "You run your hands around the outside of the patient's clothing and under them to find major bleeds."
     const majorBleeds = scenarioState.patient.ailments.filter(
@@ -53,10 +61,27 @@ const procedures: Record<
     return { responseText, scenarioState, result: 'success' }
   },
 
-  focusedSpineAssessment: (scenarioState) => {
+  focusedSpineAssessment: (_command, scenarioState) => {
     const responseText =
       'You inform the patient that you are going to perform a focused spine assessment. Proceed with the steps of the assessment.'
 
     return { responseText, scenarioState, result: 'success' }
+  },
+
+  passiveRangeOfMotionAssessment: (command, scenarioState, context) => {
+    return pipeHandlers(
+      enrich<PerformableContext, BodyPartContext>(withBodyPart),
+      transform((_command, scenarioState, context) => {
+        const motion = scenarioUtils.getMostProminentBodyPartValue(
+          context.partEffects,
+          (part) => part.motion,
+          MOTION_PRIORITIES,
+        )
+
+        const responseText = `You ask the patient to move their ${context.bodyPart.partName} around slowly. It is ${motion}.`
+
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context)
   },
 }
