@@ -84,4 +84,40 @@ const procedures: Record<
       }),
     )(command, scenarioState, context)
   },
+
+  activeRangeOfMotionAssessment: (command, scenarioState, context) => {
+    return pipeHandlers(
+      enrich<PerformableContext, BodyPartContext>(withBodyPart),
+      transform((_command, scenarioState, context) => {
+        const motion = scenarioUtils.getMostProminentBodyPartValue(
+          context.partEffects,
+          (part) => part.motion,
+          MOTION_PRIORITIES,
+        )
+
+        // TODO: Make this response better & reflect different values than other ROM assessments
+        const responseText = `You ask the patient to move their ${context.bodyPart.partName}  in a weight bearing manner. It is ${motion}.`
+
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context)
+  },
+
+  activityRangeOfMotionAssessment: (command, scenarioState, context) => {
+    return pipeHandlers(
+      enrich<PerformableContext, BodyPartContext>(withBodyPart),
+      transform((_command, scenarioState, context) => {
+        const motion = scenarioUtils.getMostProminentBodyPartValue(
+          context.partEffects,
+          (part) => part.motion,
+          MOTION_PRIORITIES,
+        )
+
+        // TODO: Make this response better & reflect different values than other ROM assessments
+        const responseText = `You ask the patient to move their ${context.bodyPart.partName} in a way comensurate with the activity you are doing. It is ${motion}.`
+
+        return { responseText, scenarioState, result: 'success' }
+      }),
+    )(command, scenarioState, context)
+  },
 }

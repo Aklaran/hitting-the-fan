@@ -513,6 +513,8 @@ export const performTargetSchema = z.enum([
   'bloodSweep',
   'focusedSpineAssessment',
   'passiveRangeOfMotionAssessment',
+  'activeRangeOfMotionAssessment',
+  'activityRangeOfMotionAssessment',
 ])
 export type PerformTarget = z.infer<typeof performTargetSchema>
 
