@@ -1,3 +1,4 @@
+import { NotepadDialog } from '@/components/custom-ui/notepadDialog'
 import { ScenarioLogOutput } from '@/components/custom-ui/scenarioLogOutput'
 import { ScenarioPlayerInput } from '@/components/custom-ui/scenarioPlayerInput'
 import { Button } from '@/components/ui/button'
@@ -85,6 +86,7 @@ function ScenarioPlayPage() {
         >
           Reset
         </Button>
+        <NotepadDialog />
       </ButtonGroup>
     </div>
   )

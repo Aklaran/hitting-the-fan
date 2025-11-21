@@ -15,6 +15,7 @@ const mvpScenario: CreateScenarioSchema = {
       distanceToPatient: 'far',
       inventory: ['gloves', 'thermometer'],
       worn: [],
+      notes: '',
     },
     patient: {
       name: 'Jeff',

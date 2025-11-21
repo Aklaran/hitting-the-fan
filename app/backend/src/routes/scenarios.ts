@@ -9,6 +9,7 @@ import {
   getScenarioSchema,
   processActionSchema,
   ScenarioState,
+  updatePlayerNotesInputSchema,
 } from '@shared/types/scenario'
 import logger from '@shared/util/logger'
 import { TRPCError } from '@trpc/server'
@@ -84,6 +85,54 @@ const scenariosRouter = router({
   deleteSession: publicProcedure.mutation(async ({ ctx }) => {
     return await scenarioService.deleteSession(ctx)
   }),
+
+  getPlayerNotes: publicProcedure.query(async ({ ctx }) => {
+    const { user } = ctx
+
+    if (!user) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You are not authorized to view scenario sessions.',
+      })
+    }
+
+    const scenarioSession = await scenarioService.getScenarioSession(
+      user.id,
+      ctx,
+    )
+
+    if (!scenarioSession.scenarioState) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Scenario session not found.',
+      })
+    }
+
+    const { player } = scenarioSession.scenarioState as ScenarioState
+
+    return player.notes
+  }),
+
+  updatePlayerNotes: publicProcedure
+    .input(updatePlayerNotesInputSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { user } = ctx
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You are not authorized to update player notes.',
+        })
+      }
+
+      const newNotes = await scenarioService.updatePlayerNotes(
+        input,
+        user.id,
+        ctx,
+      )
+
+      return newNotes
+    }),
 })
 
 export default scenariosRouter

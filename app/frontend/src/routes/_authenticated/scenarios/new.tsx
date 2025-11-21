@@ -34,6 +34,7 @@ function ScenarioForm() {
           distanceToPatient: 'far',
           inventory: [],
           worn: [],
+          notes: '',
         },
         patient: {
           name: '',

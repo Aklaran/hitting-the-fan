@@ -414,6 +414,7 @@ export const playerSchema = z.object({
   distanceToPatient: distanceSchema,
   inventory: z.array(inventoryItemSchema),
   worn: z.array(wearableSchema),
+  notes: z.string(),
   // TODO: Track whether the player is occupied (controlling spine, CPR)
 })
 export type Player = z.infer<typeof playerSchema>
@@ -438,6 +439,15 @@ export const processActionSchema = z.object({
   action: z.string(),
 })
 export type ProcessAction = z.infer<typeof processActionSchema>
+
+export const updatePlayerNotesInputSchema = z.object({
+  notes: z
+    .string()
+    .max(1000, { message: 'Notes must be less than 1000 characters' }),
+})
+export type UpdatePlayerNotesInput = z.infer<
+  typeof updatePlayerNotesInputSchema
+>
 
 export const viewableSchema = z.object({
   description: z.string(),
