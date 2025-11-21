@@ -1,5 +1,5 @@
 import TableSkeleton from '@/components/custom-ui/tableSkeleton'
-import Button from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,

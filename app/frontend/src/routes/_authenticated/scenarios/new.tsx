@@ -1,5 +1,5 @@
 import { FormErrorMessage } from '@/components/custom-ui/formErrorMessage'
-import Button from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { trpc } from '@/lib/trpc'
@@ -167,7 +167,7 @@ function ScenarioForm() {
               </>
             )}
           />
-          
+
           <form.Field
             name="openingPrompt"
             validators={{

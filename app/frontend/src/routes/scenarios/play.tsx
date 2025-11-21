@@ -1,6 +1,7 @@
 import { ScenarioLogOutput } from '@/components/custom-ui/scenarioLogOutput'
 import { ScenarioPlayerInput } from '@/components/custom-ui/scenarioPlayerInput'
-import Button from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
+import { ButtonGroup } from '@/components/ui/button-group'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { trpc } from '@/lib/trpc'
 import { createFileRoute } from '@tanstack/react-router'
@@ -75,13 +76,16 @@ function ScenarioPlayPage() {
 
         <ScenarioPlayerInput onSubmit={handlePlayerInput} autoFocus={true} />
       </div>
-      <Button
-        onClick={() => {
-          resetMutation.mutate()
-        }}
-      >
-        Reset
-      </Button>
+      <ButtonGroup className="w-5/6 mx-auto mt-4">
+        <Button
+          variant="outline"
+          onClick={() => {
+            resetMutation.mutate()
+          }}
+        >
+          Reset
+        </Button>
+      </ButtonGroup>
     </div>
   )
 }

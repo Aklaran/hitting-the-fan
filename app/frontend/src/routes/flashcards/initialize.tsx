@@ -1,4 +1,4 @@
-import Button from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { trpc } from '@/lib/trpc'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 

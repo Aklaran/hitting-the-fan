@@ -1,4 +1,4 @@
-import Button from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { trpc } from '@/lib/trpc'
 import { MyGrade } from '@shared/types/srs'
