@@ -10,18 +10,24 @@ import { useRef } from 'react'
 
 function ScenarioPlayPage() {
   const {
-    data: scenarioLog,
+    data: scenarioState,
     isLoading,
     isError,
   } = trpc.scenario.getSessionState.useQuery()
 
   const trpcUtils = trpc.useUtils()
 
-  const mutation = trpc.scenario.processAction.useMutation({
+  const gameActionMutation = trpc.scenario.processAction.useMutation({
     onSuccess: () => {
       trpcUtils.scenario.getSessionState.invalidate()
 
       scrollLogContainer()
+    },
+  })
+
+  const playerNotesMutation = trpc.scenario.updatePlayerNotes.useMutation({
+    onSuccess: () => {
+      trpcUtils.scenario.getSessionState.invalidate()
     },
   })
 
@@ -47,12 +53,16 @@ function ScenarioPlayPage() {
     return <div>Loading...</div>
   }
 
-  if (!scenarioLog) {
+  if (!scenarioState) {
     return <div>Error - no data</div>
   }
 
   const handlePlayerInput = async (value: { action: string }) => {
-    mutation.mutate({ action: value.action })
+    gameActionMutation.mutate({ action: value.action })
+  }
+
+  const handlePlayerNotesSubmit = (notes: string) => {
+    playerNotesMutation.mutate({ notes: notes })
   }
 
   const scrollLogContainer = () => {
@@ -71,7 +81,7 @@ function ScenarioPlayPage() {
     <div className="pt-2">
       <div className="flex flex-col justify-between gap-2 border rounded p-2 w-5/6 h-96 max-h-dvh mx-auto">
         <ScenarioLogOutput
-          scenarioLog={scenarioLog}
+          scenarioLog={scenarioState.log}
           logContainerRef={logContainerRef}
         />
 
@@ -86,7 +96,10 @@ function ScenarioPlayPage() {
         >
           Reset
         </Button>
-        <NotepadDialog />
+        <NotepadDialog
+          playerNotes={scenarioState.player.notes}
+          onSubmit={handlePlayerNotesSubmit}
+        />
       </ButtonGroup>
     </div>
   )

@@ -66,8 +66,8 @@ const scenariosRouter = router({
       ctx,
     )
 
-    const { log } = scenarioSession.scenarioState as ScenarioState
-    return log
+    const { log, player } = scenarioSession.scenarioState as ScenarioState
+    return { log, player }
   }),
 
   processAction: publicProcedure
@@ -78,39 +78,13 @@ const scenariosRouter = router({
         ctx,
       )
 
-      const { log } = updatedScenarioSession.scenarioState as ScenarioState
-      return log
+      const { log, player } =
+        updatedScenarioSession.scenarioState as ScenarioState
+      return { log, player }
     }),
 
   deleteSession: publicProcedure.mutation(async ({ ctx }) => {
     return await scenarioService.deleteSession(ctx)
-  }),
-
-  getPlayerNotes: publicProcedure.query(async ({ ctx }) => {
-    const { user } = ctx
-
-    if (!user) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'You are not authorized to view scenario sessions.',
-      })
-    }
-
-    const scenarioSession = await scenarioService.getScenarioSession(
-      user.id,
-      ctx,
-    )
-
-    if (!scenarioSession.scenarioState) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Scenario session not found.',
-      })
-    }
-
-    const { player } = scenarioSession.scenarioState as ScenarioState
-
-    return player.notes
   }),
 
   updatePlayerNotes: publicProcedure
