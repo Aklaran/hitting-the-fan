@@ -15,5 +15,6 @@
   },
   "editor.quickSuggestions": {
     "strings": "on"
-  }
+  },
+  "prisma.pinToPrisma6": true
 }
