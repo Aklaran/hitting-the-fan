@@ -1,3 +1,4 @@
+import { InventoryDialog } from '@/components/custom-ui/inventoryDialog'
 import { NotepadDialog } from '@/components/custom-ui/notepadDialog'
 import { ScenarioLogOutput } from '@/components/custom-ui/scenarioLogOutput'
 import { ScenarioPlayerInput } from '@/components/custom-ui/scenarioPlayerInput'
@@ -88,18 +89,23 @@ function ScenarioPlayPage() {
         <ScenarioPlayerInput onSubmit={handlePlayerInput} autoFocus={true} />
       </div>
       <ButtonGroup className="w-5/6 mx-auto mt-4">
-        <Button
-          variant="outline"
-          onClick={() => {
-            resetMutation.mutate()
-          }}
-        >
-          Reset
-        </Button>
-        <NotepadDialog
-          playerNotes={scenarioState.player.notes}
-          onSubmit={handlePlayerNotesSubmit}
-        />
+        <ButtonGroup>
+          <Button
+            variant="destructive"
+            onClick={() => {
+              resetMutation.mutate()
+            }}
+          >
+            Reset
+          </Button>
+        </ButtonGroup>
+        <ButtonGroup>
+          <NotepadDialog
+            playerNotes={scenarioState.player.notes}
+            onSubmit={handlePlayerNotesSubmit}
+          />
+          <InventoryDialog inventory={scenarioState.player.inventory} />
+        </ButtonGroup>
       </ButtonGroup>
     </div>
   )
