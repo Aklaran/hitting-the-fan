@@ -2,6 +2,8 @@ import {
   ActionResponse,
   actionResponseSchema,
   Ailment,
+  ApplyTarget,
+  applyTargetSchema,
   BodyPart,
   BodyPartName,
   bodyPartNames,
@@ -110,6 +112,10 @@ const isViewable = (obj: unknown): obj is Viewable => {
 
 const isQuestionTarget = (obj: unknown): obj is QuestionTarget => {
   return isSchema(questionTargetSchema, obj)
+}
+
+const isApplyTarget = (obj: unknown): obj is ApplyTarget => {
+  return isSchema(applyTargetSchema, obj)
 }
 
 const isInstructTarget = (obj: unknown): obj is InstructTarget => {
@@ -406,6 +412,7 @@ export const scenarioUtils = {
   isWearable,
   isSchema,
   isQuestionTarget,
+  isApplyTarget,
   isInstructTarget,
   isControlTarget,
   isPerformTarget,

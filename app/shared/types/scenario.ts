@@ -466,6 +466,7 @@ export const verbSchema = z.enum([
   'control',
   'remove',
   'perform',
+  'apply',
 ])
 export type Verb = z.infer<typeof verbSchema>
 
@@ -528,6 +529,9 @@ export const performTargetSchema = z.enum([
 ])
 export type PerformTarget = z.infer<typeof performTargetSchema>
 
+export const applyTargetSchema = z.enum(['splint'])
+export type ApplyTarget = z.infer<typeof applyTargetSchema>
+
 export const measureTargetSchema = z.enum([
   'respiration',
   'pulse',
@@ -579,6 +583,7 @@ export const nounSchema = z.enum([
   ...performTargetSchema.options,
   ...removeTargetSchema.options,
   ...measureTargetSchema.options,
+  ...applyTargetSchema.options,
 ])
 export type Noun = z.infer<typeof nounSchema>
 
@@ -596,6 +601,7 @@ export const commandObjectSchema = z.union([
   moveTargetSchema,
   measureTargetSchema,
   inventoryItemSchema,
+  applyTargetSchema,
 ])
 export type CommandObject = z.infer<typeof commandObjectSchema>
 
