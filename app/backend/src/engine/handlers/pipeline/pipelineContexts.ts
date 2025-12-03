@@ -1,5 +1,6 @@
 import {
   ailmentSchema,
+  applyTargetSchema,
   bodyPartSchema,
   controlTargetSchema,
   measureTargetSchema,
@@ -28,6 +29,11 @@ export const askableContextSchema = z.object({
 })
 export type AskableContext = z.infer<typeof askableContextSchema>
 
+export const applicableContextSchema = z.object({
+  applicable: applyTargetSchema,
+})
+export type ApplicableContext = z.infer<typeof applicableContextSchema>
+
 export const medicalTagsContextSchema = z.object({
   medicalTags: medicalTagSchema,
 })
@@ -54,6 +60,11 @@ export const ailmentContextSchema = z.object({
   ailment: ailmentSchema,
 })
 export type AilmentContext = z.infer<typeof ailmentContextSchema>
+
+export const ailmentsContextSchema = z.object({
+  ailments: ailmentSchema.array(),
+})
+export type AilmentsContext = z.infer<typeof ailmentsContextSchema>
 
 export const performableContextSchema = z.object({
   performable: performTargetSchema,
