@@ -1,0 +1,13 @@
+// Re-export all types for backward compatibility
+export * from './action'
+export * from './ailment'
+export * from './bodyPart'
+export * from './command'
+export * from './commandTargets'
+export * from './environment'
+export * from './log'
+export * from './patient'
+export * from './player'
+export * from './scenario'
+export * from './state'
+export * from './vitals'
