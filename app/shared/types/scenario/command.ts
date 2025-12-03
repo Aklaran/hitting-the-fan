@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { ailmentSchema } from './ailment'
 import { bodyPartNames, bodyPartSchema } from './bodyPart'
 import {
+  applyTargetSchema,
   controlTargetSchema,
   instructTargetSchema,
   measureTargetSchema,
@@ -26,6 +27,7 @@ export const verbSchema = z.enum([
   'control',
   'remove',
   'perform',
+  'apply',
 ])
 export type Verb = z.infer<typeof verbSchema>
 
@@ -61,6 +63,7 @@ export const nounSchema = z.enum([
   ...performTargetSchema.options,
   ...removeTargetSchema.options,
   ...measureTargetSchema.options,
+  ...applyTargetSchema.options,
 ])
 export type Noun = z.infer<typeof nounSchema>
 
@@ -77,6 +80,7 @@ export const commandObjectSchema = z.union([
   moveTargetSchema,
   measureTargetSchema,
   inventoryItemSchema,
+  applyTargetSchema,
 ])
 export type CommandObject = z.infer<typeof commandObjectSchema>
 

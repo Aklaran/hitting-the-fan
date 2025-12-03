@@ -16,6 +16,7 @@ import {
 } from '@shared/types/scenario'
 import { UserId } from '@shared/types/user'
 import logger from '@shared/util/logger'
+import { applyHandler } from './handlers/verbHandlers/applyHandler'
 import { askHandler } from './handlers/verbHandlers/askHandler'
 import { controlHandler } from './handlers/verbHandlers/controlHandler'
 import { instructHandler } from './handlers/verbHandlers/instructHandler'
@@ -41,6 +42,7 @@ const verbHandlers: Record<Verb, VerbHandler> = {
   control: controlHandler,
   remove: removeHandler,
   perform: performHandler,
+  apply: applyHandler,
 }
 
 const withActionLog = (
@@ -293,6 +295,10 @@ const resolveObject = (
   }
 
   if (scenarioUtils.isPerformTarget(objectName)) {
+    return objectName
+  }
+
+  if (scenarioUtils.isApplyTarget(objectName)) {
     return objectName
   }
 
