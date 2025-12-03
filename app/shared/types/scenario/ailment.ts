@@ -68,6 +68,9 @@ export const ailmentSchema = z.object({
   normality: z.string(),
   happenedBefore: z.string(),
 
+  possibleTreatments: z.array(treatmentSchema),
+  appliedTreatments: z.array(treatmentKeySchema),
+
   effects: ailmentEffectsSchema,
 })
 export type Ailment = z.infer<typeof ailmentSchema>
