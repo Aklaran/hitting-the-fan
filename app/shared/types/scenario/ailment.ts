@@ -37,6 +37,15 @@ export type LocalEffects = z.infer<typeof localEffectsSchema>
 export const globalEffectsSchema = baseEffectsSchema
 export type GlobalEffects = z.infer<typeof globalEffectsSchema>
 
+export const treatmentKeySchema = z.enum(['splint'])
+export type TreatmentKey = z.infer<typeof treatmentKeySchema>
+
+export const treatmentSchema = z.object({
+  key: treatmentKeySchema,
+  effects: z.union([localEffectsSchema, globalEffectsSchema]),
+})
+export type Treatment = z.infer<typeof treatmentSchema>
+
 export const ailmentEffectsSchema = localEffectsSchema
 export type AilmentEffects = z.infer<typeof ailmentEffectsSchema>
 

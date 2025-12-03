@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { treatmentKeySchema } from './ailment'
 import { baseBodyPartSchema } from './bodyPart'
 import { patientSchema } from './patient'
 
@@ -84,3 +85,6 @@ export const viewableSchema = z.object({
   description: z.string(),
 })
 export type Viewable = z.infer<typeof viewableSchema>
+
+export const applyTargetSchema = treatmentKeySchema
+export type ApplyTarget = z.infer<typeof applyTargetSchema>
