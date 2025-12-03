@@ -232,5 +232,6 @@ const measurePupils = (scenarioState: ScenarioState) => {
 }
 
 const measureTemperature = (scenarioState: ScenarioState) => {
-  return `You measure the patient's temperature to be ${scenarioState.patient.temperatureFahrenheit} degrees Fahrenheit.`
+  const temperature = scenarioUtils.calculateTemperature(scenarioState.patient)
+  return `You measure the patient's temperature to be ${temperature} degrees Fahrenheit.`
 }

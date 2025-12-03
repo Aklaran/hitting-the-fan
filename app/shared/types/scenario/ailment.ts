@@ -5,23 +5,40 @@ import { effortSchema, pupilSchema, rhythmSchema, skinSchema } from './vitals'
 export const bleedSchema = z.enum(['major', 'minor', 'none'])
 export type Bleed = z.infer<typeof bleedSchema>
 
-export const effectsSchema = z.object({
+const rateModifierTypeSchema = z.enum(['multiplicative', 'additive'])
+export type RateModifierType = z.infer<typeof rateModifierTypeSchema>
+
+const baseEffectsSchema = z.object({
   circulation: z.object({
-    heartRateMultiplier: z.number().positive().max(100),
+    heartRateModifier: z.number().min(-100).max(100),
+    rateModifierType: rateModifierTypeSchema,
     rhythm: rhythmSchema,
   }),
   respiration: z.object({
-    respiratoryRateMultiplier: z.number().positive().max(100),
+    respiratoryRateModifier: z.number().min(-100).max(100),
+    rateModifierType: rateModifierTypeSchema,
     rhythm: rhythmSchema,
     effort: effortSchema,
   }),
   skin: skinSchema,
   pupils: pupilSchema,
-  coreTemperatureCelsiusMultiplier: z.number().positive().max(100),
+  temperature: z.object({
+    temperatureModifier: z.number().min(-100).max(100),
+    rateModifierType: rateModifierTypeSchema,
+  }),
   bleed: bleedSchema,
-  bodyParts: z.array(bodyPartSchema),
 })
-export type Effects = z.infer<typeof effectsSchema>
+
+export const localEffectsSchema = baseEffectsSchema.extend({
+  bodyParts: z.array(bodyPartSchema).min(1),
+})
+export type LocalEffects = z.infer<typeof localEffectsSchema>
+
+export const globalEffectsSchema = baseEffectsSchema
+export type GlobalEffects = z.infer<typeof globalEffectsSchema>
+
+export const ailmentEffectsSchema = localEffectsSchema
+export type AilmentEffects = z.infer<typeof ailmentEffectsSchema>
 
 export const ailmentSchema = z.object({
   name: z.string(),
@@ -42,7 +59,6 @@ export const ailmentSchema = z.object({
   normality: z.string(),
   happenedBefore: z.string(),
 
-  // TODO: make effects optional
-  effects: effectsSchema,
+  effects: ailmentEffectsSchema,
 })
 export type Ailment = z.infer<typeof ailmentSchema>
