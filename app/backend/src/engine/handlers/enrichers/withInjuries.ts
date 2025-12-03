@@ -8,7 +8,7 @@ const withInjuries = <T extends BodyPartContext>(
   scenarioState: ScenarioState,
   context: T,
 ): OptionalActionResponse<T & InjuryContext> => {
-  const injuries = scenarioUtils.getAilmentsByBodyPart(
+  const injuries = scenarioUtils.getAilmentEffectsByBodyPart(
     scenarioState.patient.ailments,
     context.bodyPart,
   )

@@ -33,7 +33,7 @@ const palpateBodyPart = (
 
   responseText = command.object.palpationResponse
 
-  const ailments = scenarioUtils.getAilmentsByBodyPart(
+  const ailments = scenarioUtils.getAilmentEffectsByBodyPart(
     scenarioState.patient.ailments,
     command.object,
   )

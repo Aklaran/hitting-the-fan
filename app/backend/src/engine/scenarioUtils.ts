@@ -2,6 +2,8 @@ import {
   ActionResponse,
   actionResponseSchema,
   Ailment,
+  ApplyTarget,
+  applyTargetSchema,
   BodyPart,
   BodyPartName,
   bodyPartNames,
@@ -112,6 +114,10 @@ const isQuestionTarget = (obj: unknown): obj is QuestionTarget => {
   return isSchema(questionTargetSchema, obj)
 }
 
+const isApplyTarget = (obj: unknown): obj is ApplyTarget => {
+  return isSchema(applyTargetSchema, obj)
+}
+
 const isInstructTarget = (obj: unknown): obj is InstructTarget => {
   return isSchema(instructTargetSchema, obj)
 }
@@ -170,10 +176,27 @@ const getBodyPartByName = (
 /**
  * Gets all ailment effects that affect a specific body part
  * @param ailments List of ailments to search through
+ * @param bodyPart The body part to find ailments for
+ * @returns Array of ailments that are affecting the body part
+ */
+const getAilmentsByBodyPart = <T extends BodyPart>(
+  ailments: Ailment[],
+  bodyPart: T,
+): Ailment[] => {
+  return ailments.filter((ailment) => {
+    return ailment.effects.bodyParts.some(
+      (part): part is T => part.partName === bodyPart.partName,
+    )
+  })
+}
+
+/**
+ * Gets all ailment effects that affect a specific body part
+ * @param ailments List of ailments to search through
  * @param bodyPart The body part to find effects for
  * @returns Array of body part effects from ailments that match the given body part
  */
-const getAilmentsByBodyPart = <T extends BodyPart>(
+const getAilmentEffectsByBodyPart = <T extends BodyPart>(
   ailments: Ailment[],
   bodyPart: T,
 ): T[] => {
@@ -246,7 +269,7 @@ const calculateHeartRate = (patient: Patient) => {
   const baseRate = patient.circulation.rate
 
   const multiplier = patient.ailments
-    .map((ailment) => ailment.effects.circulation.heartRateMultiplier)
+    .map((ailment) => ailment.effects.circulation.heartRateModifier)
     .reduce((prev, curr) => prev * curr)
 
   return Math.round(baseRate * multiplier)
@@ -269,7 +292,7 @@ const calculateRespiratoryRate = (patient: Patient) => {
   const baseRate = patient.respiration.rate
 
   const multiplier = patient.ailments
-    .map((ailment) => ailment.effects.respiration.respiratoryRateMultiplier)
+    .map((ailment) => ailment.effects.respiration.respiratoryRateModifier)
     .reduce((prev, curr) => prev * curr)
 
   return Math.round(baseRate * multiplier)
@@ -340,6 +363,16 @@ const calculatePupilShape = (patient: Patient) => {
   )
 }
 
+const calculateTemperature = (patient: Patient) => {
+  const baseTemperature = patient.temperatureFahrenheit
+
+  const multiplier = patient.ailments
+    .map((ailment) => ailment.effects.temperature.temperatureModifier)
+    .reduce((prev, curr) => prev * curr)
+
+  return Math.round(baseTemperature * multiplier)
+}
+
 const withDistanceCheck = (
   expectedDistance: Distance,
   handler: (command: Command, scenarioState: ScenarioState) => ActionResponse,
@@ -406,6 +439,7 @@ export const scenarioUtils = {
   isWearable,
   isSchema,
   isQuestionTarget,
+  isApplyTarget,
   isInstructTarget,
   isControlTarget,
   isPerformTarget,
@@ -419,6 +453,7 @@ export const scenarioUtils = {
   isNoun,
   getBodyPartByName,
   getAilmentsByBodyPart,
+  getAilmentEffectsByBodyPart,
   getEffectsOnBodyPart,
   getMostProminentBodyPartValue,
   getMostProminentValue,
@@ -430,6 +465,7 @@ export const scenarioUtils = {
   calculatePupilEquality,
   calculatePupilReactivity,
   calculatePupilShape,
+  calculateTemperature,
   removeFromInventory,
   withDistanceCheck,
   withConsciousnessCheck,

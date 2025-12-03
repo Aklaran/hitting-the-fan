@@ -30,7 +30,7 @@ const lookAtBodyPart = (bodyPart: BodyPart, scenarioState: ScenarioState) => {
 
   let responseText = bodyPart.description[bodyPart.obstructedState]
 
-  const ailments = scenarioUtils.getAilmentsByBodyPart(
+  const ailments = scenarioUtils.getAilmentEffectsByBodyPart(
     scenarioState.patient.ailments,
     bodyPart,
   )
