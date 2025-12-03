@@ -14,6 +14,7 @@ import isDistanceFromPatient from '../guards/isDistanceFromPatient'
 import { enrich, guard, pipeHandlers, transform } from '../pipeline/handlerPipe'
 import {
   BodyPartContext,
+  BodyPartEffectsContext,
   PerformableContext,
   PipelineContext,
 } from '../pipeline/pipelineContexts'
@@ -70,7 +71,9 @@ const procedures: Record<
 
   passiveRangeOfMotionAssessment: (command, scenarioState, context) => {
     return pipeHandlers(
-      enrich<PerformableContext, BodyPartContext>(withBodyPart),
+      enrich<PerformableContext, BodyPartContext & BodyPartEffectsContext>(
+        withBodyPart,
+      ),
       transform((_command, scenarioState, context) => {
         const motion = scenarioUtils.getMostProminentBodyPartValue(
           context.partEffects,
@@ -87,7 +90,9 @@ const procedures: Record<
 
   activeRangeOfMotionAssessment: (command, scenarioState, context) => {
     return pipeHandlers(
-      enrich<PerformableContext, BodyPartContext>(withBodyPart),
+      enrich<PerformableContext, BodyPartContext & BodyPartEffectsContext>(
+        withBodyPart,
+      ),
       transform((_command, scenarioState, context) => {
         const motion = scenarioUtils.getMostProminentBodyPartValue(
           context.partEffects,
@@ -105,7 +110,9 @@ const procedures: Record<
 
   activityRangeOfMotionAssessment: (command, scenarioState, context) => {
     return pipeHandlers(
-      enrich<PerformableContext, BodyPartContext>(withBodyPart),
+      enrich<PerformableContext, BodyPartContext & BodyPartEffectsContext>(
+        withBodyPart,
+      ),
       transform((_command, scenarioState, context) => {
         const motion = scenarioUtils.getMostProminentBodyPartValue(
           context.partEffects,

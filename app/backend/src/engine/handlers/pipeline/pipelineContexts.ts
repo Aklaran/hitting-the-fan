@@ -35,9 +35,15 @@ export type MedicalTagsContext = z.infer<typeof medicalTagsContextSchema>
 
 export const bodyPartContextSchema = z.object({
   bodyPart: bodyPartSchema,
-  partEffects: bodyPartSchema.array(),
 })
 export type BodyPartContext = z.infer<typeof bodyPartContextSchema>
+
+export const bodyPartEffectsContextSchema = z.object({
+  partEffects: bodyPartSchema.array(),
+})
+export type BodyPartEffectsContext = z.infer<
+  typeof bodyPartEffectsContextSchema
+>
 
 export const injuryContextSchema = z.object({
   injuries: bodyPartSchema.array(),
