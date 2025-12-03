@@ -258,11 +258,13 @@ const mvpScenario: CreateScenarioSchema = {
           happenedBefore: "Yeah I've broken this ankle before.",
           effects: {
             circulation: {
-              heartRateMultiplier: 1.3,
+              heartRateModifier: 1.3,
+              rateModifierType: 'multiplicative',
               rhythm: 'regular',
             },
             respiration: {
-              respiratoryRateMultiplier: 1.3,
+              respiratoryRateModifier: 1.3,
+              rateModifierType: 'multiplicative',
               rhythm: 'irregular',
               effort: 'easy',
             },
@@ -276,7 +278,10 @@ const mvpScenario: CreateScenarioSchema = {
               moisture: 'dry',
               temperature: 'cool',
             },
-            coreTemperatureCelsiusMultiplier: 1.3,
+            temperature: {
+              temperatureModifier: 1.01,
+              rateModifierType: 'multiplicative',
+            },
             bleed: 'none',
             bodyParts: [
               {
@@ -294,9 +299,58 @@ const mvpScenario: CreateScenarioSchema = {
                 },
                 sensation: 'tingling',
                 motion: 'immobile',
+                obstructedState: 'obstructed',
               },
             ],
           },
+          possibleTreatments: [
+            {
+              key: 'splint',
+              effects: {
+                circulation: {
+                  heartRateModifier: -0.2,
+                  rateModifierType: 'additive',
+                  rhythm: 'regular',
+                },
+                respiration: {
+                  respiratoryRateModifier: -0.2,
+                  rateModifierType: 'additive',
+                  rhythm: 'irregular',
+                  effort: 'easy',
+                },
+                skin: {
+                  color: 'pink',
+                  moisture: 'dry',
+                  temperature: 'cool',
+                },
+                pupils: {
+                  equality: 'equal',
+                  reactivity: 'reactive',
+                  shape: 'round',
+                },
+                temperature: {
+                  temperatureModifier: -0.2,
+                  rateModifierType: 'additive',
+                },
+                bleed: 'none',
+                bodyParts: [
+                  {
+                    partName: 'leftFoot',
+                    description: {
+                      obstructed: 'The foot is covered by a splint.',
+                      unobstructed: 'The foot is covered by a splint.',
+                    },
+                    palpationResponse: 'You press on the left foot.',
+                    circulation: { quality: 'strong' },
+                    sensation: 'normal',
+                    motion: 'normal',
+                    obstructedState: 'obstructed',
+                  },
+                ],
+              },
+            },
+          ],
+          appliedTreatments: [],
         },
       ],
       instructions: {
@@ -327,6 +381,40 @@ const mvpScenario: CreateScenarioSchema = {
       time: 'early in the afternoon on May 20th',
       place: 'the base of a mega alpine climb.',
     },
+    possibleGlobalTreatments: [
+      {
+        key: 'splint',
+        effects: {
+          circulation: {
+            heartRateModifier: -0.2,
+            rateModifierType: 'additive',
+            rhythm: 'regular',
+          },
+          respiration: {
+            respiratoryRateModifier: -0.2,
+            rateModifierType: 'additive',
+            rhythm: 'irregular',
+            effort: 'easy',
+          },
+          skin: {
+            color: 'pink',
+            moisture: 'dry',
+            temperature: 'cool',
+          },
+          pupils: {
+            equality: 'equal',
+            reactivity: 'reactive',
+            shape: 'round',
+          },
+          temperature: {
+            temperatureModifier: -0.2,
+            rateModifierType: 'additive',
+          },
+          bleed: 'none',
+        },
+      },
+    ],
+    globalTreatmentsApplied: [],
   },
 }
 
