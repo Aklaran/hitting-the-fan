@@ -54,6 +54,61 @@ export function pipeHandlers<A, B, C, D, E, F>(
   _op5: Handler<E, F>,
 ): OuterHandler<A>
 
+export function pipeHandlers<A, B, C, D, E, F, G>(
+  _op1: Handler<A, B>,
+  _op2: Handler<B, C>,
+  _op3: Handler<C, D>,
+  _op4: Handler<D, E>,
+  _op5: Handler<E, F>,
+  _op6: Handler<F, G>,
+): OuterHandler<A>
+
+export function pipeHandlers<A, B, C, D, E, F, G, H>(
+  _op1: Handler<A, B>,
+  _op2: Handler<B, C>,
+  _op3: Handler<C, D>,
+  _op4: Handler<D, E>,
+  _op5: Handler<E, F>,
+  _op6: Handler<F, G>,
+  _op7: Handler<G, H>,
+): OuterHandler<A>
+
+export function pipeHandlers<A, B, C, D, E, F, G, H, I>(
+  _op1: Handler<A, B>,
+  _op2: Handler<B, C>,
+  _op3: Handler<C, D>,
+  _op4: Handler<D, E>,
+  _op5: Handler<E, F>,
+  _op6: Handler<F, G>,
+  _op7: Handler<G, H>,
+  _op8: Handler<H, I>,
+): OuterHandler<A>
+
+export function pipeHandlers<A, B, C, D, E, F, G, H, I, J>(
+  _op1: Handler<A, B>,
+  _op2: Handler<B, C>,
+  _op3: Handler<C, D>,
+  _op4: Handler<D, E>,
+  _op5: Handler<E, F>,
+  _op6: Handler<F, G>,
+  _op7: Handler<G, H>,
+  _op8: Handler<H, I>,
+  _op9: Handler<I, J>,
+): OuterHandler<A>
+
+export function pipeHandlers<A, B, C, D, E, F, G, H, I, J, K>(
+  _op1: Handler<A, B>,
+  _op2: Handler<B, C>,
+  _op3: Handler<C, D>,
+  _op4: Handler<D, E>,
+  _op5: Handler<E, F>,
+  _op6: Handler<F, G>,
+  _op7: Handler<G, H>,
+  _op8: Handler<H, I>,
+  _op9: Handler<I, J>,
+  _op10: Handler<J, K>,
+): OuterHandler<A>
+
 export function pipeHandlers<TContext>(
   // `any` is necessary here to allow variable number and type of handlers.
   // ..Thankfully, this function (should) never been called by client code, and
