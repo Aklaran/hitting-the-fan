@@ -23,6 +23,7 @@ import {
   InventoryItem,
   inventoryItemSchema,
   LevelOfResponsiveness,
+  LocalEffects,
   LOR_VALUES,
   MeasureTarget,
   measureTargetSchema,
@@ -30,6 +31,7 @@ import {
   moveTargetSchema,
   Noun,
   nounSchema,
+  OBSTRUCTION_PRIORITIES,
   Patient,
   PerformTarget,
   performTargetSchema,
@@ -46,6 +48,7 @@ import {
   ScenarioLogEntry,
   ScenarioState,
   scenarioStateSchema,
+  Treatment,
   Verb,
   verbSchema,
   Viewable,
@@ -166,6 +169,12 @@ const isNoun = (str: string): str is Noun => {
   return isSchema(nounSchema, str)
 }
 
+const hasLocalEffects = (
+  treatment: Treatment,
+): treatment is Treatment & { effects: LocalEffects } => {
+  return 'bodyParts' in treatment.effects
+}
+
 const getBodyPartByName = (
   bodyParts: BodyPart[],
   name: BodyPartName,
@@ -200,11 +209,52 @@ const getAilmentEffectsByBodyPart = <T extends BodyPart>(
   ailments: Ailment[],
   bodyPart: T,
 ): T[] => {
-  return ailments
-    .flatMap((ailment) => ailment.effects.bodyParts)
-    .filter((part): part is T => {
-      return part.partName === bodyPart.partName
-    })
+  return ailments.flatMap((ailment) => {
+    const ailmentEffectsOnPart = ailment.effects.bodyParts.filter(
+      (part): part is T => part.partName === bodyPart.partName,
+    )
+
+    if (!ailmentEffectsOnPart || ailmentEffectsOnPart.length == 0) return []
+
+    const treatmentEffectsAppliedToAilment = ailment.possibleTreatments
+      .filter((possibleTreatment) =>
+        ailment.appliedTreatments.some(
+          (treatmentKey) => possibleTreatment.key === treatmentKey,
+        ),
+      )
+      .filter(hasLocalEffects)
+
+    if (
+      !treatmentEffectsAppliedToAilment ||
+      treatmentEffectsAppliedToAilment.length == 0
+    ) {
+      return ailmentEffectsOnPart
+    }
+
+    const treatmentEffectsOnPart = treatmentEffectsAppliedToAilment
+      .flatMap((treatment) => treatment.effects.bodyParts)
+      .filter((part) => part.partName === bodyPart.partName)
+
+    const treatmentDescriptions = treatmentEffectsOnPart
+      .map((part) => part.description.obstructed)
+      .join(' ')
+
+    const treatmentObstructedState = treatmentEffectsOnPart
+      .map((part) => part.obstructedState)
+      .reduce((prev, curr) =>
+        OBSTRUCTION_PRIORITIES[prev] < OBSTRUCTION_PRIORITIES[curr]
+          ? prev
+          : curr,
+      )
+
+    return ailmentEffectsOnPart.map((part) => ({
+      ...part,
+      description: {
+        obstructed: treatmentDescriptions,
+      },
+      obstructedState: treatmentObstructedState,
+    }))
+  })
 }
 
 /**

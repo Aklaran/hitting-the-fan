@@ -12,6 +12,11 @@ export const MOTION_PRIORITIES: Record<Motion, number> = {
 export const obstructionSchema = z.enum(['obstructed', 'unobstructed'])
 export type Obstruction = z.infer<typeof obstructionSchema>
 
+export const OBSTRUCTION_PRIORITIES: Record<Obstruction, number> = {
+  obstructed: 0,
+  unobstructed: 1,
+}
+
 // Lower value == higher priority
 // This is to allow for more values to be added without changing the map.
 export const PULSE_QUALITY_PRIORITIES = {
