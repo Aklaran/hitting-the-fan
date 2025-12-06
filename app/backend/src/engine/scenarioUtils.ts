@@ -2,6 +2,7 @@ import {
   ActionResponse,
   actionResponseSchema,
   Ailment,
+  AilmentEffects,
   ApplyTarget,
   applyTargetSchema,
   BodyPart,
@@ -319,10 +320,56 @@ const calculateHeartRate = (patient: Patient) => {
   const baseRate = patient.circulation.rate
 
   const multiplier = patient.ailments
-    .map((ailment) => ailment.effects.circulation.heartRateModifier)
+    .map(calculateRealizedAilmentEffects)
+    .map((realizedEffects) => realizedEffects.circulation.heartRateModifier)
     .reduce((prev, curr) => prev * curr)
 
   return Math.round(baseRate * multiplier)
+}
+
+const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
+  const treatments = ailment.possibleTreatments.filter((possibleTreatment) =>
+    isTreatmentAppliedToAilment(possibleTreatment, ailment),
+  )
+
+  const heartRateModifier = calculateAilmentHeartRateMultiplier(
+    treatments,
+    ailment,
+  )
+
+  return {
+    ...ailment.effects,
+    circulation: {
+      ...ailment.effects.circulation,
+      heartRateModifier,
+    },
+  }
+}
+
+const calculateAilmentHeartRateMultiplier = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  if (treatments.length == 0) {
+    return ailment.effects.circulation.heartRateModifier
+  }
+
+  // Treatments are always going to add to the ailment multiplier
+  // This is an arbitrary determination and can be changed if it doesn't fit the bill.
+  const treatmentsModifier = treatments
+    .map((treatment) => treatment.effects.circulation.heartRateModifier)
+    .reduce((prev, curr) => prev + curr)
+
+  return ailment.effects.circulation.heartRateModifier + treatmentsModifier
+}
+
+const isTreatmentAppliedToAilment = (
+  treatment: Treatment,
+  ailment: Ailment,
+) => {
+  return ailment.appliedTreatments.some(
+    (appliedTreatmentKey) => appliedTreatmentKey == treatment.key,
+  )
 }
 
 const calculateHeartRhythm = (patient: Patient) => {
