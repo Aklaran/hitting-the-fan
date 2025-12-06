@@ -347,6 +347,7 @@ const calculateRealizedPatient = (scenarioState: ScenarioState): Patient => {
       effort: calculateRespiratoryEffort(patient),
     },
     skin: calculateSkin(patient),
+    pupils: calculatePupils(patient),
   }
 }
 
@@ -409,6 +410,8 @@ const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
 
   const skin = calculateAilmentSkin(treatments, ailment)
 
+  const pupils = calculateAilmentPupils(treatments, ailment)
+
   return {
     ...ailment.effects,
     temperature: {
@@ -427,7 +430,60 @@ const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
       effort: respiratoryEffort,
     },
     skin,
+    pupils,
   }
+}
+
+const calculateAilmentPupils = (treatments: Treatment[], ailment: Ailment) => {
+  const equality = calculateAilmentPupilEquality(treatments, ailment)
+  const reactivity = calculateAilmentPupilReactivity(treatments, ailment)
+  const shape = calculateAilmentPupilShape(treatments, ailment)
+  return { equality, reactivity, shape }
+}
+
+const calculateAilmentPupilEquality = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments.map(
+    (treatment) => treatment.effects.pupils.equality,
+  )
+
+  if (treatmentValues.length > 0) {
+    return getMostProminentValue(treatmentValues, PUPIL_EQUALITY_PRIORITIES)
+  }
+
+  return ailment.effects.pupils.equality
+}
+
+const calculateAilmentPupilReactivity = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments.map(
+    (treatment) => treatment.effects.pupils.reactivity,
+  )
+
+  if (treatmentValues.length > 0) {
+    return getMostProminentValue(treatmentValues, PUPIL_REACTIVITY_PRIORITIES)
+  }
+
+  return ailment.effects.pupils.reactivity
+}
+
+const calculateAilmentPupilShape = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments.map(
+    (treatment) => treatment.effects.pupils.shape,
+  )
+
+  if (treatmentValues.length > 0) {
+    return getMostProminentValue(treatmentValues, PUPIL_SHAPE_PRIORITIES)
+  }
+
+  return ailment.effects.pupils.shape
 }
 
 const calculateAilmentTemperatureMultiplier = (
@@ -634,12 +690,19 @@ const calculateRespiratoryEffort = (patient: Patient) => {
   )
 }
 
+const calculatePupils = (patient: Patient) => {
+  const equality = calculatePupilEquality(patient)
+  const reactivity = calculatePupilReactivity(patient)
+  const shape = calculatePupilShape(patient)
+  return { equality, reactivity, shape }
+}
+
 const calculatePupilEquality = (patient: Patient) => {
   const baseEquality = patient.pupils.equality
 
-  const ailmentEqualities = patient.ailments.map(
-    (ailment) => ailment.effects.pupils.equality,
-  )
+  const ailmentEqualities = patient.ailments
+    .map(calculateRealizedAilmentEffects)
+    .map((realizedEffects) => realizedEffects.pupils.equality)
 
   return getMostProminentValue(
     [baseEquality, ...ailmentEqualities],
@@ -650,9 +713,9 @@ const calculatePupilEquality = (patient: Patient) => {
 const calculatePupilReactivity = (patient: Patient) => {
   const baseReactivity = patient.pupils.reactivity
 
-  const ailmentReactivities = patient.ailments.map(
-    (ailment) => ailment.effects.pupils.reactivity,
-  )
+  const ailmentReactivities = patient.ailments
+    .map(calculateRealizedAilmentEffects)
+    .map((realizedEffects) => realizedEffects.pupils.reactivity)
 
   return getMostProminentValue(
     [baseReactivity, ...ailmentReactivities],
@@ -663,9 +726,9 @@ const calculatePupilReactivity = (patient: Patient) => {
 const calculatePupilShape = (patient: Patient) => {
   const baseShape = patient.pupils.shape
 
-  const ailmentShapes = patient.ailments.map(
-    (ailment) => ailment.effects.pupils.shape,
-  )
+  const ailmentShapes = patient.ailments
+    .map(calculateRealizedAilmentEffects)
+    .map((realizedEffects) => realizedEffects.pupils.shape)
 
   return getMostProminentValue(
     [baseShape, ...ailmentShapes],

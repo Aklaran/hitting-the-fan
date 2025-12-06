@@ -14,6 +14,7 @@ import withCirculationCapableBodyPart, {
 } from '../enrichers/withCirculationCapableBodyPart'
 import withExtremity, { ExtremityContext } from '../enrichers/withExtremity'
 import withMeasureable from '../enrichers/withMeasureable'
+import { withRealizedPatient } from '../enrichers/withRealizedPatient'
 import hasCommandObject from '../guards/hasCommandObject'
 import isDistanceFromPatient from '../guards/isDistanceFromPatient'
 import {
@@ -26,6 +27,7 @@ import {
 import {
   MeasureableContext,
   PipelineContext,
+  RealizedPatientContext,
 } from '../pipeline/pipelineContexts'
 
 export const measureHandler: VerbHandler = {
@@ -34,20 +36,26 @@ export const measureHandler: VerbHandler = {
       guard<PipelineContext>(hasCommandObject),
       guard(isDistanceFromPatient('near')),
       enrich<PipelineContext, MeasureableContext>(withMeasureable),
-      transform<MeasureableContext>((command, scenarioState, context) => {
-        return responseBank[context.measureable](
-          command,
-          scenarioState,
-          context,
-        )
-      }),
+      enrich<MeasureableContext, RealizedPatientContext>(withRealizedPatient),
+      transform<MeasureableContext & RealizedPatientContext>(
+        (command, scenarioState, context) => {
+          return responseBank[context.measureable](
+            command,
+            scenarioState,
+            context,
+          )
+        },
+      ),
     )(command, scenarioState, {})
   },
 }
 
 const responseBank: Record<
   MeasureTarget,
-  Handler<MeasureableContext, MeasureableContext>
+  Handler<
+    MeasureableContext & RealizedPatientContext,
+    MeasureableContext & RealizedPatientContext
+  >
 > = {
   respiration: (command, scenarioState, context) =>
     pipeHandlers(
@@ -101,7 +109,7 @@ const responseBank: Record<
   skinTemperature: (command, scenarioState, context) =>
     pipeHandlers(
       transform(() => {
-        const responseText = measureSkinTemperature(scenarioState)
+        const responseText = measureSkinTemperature(scenarioState, context)
         return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
@@ -109,7 +117,7 @@ const responseBank: Record<
   skinColor: (command, scenarioState, context) =>
     pipeHandlers(
       transform(() => {
-        const responseText = measureSkinColor(scenarioState)
+        const responseText = measureSkinColor(scenarioState, context)
         return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
@@ -117,7 +125,7 @@ const responseBank: Record<
   skinMoisture: (command, scenarioState, context) =>
     pipeHandlers(
       transform(() => {
-        const responseText = measureSkinMoisture(scenarioState)
+        const responseText = measureSkinMoisture(scenarioState, context)
         return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
@@ -125,7 +133,7 @@ const responseBank: Record<
   pupils: (command, scenarioState, context) =>
     pipeHandlers(
       transform(() => {
-        const responseText = measurePupils(scenarioState)
+        const responseText = measurePupils(scenarioState, context)
         return { responseText, scenarioState, result: 'success' }
       }),
     )(command, scenarioState, context),
@@ -203,30 +211,31 @@ const measureMotion = (
   return `You ask the patient to move their ${part.partName}. It is ${motion}.`
 }
 
-const measureSkinTemperature = (scenarioState: ScenarioState) => {
-  const realizedPatient = scenarioUtils.calculateRealizedPatient(scenarioState)
-
-  return `The patient's skin is ${realizedPatient.skin.temperature}.`
+const measureSkinTemperature = (
+  _: ScenarioState,
+  context: RealizedPatientContext,
+) => {
+  return `The patient's skin is ${context.realizedPatient.skin.temperature}.`
 }
 
-const measureSkinMoisture = (scenarioState: ScenarioState) => {
-  const realizedPatient = scenarioUtils.calculateRealizedPatient(scenarioState)
-
-  return `The patient's skin is ${realizedPatient.skin.moisture}.`
+const measureSkinMoisture = (
+  _: ScenarioState,
+  context: RealizedPatientContext,
+) => {
+  return `The patient's skin is ${context.realizedPatient.skin.moisture}.`
 }
 
-const measureSkinColor = (scenarioState: ScenarioState) => {
-  const realizedPatient = scenarioUtils.calculateRealizedPatient(scenarioState)
-
-  return `The patient's skin is ${realizedPatient.skin.color}.`
+const measureSkinColor = (
+  _: ScenarioState,
+  context: RealizedPatientContext,
+) => {
+  return `The patient's skin is ${context.realizedPatient.skin.color}.`
 }
 
-const measurePupils = (scenarioState: ScenarioState) => {
-  const equality = scenarioUtils.calculatePupilEquality(scenarioState.patient)
-  const reactivity = scenarioUtils.calculatePupilReactivity(
-    scenarioState.patient,
-  )
-  const shape = scenarioUtils.calculatePupilShape(scenarioState.patient)
+const measurePupils = (_: ScenarioState, context: RealizedPatientContext) => {
+  const equality = context.realizedPatient.pupils.equality
+  const reactivity = context.realizedPatient.pupils.reactivity
+  const shape = context.realizedPatient.pupils.shape
 
   return `You look closely at the patient's eyes and take note of the shape. They are ${shape} and ${equality}. You ask the patient to close their eyes for 5 seconds and open them again. The eyes are ${reactivity} to light.`
 }

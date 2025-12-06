@@ -269,9 +269,9 @@ const mvpScenario: CreateScenarioSchema = {
               effort: 'labored',
             },
             pupils: {
-              equality: 'equal',
-              reactivity: 'reactive',
-              shape: 'round',
+              equality: 'unequal',
+              reactivity: 'late reactive',
+              shape: 'not... round?',
             },
             skin: {
               color: 'ashen',

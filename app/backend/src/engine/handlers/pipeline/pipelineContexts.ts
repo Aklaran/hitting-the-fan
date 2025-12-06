@@ -5,6 +5,7 @@ import {
   controlTargetSchema,
   measureTargetSchema,
   medicalTagSchema,
+  patientSchema,
   performTargetSchema,
   questionTargetSchema,
   wearableSchema,
@@ -75,3 +76,10 @@ export const measureableContextSchema = z.object({
   measureable: measureTargetSchema,
 })
 export type MeasureableContext = z.infer<typeof measureableContextSchema>
+
+export const realizedPatientContextSchema = z.object({
+  realizedPatient: patientSchema,
+})
+export type RealizedPatientContext = z.infer<
+  typeof realizedPatientContextSchema
+>
