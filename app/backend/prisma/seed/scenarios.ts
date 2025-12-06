@@ -260,13 +260,13 @@ const mvpScenario: CreateScenarioSchema = {
             circulation: {
               heartRateModifier: 1.3,
               rateModifierType: 'multiplicative',
-              rhythm: 'regular',
+              rhythm: 'irregular',
             },
             respiration: {
               respiratoryRateModifier: 1.3,
               rateModifierType: 'multiplicative',
               rhythm: 'irregular',
-              effort: 'easy',
+              effort: 'labored',
             },
             pupils: {
               equality: 'equal',
@@ -315,7 +315,7 @@ const mvpScenario: CreateScenarioSchema = {
                 respiration: {
                   respiratoryRateModifier: -0.2,
                   rateModifierType: 'additive',
-                  rhythm: 'irregular',
+                  rhythm: 'regular',
                   effort: 'easy',
                 },
                 skin: {

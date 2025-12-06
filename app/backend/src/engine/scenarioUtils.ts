@@ -344,6 +344,16 @@ const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
     ailment,
   )
 
+  const respiratoryRhythm = calculateAilmentRespiratoryRhythm(
+    treatments,
+    ailment,
+  )
+
+  const respiratoryEffort = calculateAilmentRespiratoryEffort(
+    treatments,
+    ailment,
+  )
+
   return {
     ...ailment.effects,
     circulation: {
@@ -354,6 +364,8 @@ const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
     respiration: {
       ...ailment.effects.respiration,
       respiratoryRateModifier,
+      rhythm: respiratoryRhythm,
+      effort: respiratoryEffort,
     },
   }
 }
@@ -402,6 +414,38 @@ const calculateAilmentRespiratoryRateMultiplier = (
   )
 }
 
+const calculateAilmentRespiratoryRhythm = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments.map(
+    (treatment) => treatment.effects.respiration.rhythm,
+  )
+
+  // Treatments override the ailment, then are sorted for priority among themselves.
+  if (treatmentValues.length > 0) {
+    return getMostProminentValue(treatmentValues, RHYTHM_PRIORITIES)
+  }
+
+  return ailment.effects.respiration.rhythm
+}
+
+const calculateAilmentRespiratoryEffort = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments.map(
+    (treatment) => treatment.effects.respiration.effort,
+  )
+
+  // Treatments override the ailment, then are sorted for priority among themselves.
+  if (treatmentValues.length > 0) {
+    return getMostProminentValue(treatmentValues, EFFORT_PRIORITIES)
+  }
+
+  return ailment.effects.respiration.effort
+}
+
 const isTreatmentAppliedToAilment = (
   treatment: Treatment,
   ailment: Ailment,
@@ -440,9 +484,9 @@ const calculateRespiratoryRate = (patient: Patient) => {
 const calculateRespiratoryRhythm = (patient: Patient) => {
   const baseRhythm = patient.respiration.rhythm
 
-  const ailmentRhythms = patient.ailments.map(
-    (ailment) => ailment.effects.respiration.rhythm,
-  )
+  const ailmentRhythms = patient.ailments
+    .map(calculateRealizedAilmentEffects)
+    .map((realizedEffects) => realizedEffects.respiration.rhythm)
 
   return getMostProminentValue(
     [baseRhythm, ...ailmentRhythms],
@@ -453,9 +497,9 @@ const calculateRespiratoryRhythm = (patient: Patient) => {
 const calculateRespiratoryEffort = (patient: Patient) => {
   const baseEffort = patient.respiration.effort
 
-  const ailmentEfforts = patient.ailments.map(
-    (ailment) => ailment.effects.respiration.effort,
-  )
+  const ailmentEfforts = patient.ailments
+    .map(calculateRealizedAilmentEffects)
+    .map((realizedEffects) => realizedEffects.respiration.effort)
 
   return getMostProminentValue(
     [baseEffort, ...ailmentEfforts],
