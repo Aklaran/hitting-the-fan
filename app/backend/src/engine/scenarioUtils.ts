@@ -49,6 +49,10 @@ import {
   ScenarioLogEntry,
   ScenarioState,
   scenarioStateSchema,
+  Skin,
+  SKIN_COLOR_PRIORITIES,
+  SKIN_MOISTURE_PRIORITIES,
+  SKIN_TEMPERATURE_PRIORITIES,
   Treatment,
   Verb,
   verbSchema,
@@ -327,9 +331,58 @@ const calculateHeartRate = (patient: Patient) => {
   return Math.round(baseRate * multiplier)
 }
 
+const calculateRealizedPatient = (scenarioState: ScenarioState): Patient => {
+  const patient = scenarioState.patient
+
+  return {
+    ...patient,
+    temperatureFahrenheit: calculateTemperature(patient),
+    circulation: {
+      rate: calculateHeartRate(patient),
+      rhythm: calculateHeartRhythm(patient),
+    },
+    respiration: {
+      rate: calculateRespiratoryRate(patient),
+      rhythm: calculateRespiratoryRhythm(patient),
+      effort: calculateRespiratoryEffort(patient),
+    },
+    skin: calculateSkin(patient),
+  }
+}
+
+const calculateSkin = (patient: Patient): Skin => {
+  const baseSkin = patient.skin
+
+  const ailmentSkin = patient.ailments
+    .map(calculateRealizedAilmentEffects)
+    .map((realizedEffects) => realizedEffects.skin)
+
+  const color = getMostProminentValue(
+    [baseSkin.color, ...ailmentSkin.map((skin) => skin.color)],
+    SKIN_COLOR_PRIORITIES,
+  )
+
+  const temperature = getMostProminentValue(
+    [baseSkin.temperature, ...ailmentSkin.map((skin) => skin.temperature)],
+    SKIN_TEMPERATURE_PRIORITIES,
+  )
+
+  const moisture = getMostProminentValue(
+    [baseSkin.moisture, ...ailmentSkin.map((skin) => skin.moisture)],
+    SKIN_MOISTURE_PRIORITIES,
+  )
+
+  return { color, temperature, moisture }
+}
+
 const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
   const treatments = ailment.possibleTreatments.filter((possibleTreatment) =>
     isTreatmentAppliedToAilment(possibleTreatment, ailment),
+  )
+
+  const temperatureModifier = calculateAilmentTemperatureMultiplier(
+    treatments,
+    ailment,
   )
 
   const heartRateModifier = calculateAilmentHeartRateMultiplier(
@@ -354,8 +407,14 @@ const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
     ailment,
   )
 
+  const skin = calculateAilmentSkin(treatments, ailment)
+
   return {
     ...ailment.effects,
+    temperature: {
+      ...ailment.effects.temperature,
+      temperatureModifier,
+    },
     circulation: {
       ...ailment.effects.circulation,
       heartRateModifier,
@@ -367,7 +426,75 @@ const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
       rhythm: respiratoryRhythm,
       effort: respiratoryEffort,
     },
+    skin,
   }
+}
+
+const calculateAilmentTemperatureMultiplier = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments
+    .map((treatment) => treatment.effects.temperature.temperatureModifier)
+    .reduce((prev, curr) => prev + curr, 0)
+
+  return ailment.effects.temperature.temperatureModifier + treatmentValues
+}
+
+const calculateAilmentSkin = (
+  treatments: Treatment[],
+  ailment: Ailment,
+): Skin => {
+  const color = calculateAilmentSkinColor(treatments, ailment)
+  const temperature = calculateAilmentSkinTemperature(treatments, ailment)
+  const moisture = calculateAilmentSkinMoisture(treatments, ailment)
+
+  return { color, temperature, moisture }
+}
+
+const calculateAilmentSkinMoisture = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments.map(
+    (treatment) => treatment.effects.skin.moisture,
+  )
+
+  if (treatmentValues.length > 0) {
+    return getMostProminentValue(treatmentValues, SKIN_MOISTURE_PRIORITIES)
+  }
+
+  return ailment.effects.skin.moisture
+}
+
+const calculateAilmentSkinColor = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments.map(
+    (treatment) => treatment.effects.skin.color,
+  )
+
+  if (treatmentValues.length > 0) {
+    return getMostProminentValue(treatmentValues, SKIN_COLOR_PRIORITIES)
+  }
+
+  return ailment.effects.skin.color
+}
+
+const calculateAilmentSkinTemperature = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments.map(
+    (treatment) => treatment.effects.skin.temperature,
+  )
+
+  if (treatmentValues.length > 0) {
+    return getMostProminentValue(treatmentValues, SKIN_TEMPERATURE_PRIORITIES)
+  }
+
+  return ailment.effects.skin.temperature
 }
 
 const calculateAilmentHeartRateMultiplier = (
@@ -550,7 +677,8 @@ const calculateTemperature = (patient: Patient) => {
   const baseTemperature = patient.temperatureFahrenheit
 
   const multiplier = patient.ailments
-    .map((ailment) => ailment.effects.temperature.temperatureModifier)
+    .map(calculateRealizedAilmentEffects)
+    .map((realizedEffects) => realizedEffects.temperature.temperatureModifier)
     .reduce((prev, curr) => prev * curr)
 
   return Math.round(baseTemperature * multiplier)
@@ -649,6 +777,7 @@ export const scenarioUtils = {
   calculatePupilReactivity,
   calculatePupilShape,
   calculateTemperature,
+  calculateRealizedPatient,
   removeFromInventory,
   withDistanceCheck,
   withConsciousnessCheck,

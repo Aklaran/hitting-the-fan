@@ -38,7 +38,7 @@ const mvpScenario: CreateScenarioSchema = {
       skin: {
         color: 'pink',
         temperature: 'warm',
-        moisture: 'moist',
+        moisture: 'dry',
       },
       pupils: {
         equality: 'equal',
@@ -274,9 +274,9 @@ const mvpScenario: CreateScenarioSchema = {
               shape: 'round',
             },
             skin: {
-              color: 'pink',
-              moisture: 'dry',
-              temperature: 'cool',
+              color: 'ashen',
+              moisture: 'clammy',
+              temperature: 'hot',
             },
             temperature: {
               temperatureModifier: 1.01,

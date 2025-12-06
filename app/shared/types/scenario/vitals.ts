@@ -58,11 +58,31 @@ export const EFFORT_PRIORITIES: Record<Effort, number> = {
 export const skinTemperatureSchema = z.enum(['warm', 'cool', 'hot'])
 export type SkinTemperature = z.infer<typeof skinTemperatureSchema>
 
+export const SKIN_TEMPERATURE_PRIORITIES: Record<SkinTemperature, number> = {
+  hot: 0,
+  cool: 1,
+  warm: 2,
+}
+
 export const skinColorSchema = z.enum(['pink', 'pale', 'red', 'ashen'])
 export type SkinColor = z.infer<typeof skinColorSchema>
 
+export const SKIN_COLOR_PRIORITIES: Record<SkinColor, number> = {
+  ashen: 0,
+  red: 1,
+  pale: 2,
+  pink: 3,
+}
+
 export const skinMoistureSchema = z.enum(['dry', 'moist', 'clammy', 'wet'])
 export type SkinMoisture = z.infer<typeof skinMoistureSchema>
+
+export const SKIN_MOISTURE_PRIORITIES: Record<SkinMoisture, number> = {
+  wet: 0,
+  clammy: 1,
+  moist: 2,
+  dry: 3,
+}
 
 export const skinSchema = z.object({
   temperature: skinTemperatureSchema,

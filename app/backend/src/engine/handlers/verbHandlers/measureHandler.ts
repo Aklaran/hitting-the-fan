@@ -204,21 +204,21 @@ const measureMotion = (
 }
 
 const measureSkinTemperature = (scenarioState: ScenarioState) => {
-  const skinTemperature = scenarioState.patient.skin.temperature
+  const realizedPatient = scenarioUtils.calculateRealizedPatient(scenarioState)
 
-  return `The patient's skin is ${skinTemperature}.`
+  return `The patient's skin is ${realizedPatient.skin.temperature}.`
 }
 
 const measureSkinMoisture = (scenarioState: ScenarioState) => {
-  const skinMoisture = scenarioState.patient.skin.moisture
+  const realizedPatient = scenarioUtils.calculateRealizedPatient(scenarioState)
 
-  return `The patient's skin is ${skinMoisture}.`
+  return `The patient's skin is ${realizedPatient.skin.moisture}.`
 }
 
 const measureSkinColor = (scenarioState: ScenarioState) => {
-  const skinColor = scenarioState.patient.skin.color
+  const realizedPatient = scenarioUtils.calculateRealizedPatient(scenarioState)
 
-  return `The patient's skin is ${skinColor}.`
+  return `The patient's skin is ${realizedPatient.skin.color}.`
 }
 
 const measurePupils = (scenarioState: ScenarioState) => {
