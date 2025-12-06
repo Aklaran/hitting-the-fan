@@ -349,6 +349,36 @@ const calculateRealizedPatient = (scenarioState: ScenarioState): Patient => {
     },
     skin: calculateSkin(patient),
     pupils: calculatePupils(patient),
+    bodyParts: calculateBodyParts(patient),
+  }
+}
+
+const calculateBodyParts = (patient: Patient): BodyPart[] => {
+  return patient.bodyParts.map((bodyPart) =>
+    calculateRealizedBodyPart(bodyPart, patient),
+  )
+}
+
+const calculateRealizedBodyPart = (
+  bodyPart: BodyPart,
+  patient: Patient,
+): BodyPart => {
+  const ailmentEffects = getAilmentEffectsByBodyPart(patient.ailments, bodyPart)
+
+  return {
+    ...bodyPart,
+    description: {
+      obstructed: ailmentEffects
+        .map((effect) => effect.description.obstructed)
+        .join(' '),
+      unobstructed: ailmentEffects
+        .map((effect) => effect.description.unobstructed)
+        .join(' '),
+    },
+    obstructedState: getMostProminentValue(
+      ailmentEffects.map((effect) => effect.obstructedState),
+      OBSTRUCTION_PRIORITIES,
+    ),
   }
 }
 
