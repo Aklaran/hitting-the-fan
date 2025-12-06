@@ -278,6 +278,7 @@ const mvpScenario: CreateScenarioSchema = {
               moisture: 'clammy',
               temperature: 'hot',
             },
+            levelOfResponsiveness: 'U',
             temperature: {
               temperatureModifier: 1.01,
               rateModifierType: 'multiplicative',
@@ -307,6 +308,7 @@ const mvpScenario: CreateScenarioSchema = {
             {
               key: 'splint',
               effects: {
+                levelOfResponsiveness: 'AO4',
                 circulation: {
                   heartRateModifier: -0.2,
                   rateModifierType: 'additive',
@@ -381,39 +383,7 @@ const mvpScenario: CreateScenarioSchema = {
       time: 'early in the afternoon on May 20th',
       place: 'the base of a mega alpine climb.',
     },
-    possibleGlobalTreatments: [
-      {
-        key: 'splint',
-        effects: {
-          circulation: {
-            heartRateModifier: -0.2,
-            rateModifierType: 'additive',
-            rhythm: 'regular',
-          },
-          respiration: {
-            respiratoryRateModifier: -0.2,
-            rateModifierType: 'additive',
-            rhythm: 'irregular',
-            effort: 'easy',
-          },
-          skin: {
-            color: 'pink',
-            moisture: 'dry',
-            temperature: 'cool',
-          },
-          pupils: {
-            equality: 'equal',
-            reactivity: 'reactive',
-            shape: 'round',
-          },
-          temperature: {
-            temperatureModifier: -0.2,
-            rateModifierType: 'additive',
-          },
-          bleed: 'none',
-        },
-      },
-    ],
+    possibleGlobalTreatments: [],
     globalTreatmentsApplied: [],
   },
 }

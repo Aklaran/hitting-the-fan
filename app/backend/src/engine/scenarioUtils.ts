@@ -336,6 +336,7 @@ const calculateRealizedPatient = (scenarioState: ScenarioState): Patient => {
 
   return {
     ...patient,
+    levelOfResponsiveness: calculateLevelOfResponsiveness(patient),
     temperatureFahrenheit: calculateTemperature(patient),
     circulation: {
       rate: calculateHeartRate(patient),
@@ -349,6 +350,18 @@ const calculateRealizedPatient = (scenarioState: ScenarioState): Patient => {
     skin: calculateSkin(patient),
     pupils: calculatePupils(patient),
   }
+}
+
+const calculateLevelOfResponsiveness = (
+  patient: Patient,
+): LevelOfResponsiveness => {
+  const baseLOR = patient.levelOfResponsiveness
+
+  const ailmentLOR = patient.ailments
+    .map(calculateRealizedAilmentEffects)
+    .map((realizedEffects) => realizedEffects.levelOfResponsiveness)
+
+  return getMostProminentValue([baseLOR, ...ailmentLOR], LOR_VALUES)
 }
 
 const calculateSkin = (patient: Patient): Skin => {
@@ -412,6 +425,11 @@ const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
 
   const pupils = calculateAilmentPupils(treatments, ailment)
 
+  const levelOfResponsiveness = calculateAilmentLevelOfResponsiveness(
+    treatments,
+    ailment,
+  )
+
   return {
     ...ailment.effects,
     temperature: {
@@ -431,7 +449,23 @@ const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
     },
     skin,
     pupils,
+    levelOfResponsiveness,
   }
+}
+
+const calculateAilmentLevelOfResponsiveness = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  const treatmentValues = treatments.map(
+    (treatment) => treatment.effects.levelOfResponsiveness,
+  )
+
+  if (treatmentValues.length > 0) {
+    return getMostProminentValue(treatmentValues, LOR_VALUES)
+  }
+
+  return ailment.effects.levelOfResponsiveness
 }
 
 const calculateAilmentPupils = (treatments: Treatment[], ailment: Ailment) => {

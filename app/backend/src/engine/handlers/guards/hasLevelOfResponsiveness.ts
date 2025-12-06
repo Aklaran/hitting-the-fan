@@ -6,16 +6,17 @@ import {
   ScenarioState,
 } from '@shared/types/scenario'
 import { GuardResponse } from '../pipeline/handlerPipe'
+import { RealizedPatientContext } from '../pipeline/pipelineContexts'
 
 const hasLevelOfResponsiveness = <T>(
   check: (lor: LevelOfResponsiveness) => boolean,
 ) => {
   return (
     _command: Command,
-    scenarioState: ScenarioState,
-    _context: T,
+    _scenarioState: ScenarioState,
+    context: T & RealizedPatientContext,
   ): GuardResponse => {
-    const lor = scenarioState.patient.levelOfResponsiveness
+    const lor = context.realizedPatient.levelOfResponsiveness
 
     if (!LORCapabilities.isAwake(lor)) {
       return {

@@ -11,6 +11,7 @@ import withBodyPart from '../enrichers/withBodyPart'
 import withChiefComplaint from '../enrichers/withChiefComplaint'
 import withInjuries from '../enrichers/withInjuries'
 import withMedicalTags from '../enrichers/withMedicalTags'
+import { withRealizedPatient } from '../enrichers/withRealizedPatient'
 import hasCommandObject from '../guards/hasCommandObject'
 import hasLevelOfResponsiveness from '../guards/hasLevelOfResponsiveness'
 import hasMedicalTags from '../guards/hasMedicalTags'
@@ -29,6 +30,7 @@ import {
   InjuryContext,
   MedicalTagsContext,
   PipelineContext,
+  RealizedPatientContext,
 } from '../pipeline/pipelineContexts'
 
 export const askHandler: VerbHandler = {
@@ -37,8 +39,10 @@ export const askHandler: VerbHandler = {
       guard<PipelineContext>(hasCommandObject),
       guard(isDistanceFromPatient('near')),
       enrich<PipelineContext, AskableContext>(withAskable),
-      transform<AskableContext>((command, scenarioState, context) =>
-        responseBank[context.askable](command, scenarioState, context),
+      enrich<AskableContext, RealizedPatientContext>(withRealizedPatient),
+      transform<AskableContext & RealizedPatientContext>(
+        (command, scenarioState, context) =>
+          responseBank[context.askable](command, scenarioState, context),
       ),
     )(command, scenarioState, {})
   },
@@ -46,7 +50,10 @@ export const askHandler: VerbHandler = {
 
 const responseBank: Record<
   QuestionTarget,
-  Handler<AskableContext, AskableContext>
+  Handler<
+    AskableContext & RealizedPatientContext,
+    AskableContext & RealizedPatientContext
+  >
 > = {
   name: (command, scenarioState, context) =>
     pipeHandlers(
@@ -92,7 +99,7 @@ const responseBank: Record<
 
   medicalTags: (command, scenarioState, context) =>
     pipeHandlers(
-      guard<AskableContext>(
+      guard<AskableContext & RealizedPatientContext>(
         hasLevelOfResponsiveness(LORCapabilities.knowsIdentity),
       ),
       guard(

@@ -1,6 +1,12 @@
 import { z } from 'zod'
 import { bodyPartSchema } from './bodyPart'
-import { effortSchema, pupilSchema, rhythmSchema, skinSchema } from './vitals'
+import {
+  effortSchema,
+  levelOfResponsivenessSchema,
+  pupilSchema,
+  rhythmSchema,
+  skinSchema,
+} from './vitals'
 
 export const bleedSchema = z.enum(['major', 'minor', 'none'])
 export type Bleed = z.infer<typeof bleedSchema>
@@ -27,6 +33,7 @@ const baseEffectsSchema = z.object({
     rateModifierType: rateModifierTypeSchema,
   }),
   bleed: bleedSchema,
+  levelOfResponsiveness: levelOfResponsivenessSchema,
 })
 
 export const localEffectsSchema = baseEffectsSchema.extend({
