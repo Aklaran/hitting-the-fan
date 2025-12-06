@@ -45,7 +45,6 @@ const mvpScenario: CreateScenarioSchema = {
         shape: 'round',
         reactivity: 'reactive',
       },
-      coreTemperatureCelsius: 37,
       bodyParts: [
         // TODO: bake "normal" bodyparts into the model, only modify with ailments?
         {

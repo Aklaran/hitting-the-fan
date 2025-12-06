@@ -66,7 +66,6 @@ function ScenarioForm() {
             equality: 'equal',
             reactivity: 'reactive',
           },
-          coreTemperatureCelsius: 37,
           isSpineControlled: false,
           mechanismOfInjury: '',
           instructions: {

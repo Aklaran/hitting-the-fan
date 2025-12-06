@@ -56,7 +56,6 @@ export const patientSchema = z.object({
   skin: skinSchema,
   pupils: pupilSchema,
   levelOfResponsiveness: levelOfResponsivenessSchema,
-  coreTemperatureCelsius: z.number().int().nonnegative().max(45),
   bodyParts: z.array(bodyPartSchema),
   ailments: z.array(ailmentSchema),
   instructions: z.object({
