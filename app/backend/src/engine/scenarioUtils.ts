@@ -322,7 +322,7 @@ const calculateHeartRate = (patient: Patient) => {
   const multiplier = patient.ailments
     .map(calculateRealizedAilmentEffects)
     .map((realizedEffects) => realizedEffects.circulation.heartRateModifier)
-    .reduce((prev, curr) => prev * curr)
+    .reduce((prev, curr) => prev * curr, 1)
 
   return Math.round(baseRate * multiplier)
 }
@@ -337,11 +337,20 @@ const calculateRealizedAilmentEffects = (ailment: Ailment): AilmentEffects => {
     ailment,
   )
 
+  const respiratoryRateModifier = calculateAilmentRespiratoryRateMultiplier(
+    treatments,
+    ailment,
+  )
+
   return {
     ...ailment.effects,
     circulation: {
       ...ailment.effects.circulation,
       heartRateModifier,
+    },
+    respiration: {
+      ...ailment.effects.respiration,
+      respiratoryRateModifier,
     },
   }
 }
@@ -350,17 +359,28 @@ const calculateAilmentHeartRateMultiplier = (
   treatments: Treatment[],
   ailment: Ailment,
 ) => {
-  if (treatments.length == 0) {
-    return ailment.effects.circulation.heartRateModifier
-  }
-
   // Treatments are always going to add to the ailment multiplier
   // This is an arbitrary determination and can be changed if it doesn't fit the bill.
   const treatmentsModifier = treatments
     .map((treatment) => treatment.effects.circulation.heartRateModifier)
-    .reduce((prev, curr) => prev + curr)
+    .reduce((prev, curr) => prev + curr, 0)
 
   return ailment.effects.circulation.heartRateModifier + treatmentsModifier
+}
+
+const calculateAilmentRespiratoryRateMultiplier = (
+  treatments: Treatment[],
+  ailment: Ailment,
+) => {
+  // Treatments are always going to add to the ailment multiplier
+  // This is an arbitrary determination and can be changed if it doesn't fit the bill.
+  const treatmentsModifier = treatments
+    .map((treatment) => treatment.effects.respiration.respiratoryRateModifier)
+    .reduce((prev, curr) => prev + curr, 0)
+
+  return (
+    ailment.effects.respiration.respiratoryRateModifier + treatmentsModifier
+  )
 }
 
 const isTreatmentAppliedToAilment = (
@@ -389,7 +409,10 @@ const calculateRespiratoryRate = (patient: Patient) => {
   const baseRate = patient.respiration.rate
 
   const multiplier = patient.ailments
-    .map((ailment) => ailment.effects.respiration.respiratoryRateModifier)
+    .map(calculateRealizedAilmentEffects)
+    .map(
+      (realizedEffects) => realizedEffects.respiration.respiratoryRateModifier,
+    )
     .reduce((prev, curr) => prev * curr)
 
   return Math.round(baseRate * multiplier)
