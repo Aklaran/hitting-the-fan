@@ -297,7 +297,7 @@ const getMostProminentValue = <T extends string>(
 ) => {
   return competingValues.reduce((prev, curr) => {
     return priorities[curr] < priorities[prev] ? curr : prev
-  })
+  }, competingValues[0])
 }
 
 const removeFromInventory = (
