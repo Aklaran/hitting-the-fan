@@ -9,6 +9,7 @@ import {
   ProcessAction,
   ScenarioState,
   UpdatePlayerNotesInput,
+  UpdateSoapNoteInput,
 } from '@shared/types/scenario'
 import { UserId } from '@shared/types/user'
 import { TRPCError } from '@trpc/server'
@@ -146,6 +147,41 @@ const updatePlayerNotes = async (
   return newScenarioState.player.notes
 }
 
+const updateSoapNote = async (
+  input: UpdateSoapNoteInput,
+  userId: UserId,
+  ctx: Context,
+) => {
+  const scenarioSession = await scenarioSessionRepository.getScenarioSession(
+    userId,
+    ctx,
+  )
+
+  if (!scenarioSession) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: 'No scenario session found.',
+    })
+  }
+
+  const { player } = scenarioSession.scenarioState as ScenarioState
+  const newScenarioState = {
+    ...(scenarioSession.scenarioState as ScenarioState),
+    player: {
+      ...player,
+      soapNote: input.soapNote,
+    },
+  }
+
+  await scenarioSessionRepository.updateScenarioSession(
+    scenarioSession.id,
+    newScenarioState,
+    ctx,
+  )
+
+  return newScenarioState.player.soapNote
+}
+
 export const scenarioService = {
   createScenario,
   getScenarios,
@@ -155,4 +191,5 @@ export const scenarioService = {
   processAction,
   deleteSession,
   updatePlayerNotes,
+  updateSoapNote,
 }

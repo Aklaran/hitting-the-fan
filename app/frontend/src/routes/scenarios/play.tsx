@@ -2,6 +2,7 @@ import { InventoryDialog } from '@/components/custom-ui/inventoryDialog'
 import { NotepadDialog } from '@/components/custom-ui/notepadDialog'
 import { ScenarioLogOutput } from '@/components/custom-ui/scenarioLogOutput'
 import { ScenarioPlayerInput } from '@/components/custom-ui/scenarioPlayerInput'
+import { SoapNoteDialog } from '@/components/custom-ui/soapNoteDialog'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
@@ -27,6 +28,12 @@ function ScenarioPlayPage() {
   })
 
   const playerNotesMutation = trpc.scenario.updatePlayerNotes.useMutation({
+    onSuccess: () => {
+      trpcUtils.scenario.getSessionState.invalidate()
+    },
+  })
+
+  const soapNoteMutation = trpc.scenario.updateSoapNote.useMutation({
     onSuccess: () => {
       trpcUtils.scenario.getSessionState.invalidate()
     },
@@ -66,6 +73,10 @@ function ScenarioPlayPage() {
     playerNotesMutation.mutate({ notes: notes })
   }
 
+  const handleSoapNoteSubmit = (soapNote: string) => {
+    soapNoteMutation.mutate({ soapNote: soapNote })
+  }
+
   const scrollLogContainer = () => {
     // Timeout needed to allow state to update & re-render before scroll
     setTimeout(() => {
@@ -100,11 +111,17 @@ function ScenarioPlayPage() {
           </Button>
         </ButtonGroup>
         <ButtonGroup>
+          <InventoryDialog inventory={scenarioState.player.inventory} />
+        </ButtonGroup>
+        <ButtonGroup>
           <NotepadDialog
             playerNotes={scenarioState.player.notes}
             onSubmit={handlePlayerNotesSubmit}
           />
-          <InventoryDialog inventory={scenarioState.player.inventory} />
+          <SoapNoteDialog
+            note={scenarioState.player.soapNote}
+            onSubmit={handleSoapNoteSubmit}
+          />
         </ButtonGroup>
       </ButtonGroup>
     </div>

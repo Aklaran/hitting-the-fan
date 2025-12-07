@@ -15,7 +15,7 @@ export const playerSchema = z.object({
   inventory: z.array(inventoryItemSchema),
   worn: z.array(wearableSchema),
   notes: z.string(),
+  soapNote: z.string(),
   // TODO: Track whether the player is occupied (controlling spine, CPR)
 })
 export type Player = z.infer<typeof playerSchema>
-

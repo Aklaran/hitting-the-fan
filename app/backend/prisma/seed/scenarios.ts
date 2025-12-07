@@ -16,6 +16,7 @@ const mvpScenario: CreateScenarioSchema = {
       inventory: ['gloves', 'thermometer'],
       worn: [],
       notes: '',
+      soapNote: '',
     },
     patient: {
       name: 'Jeff',

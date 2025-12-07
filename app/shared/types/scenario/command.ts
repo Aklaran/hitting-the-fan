@@ -104,3 +104,10 @@ export const updatePlayerNotesInputSchema = z.object({
 export type UpdatePlayerNotesInput = z.infer<
   typeof updatePlayerNotesInputSchema
 >
+
+export const updateSoapNoteInputSchema = z.object({
+  soapNote: z
+    .string()
+    .max(1000, { message: 'SOAP Note must be less than 1000 characters' }),
+})
+export type UpdateSoapNoteInput = z.infer<typeof updateSoapNoteInputSchema>

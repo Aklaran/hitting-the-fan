@@ -35,6 +35,7 @@ function ScenarioForm() {
           inventory: [],
           worn: [],
           notes: '',
+          soapNote: '',
         },
         patient: {
           name: '',

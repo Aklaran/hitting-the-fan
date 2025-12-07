@@ -10,6 +10,7 @@ import {
   processActionSchema,
   ScenarioState,
   updatePlayerNotesInputSchema,
+  updateSoapNoteInputSchema,
 } from '@shared/types/scenario'
 import logger from '@shared/util/logger'
 import { TRPCError } from '@trpc/server'
@@ -106,6 +107,27 @@ const scenariosRouter = router({
       )
 
       return newNotes
+    }),
+
+  updateSoapNote: publicProcedure
+    .input(updateSoapNoteInputSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { user } = ctx
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You are not authorized to update the soap note.',
+        })
+      }
+
+      const newSoapNote = await scenarioService.updateSoapNote(
+        input,
+        user.id,
+        ctx,
+      )
+
+      return newSoapNote
     }),
 })
 
