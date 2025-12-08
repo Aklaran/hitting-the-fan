@@ -9,5 +9,9 @@ module.exports = {
   },
   moduleNameMapper: {
     "^@shared/(.*)$": "<rootDir>/app/shared/$1"
-  }
+  },
+  testMatch: [
+    '**/__tests__/**/*.test.ts',
+    '**/__tests__/**/*.spec.ts',
+  ]
 };
