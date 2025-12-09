@@ -385,6 +385,7 @@ const mvpScenario: CreateScenarioSchema = {
     },
     possibleGlobalTreatments: [],
     globalTreatmentsApplied: [],
+    grade: null,
   },
 }
 

@@ -1,3 +1,4 @@
+import { GradeDialog } from '@/components/custom-ui/gradeDialog'
 import { InventoryDialog } from '@/components/custom-ui/inventoryDialog'
 import { NotepadDialog } from '@/components/custom-ui/notepadDialog'
 import { ScenarioLogOutput } from '@/components/custom-ui/scenarioLogOutput'
@@ -8,7 +9,7 @@ import { ButtonGroup } from '@/components/ui/button-group'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { trpc } from '@/lib/trpc'
 import { createFileRoute } from '@tanstack/react-router'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 function ScenarioPlayPage() {
   const {
@@ -45,6 +46,15 @@ function ScenarioPlayPage() {
     },
   })
 
+  const finishMutation = trpc.scenario.finish.useMutation({
+    onSuccess: () => {
+      trpcUtils.scenario.getSessionState.invalidate()
+      setIsGradeDialogOpen(true)
+    },
+  })
+
+  const [isGradeDialogOpen, setIsGradeDialogOpen] = useState(false)
+
   useKeyboardShortcuts({
     'ctrl+r': () => {
       resetMutation.mutate()
@@ -75,6 +85,10 @@ function ScenarioPlayPage() {
 
   const handleSoapNoteSubmit = (soapNote: string) => {
     soapNoteMutation.mutate({ soapNote: soapNote })
+  }
+
+  const handleFinish = () => {
+    finishMutation.mutate()
   }
 
   const scrollLogContainer = () => {
@@ -121,6 +135,14 @@ function ScenarioPlayPage() {
           <SoapNoteDialog
             note={scenarioState.player.soapNote}
             onSubmit={handleSoapNoteSubmit}
+          />
+        </ButtonGroup>
+        <ButtonGroup>
+          <GradeDialog
+            grade={scenarioState.grade}
+            onOpen={handleFinish}
+            open={isGradeDialogOpen}
+            onOpenChange={setIsGradeDialogOpen}
           />
         </ButtonGroup>
       </ButtonGroup>

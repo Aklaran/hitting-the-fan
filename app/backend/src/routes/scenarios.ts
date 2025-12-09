@@ -67,8 +67,9 @@ const scenariosRouter = router({
       ctx,
     )
 
-    const { log, player } = scenarioSession.scenarioState as ScenarioState
-    return { log, player }
+    const { log, player, grade } =
+      scenarioSession.scenarioState as ScenarioState
+    return { log, player, grade }
   }),
 
   processAction: publicProcedure
@@ -129,6 +130,10 @@ const scenariosRouter = router({
 
       return newSoapNote
     }),
+
+  finish: publicProcedure.mutation(async ({ ctx }) => {
+    return await scenarioService.finishScenario(ctx)
+  }),
 })
 
 export default scenariosRouter

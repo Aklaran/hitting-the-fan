@@ -94,6 +94,7 @@ function ScenarioForm() {
         },
         possibleGlobalTreatments: [],
         globalTreatmentsApplied: [],
+        grade: null,
       },
     } as CreateScenarioSchema,
 

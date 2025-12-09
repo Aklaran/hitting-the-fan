@@ -15,6 +15,7 @@ import { UserId } from '@shared/types/user'
 import { TRPCError } from '@trpc/server'
 import { scenarioEngine } from '../engine/scenarioEngine'
 import scenarioSessionRepository from '../repositories/scenarioSessionRepository'
+import { gradingService } from './gradingService'
 
 const createScenario = async (input: CreateScenarioSchema, ctx: Context) => {
   const createdScenario = await scenarioRepository.createScenario(input, ctx)
@@ -182,6 +183,38 @@ const updateSoapNote = async (
   return newScenarioState.player.soapNote
 }
 
+const finishScenario = async (ctx: Context) => {
+  const scenarioSession = await scenarioSessionRepository.getScenarioSession(
+    ctx.user.id,
+    ctx,
+  )
+
+  if (!scenarioSession) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: 'No scenario session found.',
+    })
+  }
+
+  const gradeResponse = gradingService.gradeScenario(
+    // TODO: Get around casting the scenario state - could this introduce a runtime error?
+    scenarioSession.scenarioState as ScenarioState,
+  )
+
+  const newScenarioState = {
+    ...(scenarioSession.scenarioState as ScenarioState),
+    grade: gradeResponse,
+  }
+
+  await scenarioSessionRepository.updateScenarioSession(
+    scenarioSession.id,
+    newScenarioState,
+    ctx,
+  )
+
+  return gradeResponse
+}
+
 export const scenarioService = {
   createScenario,
   getScenarios,
@@ -192,4 +225,5 @@ export const scenarioService = {
   deleteSession,
   updatePlayerNotes,
   updateSoapNote,
+  finishScenario,
 }
