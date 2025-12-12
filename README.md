@@ -5,6 +5,7 @@ A medical scenario training application built with TypeScript, React, and Expres
 ## Quick Links
 
 - **[AI Onboarding Guide](./AI_ONBOARDING.md)** - Comprehensive guide for AI coding agents
+- **[Scenario Engine Guide](./SCENARIO_ENGINE.md)** - Deep dive into the scenario game engine
 - **[Quick Start Guide](./QUICKSTART.md)** - Get started in 5 minutes
 - **[Deployment Guide](./DEPLOYMENT.md)** - Production deployment instructions
 - **[Cursor Rules](./.cursorrules)** - Project-specific rules for Cursor AI

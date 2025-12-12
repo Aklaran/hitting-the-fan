@@ -108,6 +108,8 @@ The core game engine processes user commands in medical scenarios:
 - **Enrichers**: Add context to scenarios (`handlers/enrichers/`)
 - State is stored as JSON in database
 
+**📖 See SCENARIO_ENGINE.md for comprehensive engine documentation**
+
 ### Spaced Repetition System (SRS)
 
 - Uses `ts-fsrs` library

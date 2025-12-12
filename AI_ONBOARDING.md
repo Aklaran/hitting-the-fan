@@ -379,6 +379,8 @@ The scenario engine processes user commands. To add a new verb:
 
 3. **Add guards/transformers** as needed in respective directories
 
+**📖 For detailed engine documentation**, see **[SCENARIO_ENGINE.md](./SCENARIO_ENGINE.md)** - covers command parsing, handler pipelines, guards, enrichers, transformers, and more.
+
 ## Testing
 
 ### Unit Tests
@@ -508,6 +510,7 @@ The core game engine processes medical scenario commands:
 ## Resources
 
 - **Project README**: `README.md`
+- **Scenario Engine**: `SCENARIO_ENGINE.md` - Comprehensive guide to the game engine
 - **Quick Start**: `QUICKSTART.md`
 - **Deployment Guide**: `DEPLOYMENT.md`
 - **Cursor Rules**: `.cursorrules` (for AI agents)
