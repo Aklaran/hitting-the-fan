@@ -5,8 +5,8 @@ import {
   CreateScenarioSchema,
   DeleteScenarioSchema,
   GetScenarioSchema,
-  GetScenariosSchema,
   ProcessAction,
+  Scenario,
   ScenarioState,
   UpdatePlayerNotesInput,
   UpdateSoapNoteInput,
@@ -26,7 +26,7 @@ const createScenario = async (input: CreateScenarioSchema, ctx: Context) => {
 const getScenarios = async (ctx: Context) => {
   const scenarios = await scenarioRepository.getScenarios(ctx)
 
-  return scenarios as GetScenariosSchema[]
+  return scenarios
 }
 
 const getScenario = async (input: GetScenarioSchema, ctx: Context) => {
@@ -196,9 +196,22 @@ const finishScenario = async (ctx: Context) => {
     })
   }
 
+  // Fetch scenario to get perfectActions and badActions
+  const scenario = await scenarioRepository.getScenario(
+    { id: scenarioSession.scenarioId },
+    ctx,
+  )
+
+  if (!scenario) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: 'Scenario not found.',
+    })
+  }
+
   const gradeResponse = gradingService.gradeScenario(
-    // TODO: Get around casting the scenario state - could this introduce a runtime error?
     scenarioSession.scenarioState as ScenarioState,
+    scenario as Scenario,
   )
 
   const newScenarioState = {

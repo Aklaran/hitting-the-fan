@@ -41,8 +41,21 @@ async function main() {
     try {
       await prisma.scenario.upsert({
         where: { key: scenario.key },
-        create: scenario,
-        update: scenario,
+        create: {
+          key: scenario.key,
+          title: scenario.title,
+          openingPrompt: scenario.openingPrompt,
+          initialState: scenario.initialState,
+          perfectActions: scenario.perfectActions ?? [],
+          badActions: scenario.badActions ?? undefined,
+        },
+        update: {
+          title: scenario.title,
+          openingPrompt: scenario.openingPrompt,
+          initialState: scenario.initialState,
+          perfectActions: scenario.perfectActions ?? [],
+          badActions: scenario.badActions ?? undefined,
+        },
       })
       seededScenarios++
       console.log(`Seeded scenario ${scenario.key}.`)

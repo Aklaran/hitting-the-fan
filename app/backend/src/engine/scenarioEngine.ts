@@ -14,6 +14,7 @@ import {
   Verb,
   VerbHandler,
 } from '@shared/types/scenario'
+import { GradingResult } from '@shared/types/scenario/grade'
 import { UserId } from '@shared/types/user'
 import logger from '@shared/util/logger'
 import { applyHandler } from './handlers/verbHandlers/applyHandler'
@@ -340,6 +341,219 @@ const resolveModifiers = (
   return modifiers
 }
 
+/**
+ * Compares two Command objects for equality.
+ * Handles different object types (string, patient, bodyPart, etc.)
+ */
+const commandsMatch = (
+  command1: Command,
+  command2: Command,
+): boolean => {
+  // Compare verbs
+  if (command1.verb !== command2.verb) {
+    return false
+  }
+
+  // Compare objects
+  if (!commandObjectsMatch(command1.object, command2.object)) {
+    return false
+  }
+
+  // Compare modifiers (order-independent for matching)
+  const modifiers1 = (command1.modifiers || []).sort().join(',')
+  const modifiers2 = (command2.modifiers || []).sort().join(',')
+
+  return modifiers1 === modifiers2
+}
+
+/**
+ * Compares two CommandObject values for equality.
+ * Handles different object types: string, patient, bodyPart, environment, etc.
+ */
+const commandObjectsMatch = (
+  obj1?: CommandObject,
+  obj2?: CommandObject,
+): boolean => {
+  // Both undefined
+  if (!obj1 && !obj2) {
+    return true
+  }
+
+  // One undefined, one not
+  if (!obj1 || !obj2) {
+    return false
+  }
+
+  // Both strings
+  if (typeof obj1 === 'string' && typeof obj2 === 'string') {
+    return obj1 === obj2
+  }
+
+  // Both objects - compare by type-specific properties
+  if (typeof obj1 === 'object' && typeof obj2 === 'object') {
+    // BodyPart comparison
+    if ('partName' in obj1 && 'partName' in obj2) {
+      return obj1.partName === obj2.partName
+    }
+
+    // Patient comparison
+    if ('name' in obj1 && 'age' in obj1 && 'name' in obj2 && 'age' in obj2) {
+      return obj1.name === obj2.name && obj1.age === obj2.age
+    }
+
+    // Environment comparison (by description)
+    if ('description' in obj1 && 'description' in obj2) {
+      return obj1.description === obj2.description
+    }
+
+    // For other object types, do deep equality check
+    return JSON.stringify(obj1) === JSON.stringify(obj2)
+  }
+
+  return false
+}
+
+/**
+ * Checks if player actions are in the same order as perfect actions.
+ * Returns true if matched actions appear in the same sequence.
+ */
+const actionsInOrder = (
+  playerCommands: Command[],
+  perfectActions: Command[],
+): boolean => {
+  if (playerCommands.length === 0 || perfectActions.length === 0) {
+    return false
+  }
+
+  // Find indices of matched actions in perfectActions
+  const matchedIndices: number[] = []
+  let perfectIndex = 0
+
+  for (const playerCmd of playerCommands) {
+    // Find the next matching perfect action
+    while (perfectIndex < perfectActions.length) {
+      if (commandsMatch(playerCmd, perfectActions[perfectIndex])) {
+        matchedIndices.push(perfectIndex)
+        perfectIndex++
+        break
+      }
+      perfectIndex++
+    }
+  }
+
+  // Check if matched indices are in ascending order
+  if (matchedIndices.length === 0) {
+    return false
+  }
+
+  for (let i = 1; i < matchedIndices.length; i++) {
+    if (matchedIndices[i] <= matchedIndices[i - 1]) {
+      return false
+    }
+  }
+
+  // Check if all matched actions are consecutive in perfectActions
+  return matchedIndices.length === perfectActions.length
+}
+
+/**
+ * Grades player actions against perfect actions and bad actions.
+ * Returns a GradingResult with score and descriptive information.
+ */
+const gradeActions = (
+  scenarioState: ScenarioState,
+  perfectActions: Command[],
+  badActions?: Command[],
+): GradingResult => {
+  // Extract player actions from log
+  const playerActionStrings = scenarioState.log
+    .filter((entry) => entry.type === 'player')
+    .map((entry) => entry.text)
+
+  // Parse player actions into Commands
+  const playerCommands: Command[] = []
+  for (const actionString of playerActionStrings) {
+    const createCommandResult = createCommand(actionString, scenarioState)
+    if (createCommandResult.result === 'success') {
+      playerCommands.push(createCommandResult.command)
+    }
+    // Ignore parse failures - they don't match anything anyway
+  }
+
+  // Count matched perfect actions
+  let matchedActions = 0
+  const usedPerfectIndices = new Set<number>()
+
+  for (const playerCmd of playerCommands) {
+    for (let i = 0; i < perfectActions.length; i++) {
+      if (!usedPerfectIndices.has(i) && commandsMatch(playerCmd, perfectActions[i])) {
+        matchedActions++
+        usedPerfectIndices.add(i)
+        break
+      }
+    }
+  }
+
+  // Count bad actions
+  let badActionsCount = 0
+  if (badActions && badActions.length > 0) {
+    for (const playerCmd of playerCommands) {
+      for (const badAction of badActions) {
+        if (commandsMatch(playerCmd, badAction)) {
+          badActionsCount++
+          break
+        }
+      }
+    }
+  }
+
+  // Check order
+  const orderBonus = actionsInOrder(playerCommands, perfectActions) ? 5 : 0
+
+  // Calculate base score
+  const totalPerfectActions = perfectActions.length || 1 // Avoid division by zero
+  const baseScore = (matchedActions / totalPerfectActions) * 100
+
+  // Apply penalties and bonuses
+  const penalty = badActionsCount * 10
+  let finalScore = baseScore + orderBonus - penalty
+
+  // Clamp score to minimum 0 (allow bonuses to exceed 100)
+  finalScore = Math.max(0, finalScore)
+
+  // Generate feedback
+  const feedback: string[] = []
+  if (matchedActions === totalPerfectActions) {
+    feedback.push('Perfect! You performed all the required actions.')
+  } else if (matchedActions > 0) {
+    feedback.push(
+      `You performed ${matchedActions} out of ${totalPerfectActions} required actions.`,
+    )
+  } else {
+    feedback.push('No required actions were performed.')
+  }
+
+  if (orderBonus > 0) {
+    feedback.push('Great job following the correct sequence!')
+  }
+
+  if (badActionsCount > 0) {
+    feedback.push(
+      `Warning: ${badActionsCount} potentially harmful action${badActionsCount > 1 ? 's were' : ' was'} detected.`,
+    )
+  }
+
+  return {
+    score: Math.round(finalScore * 100) / 100, // Round to 2 decimal places
+    matchedActions,
+    totalPerfectActions: perfectActions.length,
+    badActionsCount,
+    orderBonus,
+    feedback,
+  }
+}
+
 export const scenarioEngine = {
   processAction,
+  gradeActions,
 }

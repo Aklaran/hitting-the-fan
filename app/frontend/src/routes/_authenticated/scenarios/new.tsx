@@ -24,10 +24,10 @@ function ScenarioForm() {
 
   const form = useForm({
     defaultValues: {
-      id: 0,
       key: '',
       title: '',
       openingPrompt: '',
+      perfectActions: [],
       initialState: {
         log: [],
         player: {
@@ -96,10 +96,10 @@ function ScenarioForm() {
         globalTreatmentsApplied: [],
         grade: null,
       },
-    } as CreateScenarioSchema,
+    },
 
     onSubmit: async (values) => {
-      const newScenario = values.value
+      const newScenario = values.value as CreateScenarioSchema
 
       mutation.mutate(newScenario, {
         onSuccess: () => {

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { commandSchema } from './command'
 import { scenarioStateSchema } from './state'
 
 export const scenarioSchema = z.object({
@@ -15,6 +16,8 @@ export const scenarioSchema = z.object({
       message: 'Opening prompt must be at least 10 characters long.',
     }),
   initialState: scenarioStateSchema.required(),
+  perfectActions: z.array(commandSchema).default([]),
+  badActions: z.array(commandSchema).optional(),
 })
 
 export const createScenarioSchema = scenarioSchema.omit({ id: true })

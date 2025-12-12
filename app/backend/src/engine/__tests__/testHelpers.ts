@@ -96,6 +96,7 @@ export function createTestScenarioState(
     },
     possibleGlobalTreatments: [],
     globalTreatmentsApplied: [],
+    grade: null,
   }
 
   return deepMerge(defaults, overrides || {}) as ScenarioState

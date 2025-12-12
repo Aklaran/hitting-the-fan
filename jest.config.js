@@ -8,7 +8,8 @@ module.exports = {
     }]
   },
   moduleNameMapper: {
-    "^@shared/(.*)$": "<rootDir>/app/shared/$1"
+    "^@shared/(.*)$": "<rootDir>/app/shared/$1",
+    "^@backend/(.*)$": "<rootDir>/app/backend/src/$1"
   },
   testMatch: [
     '**/__tests__/**/*.test.ts',
