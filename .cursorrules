@@ -1,0 +1,194 @@
+# Cursor Rules for Hitting the Fan
+
+## Project Overview
+
+This is a TypeScript monorepo for a medical scenario training application. The project uses:
+
+- **Backend**: Express.js with tRPC, Prisma ORM, PostgreSQL
+- **Frontend**: React with Vite, TanStack Router, Tailwind CSS
+- **Shared**: Common types and utilities
+- **Package Manager**: pnpm workspaces
+- **Auth**: Kinde authentication
+- **Deployment**: Docker with Nginx reverse proxy
+
+## Architecture Principles
+
+### Monorepo Structure
+
+- `app/backend/` - Express server with tRPC routes
+- `app/frontend/` - React application
+- `app/shared/` - Shared TypeScript types and utilities
+
+### Path Aliases
+
+Use TypeScript path aliases consistently:
+
+- `@backend/*` → `./app/backend/src/*`
+- `@frontend/*` → `./app/frontend/src/*`
+- `@shared/*` → `./app/shared/*`
+
+### Code Organization
+
+**Backend Structure:**
+
+- `routes/` - tRPC routers (flashcards, scenarios, srs, users, auth)
+- `services/` - Business logic layer
+- `repositories/` - Data access layer (Prisma queries)
+- `engine/` - Scenario game engine with handlers, guards, transformers
+- `lib/` - Shared utilities, clients (Prisma, tRPC, session)
+
+**Frontend Structure:**
+
+- `routes/` - TanStack Router pages
+- `components/` - React components (ui/ for shadcn, custom-ui/ for app-specific)
+- `hooks/` - Custom React hooks
+- `lib/` - Utilities and tRPC client setup
+
+**Shared Types:**
+
+- `types/scenario/` - Scenario engine types (actions, commands, state, etc.)
+- `types/flashcard.ts` - Flashcard types
+- `types/user.ts` - User types
+- `types/srs.ts` - Spaced repetition system types
+
+## Development Guidelines
+
+### TypeScript
+
+- Use strict mode (enabled in tsconfig.json)
+- Prefer type safety over `any`
+- Use shared types from `@shared/types/*` for consistency
+- Leverage Zod schemas for runtime validation
+
+### API Design (tRPC)
+
+- All API routes are in `app/backend/src/routes/`
+- Use tRPC routers with proper typing
+- Export router types: `export type AppRouter = typeof appRouter`
+- Handle errors gracefully with proper logging
+
+### Database (Prisma)
+
+- Schema is in `app/backend/prisma/schema.prisma`
+- Run migrations: `pnpm migrate:dev` (development) or `pnpm migrate` (production)
+- Use repositories pattern for database access
+- Never use Prisma client directly in routes/services - use repositories
+
+### Testing
+
+- Unit tests: Jest (`.test.ts` files)
+- E2E tests: Cypress (`cypress/e2e/`)
+- Run tests: `pnpm test` (unit), `pnpm test:cypress` (e2e)
+- Test linting: `pnpm test:lint`
+
+### Code Style
+
+- ESLint configuration in `.eslintrc.js`
+- Prettier for formatting (`.prettierrc.js`)
+- Run linter: `pnpm lint`
+- Import sorting: Use `@trivago/prettier-plugin-sort-imports`
+
+### Environment Variables
+
+- Development: `.env` file (not committed)
+- Production: Docker environment variables
+- Template: `.env.example`
+- Backend loads `.env` automatically in development
+
+## Key Concepts
+
+### Scenario Engine
+
+The core game engine processes user commands in medical scenarios:
+
+- **Verbs**: look, palpate, measure, ask, instruct, move, survey, wear, control, remove, perform, apply
+- **Handlers**: Process verb actions (`handlers/verbHandlers/`)
+- **Guards**: Validate actions before execution (`handlers/guards/`)
+- **Transformers**: Modify state (`handlers/transformers/`)
+- **Enrichers**: Add context to scenarios (`handlers/enrichers/`)
+- State is stored as JSON in database
+
+### Spaced Repetition System (SRS)
+
+- Uses `ts-fsrs` library
+- Flashcards have review states: New, Learning, Review, Relearning
+- User progress tracked in `UserFlashcard` model
+
+### Authentication
+
+- Kinde OAuth integration
+- Session-based auth using `express-session`
+- Session stored in PostgreSQL
+- User context available in tRPC via `createContext`
+
+### Reverse Proxy Setup
+
+- **Development**: Frontend (Vite) on port 5173 proxies API requests
+- **Production**: Nginx on port 80 serves frontend and proxies to backend on port 3000
+- All API requests go through `/api/trpc` or `/api/auth`
+
+## Common Tasks
+
+### Adding a New tRPC Route
+
+1. Create router in `app/backend/src/routes/[name].ts`
+2. Import and add to `app/backend/src/routes/root.ts`
+3. Export types for frontend use
+
+### Adding a New Database Model
+
+1. Update `app/backend/prisma/schema.prisma`
+2. Create migration: `cd app/backend && pnpm migrate:dev`
+3. Create repository in `app/backend/src/repositories/`
+4. Create service if needed in `app/backend/src/services/`
+
+### Adding a New Frontend Page
+
+1. Create route file in `app/frontend/src/routes/`
+2. Use TanStack Router conventions
+3. Use tRPC hooks from `@frontend/lib/trpc`
+
+### Adding a New Scenario Verb Handler
+
+1. Create handler in `app/backend/src/engine/handlers/verbHandlers/`
+2. Add to `verbHandlers` object in `scenarioEngine.ts`
+3. Add guards/transformers as needed
+
+## Important Files to Know
+
+- `app/backend/src/server.ts` - Express server setup
+- `app/backend/src/routes/root.ts` - Main tRPC router
+- `app/backend/src/engine/scenarioEngine.ts` - Core game engine
+- `app/frontend/src/lib/trpc.ts` - tRPC client setup
+- `app/shared/types/scenario/` - Scenario type definitions
+- `package.json` - Root package with workspace scripts
+- `docker-compose.yml` - Docker services configuration
+- `nginx.conf` - Reverse proxy configuration
+
+## Scripts Reference
+
+- `pnpm dev` - Start development servers (backend + frontend)
+- `pnpm build` - Build for production
+- `pnpm test` - Run unit tests
+- `pnpm lint` - Lint code
+- `pnpm migrate:dev` - Create database migration
+- `pnpm seed` - Seed database
+- `./deploy.sh` - Deploy to production
+
+## When Making Changes
+
+1. **Always** run linter before committing: `pnpm lint`
+2. **Always** ensure TypeScript compiles: `pnpm build:frontend` (includes type check)
+3. **Consider** adding tests for new features
+4. **Update** types in `@shared/types/` if adding new data structures
+5. **Follow** existing patterns in similar files
+6. **Use** path aliases instead of relative imports
+7. **Check** that both development and production setups work
+
+## Gotchas
+
+- Backend must load `.env` before importing session config (see `server.ts`)
+- Frontend build must happen before backend serves it in production
+- Session middleware must come before tRPC middleware
+- Express trust proxy is set to 1 (for Nginx)
+- Prisma client must be regenerated after schema changes: `cd app/backend && pnpm generate`
