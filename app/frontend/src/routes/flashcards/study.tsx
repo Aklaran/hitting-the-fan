@@ -4,7 +4,7 @@ import { trpc } from '@/lib/trpc'
 import { MyGrade } from '@shared/types/srs'
 // import { Rating } from '@shared/types/srs'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/flashcards/study')({
   component: FlashcardStudyPage,
@@ -21,6 +21,12 @@ function FlashcardStudyPage() {
     isError,
   } = trpc.srs.getScheduledCards.useQuery()
 
+  useEffect(() => {
+    if (!isLoading && !isError && (!flashcards || flashcards.length === 0)) {
+      navigate({ to: '/flashcards/initialize' })
+    }
+  }, [flashcards, isLoading, isError, navigate])
+
   if (isError) {
     return <div>Error</div>
   }
@@ -30,7 +36,7 @@ function FlashcardStudyPage() {
   }
 
   if (!flashcards || flashcards.length === 0) {
-    navigate({ to: '/flashcards/initialize' })
+    return <div>Redirecting...</div>
   }
 
   return <FlashcardStudy />
