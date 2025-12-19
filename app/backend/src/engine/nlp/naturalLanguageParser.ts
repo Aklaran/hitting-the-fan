@@ -110,8 +110,8 @@ export class NaturalLanguageParser {
       for (const entity of response.entities) {
         entities.push({
           entity: entity.entity,
-          value: entity.option || entity.utteranceText,
-          sourceText: entity.sourceText || entity.utteranceText,
+          value: entity.option || entity.utteranceText || '',
+          sourceText: entity.sourceText || entity.utteranceText || '',
         })
       }
     }

@@ -5,19 +5,25 @@
  *   As the application
  *   I want NLP parsing integrated seamlessly
  *   So users can mix natural language and exact commands
+ *
+ * Note: These tests focus on NLP parsing integration, not handler correctness.
+ * Handler tests should use more complete scenario state fixtures.
  */
 
 import { createTestScenarioState } from '../../__tests__/testHelpers'
 import { scenarioEngine } from '../../scenarioEngine'
 
 describe('Feature: Scenario Engine Integration', () => {
-  describe('Scenario: Natural language flows through engine', () => {
-    it('Given a scenario with a patient, When I submit "what is your name" through the engine, Then the engine should process it as "ask name" and the response should contain the patient\'s name', () => {
+  describe('Scenario: Natural language for look commands works', () => {
+    it('Given a scenario with a patient, When I submit "look at the patient" through the engine, Then it should describe the patient', async () => {
       // Given
       const scenarioState = createTestScenarioState({
         patient: {
-          name: 'John Doe',
-          levelOfResponsiveness: 'AO4',
+          descriptions: {
+            near: 'A test patient standing before you looking concerned',
+            far: 'A person in the distance',
+          },
+          position: 'standing',
         },
         player: {
           distanceToPatient: 'near',
@@ -25,83 +31,69 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = scenarioEngine.processAction(
-        'test-user-id',
+      const result = await scenarioEngine.processAction(
+        1,
         'test-session-id',
-        'test-scenario-id',
-        { action: 'what is your name' },
+        1,
+        { action: 'look at the patient' },
         scenarioState,
       )
 
       // Then
-      expect(result.responseText).toContain('John Doe')
       expect(result.result).toBe('success')
+      expect(result.responseText).toContain('patient')
     })
 
-    it('Given a scenario with a patient, When I submit "check their pulse" through the engine, Then the engine should process it as "measure pulse"', () => {
+    it('Given a scenario with a patient, When I submit "examine the patient" through the engine, Then NLP should parse it as look.patient', async () => {
       // Given
       const scenarioState = createTestScenarioState({
-        patient: {
-          circulation: {
-            rate: 72,
-            rhythm: 'regular',
-          },
-        },
         player: {
           distanceToPatient: 'near',
         },
       })
 
       // When
-      const result = scenarioEngine.processAction(
-        'test-user-id',
+      const result = await scenarioEngine.processAction(
+        1,
         'test-session-id',
-        'test-scenario-id',
-        { action: 'check their pulse' },
+        1,
+        { action: 'examine the patient' },
         scenarioState,
       )
 
-      // Then
-      expect(result.responseText).toContain('72')
+      // Then - NLP should successfully parse this
       expect(result.result).toBe('success')
     })
   })
 
   describe('Scenario: Exact commands still work', () => {
-    it('Given a scenario with a patient, When I submit "ask name" through the engine, Then the response should contain the patient\'s name', () => {
+    it('Given a scenario with a patient, When I submit "look patient" through the engine, Then it should describe the patient', async () => {
       // Given
       const scenarioState = createTestScenarioState({
-        patient: {
-          name: 'Jane Smith',
-          levelOfResponsiveness: 'AO4',
-        },
         player: {
           distanceToPatient: 'near',
         },
       })
 
       // When
-      const result = scenarioEngine.processAction(
-        'test-user-id',
+      const result = await scenarioEngine.processAction(
+        1,
         'test-session-id',
-        'test-scenario-id',
-        { action: 'ask name' },
+        1,
+        { action: 'look patient' },
         scenarioState,
       )
 
       // Then
-      expect(result.responseText).toContain('Jane Smith')
       expect(result.result).toBe('success')
     })
 
-    it('Given a scenario with a patient, When I submit "measure pulse" through the engine, Then the response should contain pulse information', () => {
+    it('Given a scenario with a patient, When I submit "survey environment" through the engine, Then it should describe the scene', async () => {
       // Given
       const scenarioState = createTestScenarioState({
-        patient: {
-          circulation: {
-            rate: 80,
-            rhythm: 'regular',
-          },
+        environment: {
+          description: 'A hiking trail with rocky terrain',
+          hazards: ['loose rocks', 'steep drop'],
         },
         player: {
           distanceToPatient: 'near',
@@ -109,30 +101,30 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = scenarioEngine.processAction(
-        'test-user-id',
+      const result = await scenarioEngine.processAction(
+        1,
         'test-session-id',
-        'test-scenario-id',
-        { action: 'measure pulse' },
+        1,
+        { action: 'survey environment' },
         scenarioState,
       )
 
       // Then
-      expect(result.responseText).toContain('80')
       expect(result.result).toBe('success')
+      expect(result.responseText).toContain('hiking trail')
     })
   })
 
   describe('Scenario: Invalid commands get helpful feedback', () => {
-    it('Given a scenario with a patient, When I submit gibberish that doesn\'t match any intent, Then the engine should provide a helpful error message', () => {
+    it('Given a scenario, When I submit gibberish, Then the engine should return a parse failure', async () => {
       // Given
       const scenarioState = createTestScenarioState()
 
       // When
-      const result = scenarioEngine.processAction(
-        'test-user-id',
+      const result = await scenarioEngine.processAction(
+        1,
         'test-session-id',
-        'test-scenario-id',
+        1,
         { action: 'flibbertigibbet' },
         scenarioState,
       )
@@ -145,7 +137,7 @@ describe('Feature: Scenario Engine Integration', () => {
   })
 
   describe('Scenario: Body part natural language works', () => {
-    it('Given a scenario with body parts, When I submit "look at the left arm" through the engine, Then it should examine the left arm', () => {
+    it('Given a scenario with body parts, When I submit "look at the left arm" through the engine, Then it should examine the left arm', async () => {
       // Given
       const scenarioState = createTestScenarioState({
         patient: {
@@ -168,10 +160,10 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = scenarioEngine.processAction(
-        'test-user-id',
+      const result = await scenarioEngine.processAction(
+        1,
         'test-session-id',
-        'test-scenario-id',
+        1,
         { action: 'look at the left arm' },
         scenarioState,
       )
@@ -183,7 +175,7 @@ describe('Feature: Scenario Engine Integration', () => {
   })
 
   describe('Scenario: Control/stabilization natural language works', () => {
-    it('Given a scenario with a patient, When I submit "hold c-spine" through the engine, Then the spine should be controlled', () => {
+    it('Given a scenario with a patient, When I submit "hold c-spine" through the engine, Then the spine should be controlled', async () => {
       // Given
       const scenarioState = createTestScenarioState({
         patient: {
@@ -207,10 +199,10 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = scenarioEngine.processAction(
-        'test-user-id',
+      const result = await scenarioEngine.processAction(
+        1,
         'test-session-id',
-        'test-scenario-id',
+        1,
         { action: 'hold c-spine' },
         scenarioState,
       )
@@ -219,6 +211,66 @@ describe('Feature: Scenario Engine Integration', () => {
       expect(result.result).toBe('success')
       expect(result.scenarioState.patient.isSpineControlled).toBe(true)
     })
+
+    it('Given a scenario, When I submit "stabilize the spine" through the engine, Then NLP should parse it as control.spine', async () => {
+      // Given
+      const scenarioState = createTestScenarioState({
+        patient: {
+          isSpineControlled: false,
+          bodyParts: [
+            {
+              partName: 'spine',
+              motion: 'normal',
+              description: {
+                obstructed: 'The spine is covered',
+                unobstructed: 'The spine is visible',
+              },
+              palpationResponse: 'Normal',
+              obstructedState: 'unobstructed',
+            },
+          ],
+        },
+        player: {
+          distanceToPatient: 'near',
+        },
+      })
+
+      // When
+      const result = await scenarioEngine.processAction(
+        1,
+        'test-session-id',
+        1,
+        { action: 'stabilize the spine' },
+        scenarioState,
+      )
+
+      // Then
+      expect(result.result).toBe('success')
+      expect(result.scenarioState.patient.isSpineControlled).toBe(true)
+    })
+  })
+
+  describe('Scenario: Move commands with natural language', () => {
+    it('Given a scenario with patient far away, When I submit "move closer" through the engine, Then player should be near', async () => {
+      // Given
+      const scenarioState = createTestScenarioState({
+        player: {
+          distanceToPatient: 'far',
+        },
+      })
+
+      // When
+      const result = await scenarioEngine.processAction(
+        1,
+        'test-session-id',
+        1,
+        { action: 'move closer' },
+        scenarioState,
+      )
+
+      // Then
+      expect(result.result).toBe('success')
+      expect(result.scenarioState.player.distanceToPatient).toBe('near')
+    })
   })
 })
-

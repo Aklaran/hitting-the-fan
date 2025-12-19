@@ -21,6 +21,7 @@ export const measureIntents: TrainingDocument[] = [
   {
     intent: 'measure.pulse',
     utterances: [
+      'measure pulse',
       'check the pulse',
       'take their pulse',
       'what is their heart rate',
@@ -31,6 +32,8 @@ export const measureIntents: TrainingDocument[] = [
       'do they have a pulse',
       'palpate radial pulse',
       'check bpm',
+      "check the patient's pulse",
+      'check their pulse',
     ],
   },
   {
@@ -190,6 +193,8 @@ export const askSampleIntents: TrainingDocument[] = [
   {
     intent: 'ask.name',
     utterances: [
+      'ask name',
+      'ask their name',
       'what is your name',
       'who are you',
       'can you tell me your name',
@@ -544,12 +549,15 @@ export const instructIntents: TrainingDocument[] = [
   {
     intent: 'instruct.acceptCare',
     utterances: [
-      'ask for consent',
+      'instruct acceptCare',
+      'get consent',
+      'obtain consent',
       'can I help you',
       'will you accept care',
       'do you want help',
       'let me help you',
-      'ask to provide care',
+      'may I treat you',
+      'consent to treatment',
     ],
   },
   {
