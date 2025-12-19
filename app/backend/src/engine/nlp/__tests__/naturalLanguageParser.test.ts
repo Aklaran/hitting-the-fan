@@ -99,7 +99,9 @@ describe('Feature: Natural Language Intent Classification', () => {
 
   describe('Scenario: Classify ask intents (OPQRST questions)', () => {
     it('Given a trained NLP parser, When I parse "how bad is the pain on a scale of 1 to 10", Then the intent should be "ask.severity"', async () => {
-      const result = await parser.parse('how bad is the pain on a scale of 1 to 10')
+      const result = await parser.parse(
+        'how bad is the pain on a scale of 1 to 10',
+      )
 
       expect(result.intent).toBe('ask.severity')
       expect(result.confidence).toBeGreaterThan(0.7)
@@ -204,3 +206,82 @@ describe('Feature: Natural Language Intent Classification', () => {
   })
 })
 
+/**
+ * Feature: Command String Generation
+ *   As the scenario engine
+ *   I need parsed intents converted to exact command syntax
+ *   So the existing verb handlers can process them
+ */
+describe('Feature: Command String Generation', () => {
+  let parser: NaturalLanguageParser
+
+  beforeAll(async () => {
+    parser = new NaturalLanguageParser()
+    await parser.train()
+  })
+
+  describe('Scenario: Generate simple command', () => {
+    it('Given a parsed intent "measure.pulse", When I generate a command string, Then the output should be "measure pulse"', async () => {
+      // Given
+      const parseResult = await parser.parse('check the pulse')
+
+      // When
+      const commandString = parser.toCommandString(parseResult)
+
+      // Then
+      expect(commandString.command).toBe('measure pulse')
+      expect(commandString.wasNlpParsed).toBe(true)
+    })
+
+    it('Given a parsed intent "ask.name", When I generate a command string, Then the output should be "ask name"', async () => {
+      const parseResult = await parser.parse('what is your name')
+      const commandString = parser.toCommandString(parseResult)
+
+      expect(commandString.command).toBe('ask name')
+    })
+
+    it('Given a parsed intent "control.spine", When I generate a command string, Then the output should be "control spine"', async () => {
+      const parseResult = await parser.parse('hold c-spine')
+      const commandString = parser.toCommandString(parseResult)
+
+      expect(commandString.command).toBe('control spine')
+    })
+  })
+
+  describe('Scenario: Generate command with body part entity', () => {
+    it('Given a parsed intent "look" with entity bodypart="leftArm", When I generate a command string, Then the output should be "look leftArm"', async () => {
+      const parseResult = await parser.parse('examine their left arm')
+      const commandString = parser.toCommandString(parseResult)
+
+      expect(commandString.command).toBe('look leftArm')
+    })
+
+    it('Given a parsed intent "palpate" with entity bodypart="chest", When I generate a command string, Then the output should be "palpate chest"', async () => {
+      const parseResult = await parser.parse('palpate the chest')
+      const commandString = parser.toCommandString(parseResult)
+
+      expect(commandString.command).toBe('palpate chest')
+    })
+  })
+
+  describe('Scenario: Preserve original on low confidence', () => {
+    it('Given a low-confidence parse result for "weird input", When I generate a command string, Then the output should be "weird input"', async () => {
+      const parseResult = await parser.parse('weird input')
+      const commandString = parser.toCommandString(parseResult)
+
+      // When confidence is low, preserve original input
+      expect(commandString.command).toBe('weird input')
+      expect(commandString.wasNlpParsed).toBe(false)
+    })
+  })
+
+  describe('Scenario: Command string includes confidence', () => {
+    it('Given any parse result, When I generate a command string, Then the result should include confidence score', async () => {
+      const parseResult = await parser.parse('check the pulse')
+      const commandString = parser.toCommandString(parseResult)
+
+      expect(commandString.confidence).toBeDefined()
+      expect(typeof commandString.confidence).toBe('number')
+    })
+  })
+})
