@@ -5,6 +5,8 @@
  * input into exact command strings that the scenario engine can process.
  */
 
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="./node-nlp.d.ts" />
 import { NlpManager } from 'node-nlp'
 
 import { allEntities } from './entities'
@@ -149,7 +151,9 @@ export class NaturalLanguageParser {
     // Handle special cases where we need to extract from entities
     if (object === 'bodypart') {
       // Look for a body part entity
-      const bodyPartEntity = result.entities.find((e) => e.entity === 'bodypart')
+      const bodyPartEntity = result.entities.find(
+        (e) => e.entity === 'bodypart',
+      )
       if (bodyPartEntity) {
         command = `${verb} ${bodyPartEntity.value}`
       } else {
@@ -185,7 +189,12 @@ export class NaturalLanguageParser {
     for (const [entityType, entityMap] of Object.entries(allEntities)) {
       for (const [value, synonyms] of Object.entries(entityMap)) {
         // Add the value itself as a synonym
-        this.manager.addNamedEntityText(entityType, value, ['en'], [value, ...synonyms])
+        this.manager.addNamedEntityText(
+          entityType,
+          value,
+          ['en'],
+          [value, ...synonyms],
+        )
       }
     }
   }
@@ -229,4 +238,3 @@ export async function getNaturalLanguageParser(): Promise<NaturalLanguageParser>
 export function resetNaturalLanguageParser(): void {
   parserInstance = null
 }
-
