@@ -93,7 +93,7 @@ const processAction = async (input: ProcessAction, ctx: Context) => {
     })
   }
 
-  const actionResponse = scenarioEngine.processAction(
+  const actionResponse = await scenarioEngine.processAction(
     ctx.user.id,
     ctx.sessionId,
     scenarioSession.scenarioId,

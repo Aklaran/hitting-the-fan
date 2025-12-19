@@ -29,6 +29,7 @@ import { performHandler } from './handlers/verbHandlers/performHandler'
 import { removeHandler } from './handlers/verbHandlers/removeHandler'
 import { surveyHandler } from './handlers/verbHandlers/surveyHandler'
 import { wearHandler } from './handlers/verbHandlers/wearHandler'
+import { parseToCommand } from './nlp/naturalLanguageParser'
 import { scenarioUtils } from './scenarioUtils'
 
 const verbHandlers: Record<Verb, VerbHandler> = {
@@ -54,19 +55,19 @@ const withActionLog = (
     input: ProcessAction,
     actionLog: Partial<ActionLog>,
     scenarioState: ScenarioState,
-  ) => ActionResponse,
+  ) => Promise<ActionResponse>,
 ) => {
-  return (
+  return async (
     input: ProcessAction,
     actionLog: Partial<ActionLog>,
     scenarioState: ScenarioState,
-  ) => {
+  ): Promise<ActionResponse> => {
     actionLog.timestamp = new Date()
     actionLog.userId = userId
     actionLog.sessionId = sessionId
     actionLog.scenarioId = scenarioId
 
-    const response = action(input, actionLog, scenarioState)
+    const response = await action(input, actionLog, scenarioState)
 
     actionLog.rawInput = input.action
     actionLog.actionResult = response.result
@@ -79,13 +80,13 @@ const withActionLog = (
   }
 }
 
-const processAction = (
+const processAction = async (
   userId: UserId,
   sessionId: string,
   scenarioId: ScenarioId,
   input: ProcessAction,
   scenarioState: ScenarioState,
-): ActionResponse => {
+): Promise<ActionResponse> => {
   return withActionLog(
     userId,
     sessionId,
@@ -94,20 +95,52 @@ const processAction = (
   )(input, {}, scenarioState)
 }
 
-const processActionCore = (
+/**
+ * Pre-process user input with NLP to convert natural language to commands.
+ * Falls back to original input if NLP confidence is low.
+ */
+const preprocessWithNlp = async (action: string): Promise<string> => {
+  try {
+    const commandString = await parseToCommand(action)
+
+    if (commandString.wasNlpParsed) {
+      logger.debug(
+        {
+          originalInput: action,
+          parsedCommand: commandString.command,
+          confidence: commandString.confidence,
+        },
+        'NLP parsed user input',
+      )
+      return commandString.command
+    }
+
+    // Low confidence - use original input
+    return action
+  } catch (error) {
+    // NLP failed - fall back to original input
+    logger.warn({ error, action }, 'NLP parsing failed, using original input')
+    return action
+  }
+}
+
+const processActionCore = async (
   input: ProcessAction,
   actionLog: Partial<ActionLog>,
   scenarioState: ScenarioState,
-): ActionResponse => {
+): Promise<ActionResponse> => {
   const { action } = input
+
+  // Pre-process with NLP to convert natural language to commands
+  const processedAction = await preprocessWithNlp(action)
 
   const initialState = scenarioUtils.appendLogEntry(
     scenarioState,
-    action,
+    action, // Log the original user input, not the processed command
     'player',
   )
 
-  const createCommandResult = createCommand(action, initialState)
+  const createCommandResult = createCommand(processedAction, initialState)
 
   if (createCommandResult.result === 'parse_failure') {
     return appendNarratorResponse(
