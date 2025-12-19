@@ -61,7 +61,12 @@ const createNlpManager = (): NlpManager =>
 const addEntities = (manager: NlpManager): void => {
   for (const [entityType, entityMap] of Object.entries(allEntities)) {
     for (const [value, synonyms] of Object.entries(entityMap)) {
-      manager.addNamedEntityText(entityType, value, ['en'], [value, ...synonyms])
+      manager.addNamedEntityText(
+        entityType,
+        value,
+        ['en'],
+        [value, ...synonyms],
+      )
     }
   }
 }
@@ -246,44 +251,3 @@ export const parseToCommand = async (input: string): Promise<CommandString> => {
   return toCommandString(result)
 }
 
-// ============================================================================
-// Legacy Class API (for backwards compatibility with tests)
-// ============================================================================
-
-/**
- * NaturalLanguageParser class wrapper
- *
- * Provides a class-based interface for backwards compatibility.
- * Internally uses the functional implementation.
- *
- * @deprecated Prefer using the functional API: parse(), toCommandString(), parseToCommand()
- */
-export class NaturalLanguageParser {
-  private manager: NlpManager | null = null
-
-  async train(): Promise<void> {
-    this.manager = await trainNewManager()
-  }
-
-  async parse(input: string): Promise<ParseResult> {
-    if (!this.manager) {
-      throw new Error('Parser not trained. Call train() first.')
-    }
-    return parseWithManager(this.manager, input)
-  }
-
-  toCommandString(result: ParseResult): CommandString {
-    return toCommandString(result)
-  }
-}
-
-/**
- * Get a trained NaturalLanguageParser instance
- *
- * @deprecated Prefer using the functional API: parse(), toCommandString(), parseToCommand()
- */
-export const getNaturalLanguageParser = async (): Promise<NaturalLanguageParser> => {
-  const parser = new NaturalLanguageParser()
-  await parser.train()
-  return parser
-}
