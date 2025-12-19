@@ -723,7 +723,7 @@ const calculateRespiratoryRate = (patient: Patient) => {
     .map(
       (realizedEffects) => realizedEffects.respiration.respiratoryRateModifier,
     )
-    .reduce((prev, curr) => prev * curr)
+    .reduce((prev, curr) => prev * curr, 1) // Initial value of 1 for empty ailments array
 
   return Math.round(baseRate * multiplier)
 }
@@ -806,7 +806,7 @@ const calculateTemperature = (patient: Patient) => {
   const multiplier = patient.ailments
     .map(calculateRealizedAilmentEffects)
     .map((realizedEffects) => realizedEffects.temperature.temperatureModifier)
-    .reduce((prev, curr) => prev * curr)
+    .reduce((prev, curr) => prev * curr, 1) // Initial value of 1 for empty ailments array
 
   return Math.round(baseTemperature * multiplier)
 }

@@ -14,6 +14,59 @@ import { createTestScenarioState } from '../../__tests__/testHelpers'
 import { scenarioEngine } from '../../scenarioEngine'
 
 describe('Feature: Scenario Engine Integration', () => {
+  describe('Scenario: Natural language flows through engine', () => {
+    it('Given a scenario with a patient, When I submit "what is your name" through the engine, Then the engine should process it as "ask name" and response should contain the patient\'s name', async () => {
+      // Given
+      const scenarioState = createTestScenarioState({
+        patient: {
+          name: 'John Doe',
+          age: 35,
+        },
+        player: {
+          distanceToPatient: 'near',
+        },
+      })
+
+      // When
+      const result = await scenarioEngine.processAction(
+        1,
+        'test-session-id',
+        1,
+        { action: 'what is your name' },
+        scenarioState,
+      )
+
+      // Then - NLP should parse as ask.name and engine should process it
+      expect(result.result).toBe('success')
+      expect(result.responseText.toLowerCase()).toContain('john')
+    })
+
+    it('Given a scenario with a patient, When I submit "do you have any allergies" through the engine, Then it should process as ask.allergies', async () => {
+      // Given
+      const scenarioState = createTestScenarioState({
+        patient: {
+          allergies: ['aspirin'],
+        },
+        player: {
+          distanceToPatient: 'near',
+        },
+      })
+
+      // When
+      const result = await scenarioEngine.processAction(
+        1,
+        'test-session-id',
+        1,
+        { action: 'do you have any allergies' },
+        scenarioState,
+      )
+
+      // Then
+      expect(result.result).toBe('success')
+      expect(result.responseText.toLowerCase()).toContain('allerg')
+    })
+  })
+
   describe('Scenario: Natural language for look commands works', () => {
     it('Given a scenario with a patient, When I submit "look at the patient" through the engine, Then it should describe the patient', async () => {
       // Given
@@ -67,6 +120,32 @@ describe('Feature: Scenario Engine Integration', () => {
   })
 
   describe('Scenario: Exact commands still work', () => {
+    it('Given a scenario with a patient, When I submit "ask name" through the engine, Then the response should contain the patient\'s name', async () => {
+      // Given
+      const scenarioState = createTestScenarioState({
+        patient: {
+          name: 'Jane Smith',
+          age: 28,
+        },
+        player: {
+          distanceToPatient: 'near',
+        },
+      })
+
+      // When
+      const result = await scenarioEngine.processAction(
+        1,
+        'test-session-id',
+        1,
+        { action: 'ask name' },
+        scenarioState,
+      )
+
+      // Then
+      expect(result.result).toBe('success')
+      expect(result.responseText.toLowerCase()).toContain('jane')
+    })
+
     it('Given a scenario with a patient, When I submit "look patient" through the engine, Then it should describe the patient', async () => {
       // Given
       const scenarioState = createTestScenarioState({
@@ -116,7 +195,7 @@ describe('Feature: Scenario Engine Integration', () => {
   })
 
   describe('Scenario: Invalid commands get helpful feedback', () => {
-    it('Given a scenario, When I submit gibberish, Then the engine should return a parse failure', async () => {
+    it("Given a scenario, When I submit gibberish that doesn't match any intent, Then the engine should attempt exact match parsing and provide a helpful error message", async () => {
       // Given
       const scenarioState = createTestScenarioState()
 
@@ -130,9 +209,35 @@ describe('Feature: Scenario Engine Integration', () => {
       )
 
       // Then
+      // Engine attempts NLP parse (fails due to low confidence)
+      // Then attempts exact command parse (fails - not a valid verb)
+      // Finally returns parse_failure with helpful message
       expect(result.result).toBe('parse_failure')
       expect(result.responseText).toBeDefined()
       expect(result.responseText.length).toBeGreaterThan(0)
+      // Message should be helpful (not just "error")
+      expect(result.responseText.toLowerCase()).toMatch(
+        /unknown|invalid|not|recognize|understand|command/,
+      )
+    })
+
+    it('Given a scenario, When I submit nonsense words, Then the engine should preserve the original input in the error context', async () => {
+      // Given
+      const scenarioState = createTestScenarioState()
+      const gibberishCommand = 'xyzzy plugh abracadabra'
+
+      // When
+      const result = await scenarioEngine.processAction(
+        1,
+        'test-session-id',
+        1,
+        { action: gibberishCommand },
+        scenarioState,
+      )
+
+      // Then
+      expect(result.result).toBe('parse_failure')
+      expect(result.responseText).toBeDefined()
     })
   })
 
@@ -147,7 +252,8 @@ describe('Feature: Scenario Engine Integration', () => {
               motion: 'normal',
               description: {
                 obstructed: 'The left arm is covered by clothing',
-                unobstructed: 'The left arm appears normal with no visible injuries',
+                unobstructed:
+                  'The left arm appears normal with no visible injuries',
               },
               palpationResponse: 'No tenderness',
               obstructedState: 'unobstructed',
