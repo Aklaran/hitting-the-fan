@@ -187,6 +187,17 @@ The core game engine processes user commands in medical scenarios:
 6. **Use** path aliases instead of relative imports
 7. **Check** that both development and production setups work
 
+### Commit Messages
+
+Use semantic commit messages with the format `<type>(<scope>): <subject>`. Common types include `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, and `build`. The scope (optional but recommended) indicates the affected area like `frontend`, `backend`, `engine`, or `nlp`.
+
+Examples:
+
+- `feat(frontend): improve flashcard study flow with auto-initialization`
+- `fix(backend): handle null user in SRS initialization`
+- `refactor(engine): simplify command parsing logic`
+- `test(nlp): add comprehensive tests for NLP parser`
+
 ## Gotchas
 
 - Backend must load `.env` before importing session config (see `server.ts`)
