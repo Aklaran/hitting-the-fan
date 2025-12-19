@@ -272,6 +272,24 @@ describe('Feature: Command String Generation', () => {
     })
   })
 
+  describe('Scenario: Generate command with body part for apply/perform verbs', () => {
+    it('Given a parsed intent "apply.splint" with bodypart="leftFoot", When I generate a command string, Then the output should be "apply splint leftFoot"', async () => {
+      const parseResult = await parse('apply a splint to his left foot')
+      const commandString = toCommandString(parseResult)
+
+      expect(commandString.command).toBe('apply splint leftFoot')
+      expect(commandString.wasNlpParsed).toBe(true)
+    })
+
+    it('Given a parsed intent "apply.splint" with bodypart="rightArm", When I generate a command string, Then the output should be "apply splint rightArm"', async () => {
+      const parseResult = await parse('apply a splint to the right arm')
+      const commandString = toCommandString(parseResult)
+
+      expect(commandString.command).toBe('apply splint rightArm')
+      expect(commandString.wasNlpParsed).toBe(true)
+    })
+  })
+
   describe('Scenario: Generate command with modifiers', () => {
     it('Given a parsed intent "apply.splint" with modifier="tight", When I generate a command string, Then the output should be "apply splint tight"', async () => {
       // Note: This test validates modifier handling.

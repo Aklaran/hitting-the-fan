@@ -172,6 +172,19 @@ export const toCommandString = (result: ParseResult): CommandString => {
     command = `${verb} ${object}`
   }
 
+  // Check if there's a body part entity that should be included
+  // (for verbs like "apply", "perform" that can target body parts)
+  // Only add if it's not already included in the object
+  const bodyPartEntity = result.entities.find((e) => e.entity === 'bodypart')
+  if (
+    bodyPartEntity &&
+    object !== 'bodypart' &&
+    bodyPartEntity.value !== object
+  ) {
+    // Add body part after the object
+    command = `${command} ${bodyPartEntity.value}`
+  }
+
   // Add modifiers from entities
   const modifierEntity = result.entities.find((e) => e.entity === 'modifier')
   if (modifierEntity) {
@@ -250,4 +263,3 @@ export const parseToCommand = async (input: string): Promise<CommandString> => {
   const result = await parse(input)
   return toCommandString(result)
 }
-
