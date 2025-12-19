@@ -10,10 +10,25 @@
  * Handler tests should use more complete scenario state fixtures.
  */
 
+import type { ScenarioState } from '@shared/types/scenario'
 import { createTestScenarioState } from '../../__tests__/testHelpers'
 import { scenarioEngine } from '../../scenarioEngine'
 
 describe('Feature: Scenario Engine Integration', () => {
+  /**
+   * Helper function to reduce duplication in processAction calls
+   * Uses consistent test IDs and session for all integration tests
+   */
+  const processTestAction = (action: string, scenarioState: ScenarioState) => {
+    return scenarioEngine.processAction(
+      1, // scenarioId
+      'test-session-id',
+      1, // userId
+      { action },
+      scenarioState,
+    )
+  }
+
   describe('Scenario: Natural language flows through engine', () => {
     it('Given a scenario with a patient, When I submit "what is your name" through the engine, Then the engine should process it as "ask name" and response should contain the patient\'s name', async () => {
       // Given
@@ -28,13 +43,7 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'what is your name' },
-        scenarioState,
-      )
+      const result = await processTestAction('what is your name', scenarioState)
 
       // Then - NLP should parse as ask.name and engine should process it
       expect(result.result).toBe('success')
@@ -53,11 +62,8 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'do you have any allergies' },
+      const result = await processTestAction(
+        'do you have any allergies',
         scenarioState,
       )
 
@@ -84,11 +90,8 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'look at the patient' },
+      const result = await processTestAction(
+        'look at the patient',
         scenarioState,
       )
 
@@ -106,11 +109,8 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'examine the patient' },
+      const result = await processTestAction(
+        'examine the patient',
         scenarioState,
       )
 
@@ -133,13 +133,7 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'ask name' },
-        scenarioState,
-      )
+      const result = await processTestAction('ask name', scenarioState)
 
       // Then
       expect(result.result).toBe('success')
@@ -155,13 +149,7 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'look patient' },
-        scenarioState,
-      )
+      const result = await processTestAction('look patient', scenarioState)
 
       // Then
       expect(result.result).toBe('success')
@@ -180,11 +168,8 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'survey environment' },
+      const result = await processTestAction(
+        'survey environment',
         scenarioState,
       )
 
@@ -200,13 +185,7 @@ describe('Feature: Scenario Engine Integration', () => {
       const scenarioState = createTestScenarioState()
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'flibbertigibbet' },
-        scenarioState,
-      )
+      const result = await processTestAction('flibbertigibbet', scenarioState)
 
       // Then
       // Engine attempts NLP parse (fails due to low confidence)
@@ -227,13 +206,7 @@ describe('Feature: Scenario Engine Integration', () => {
       const gibberishCommand = 'xyzzy plugh abracadabra'
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: gibberishCommand },
-        scenarioState,
-      )
+      const result = await processTestAction(gibberishCommand, scenarioState)
 
       // Then
       expect(result.result).toBe('parse_failure')
@@ -266,11 +239,8 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'look at the left arm' },
+      const result = await processTestAction(
+        'look at the left arm',
         scenarioState,
       )
 
@@ -305,13 +275,7 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'hold c-spine' },
-        scenarioState,
-      )
+      const result = await processTestAction('hold c-spine', scenarioState)
 
       // Then
       expect(result.result).toBe('success')
@@ -342,11 +306,8 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'stabilize the spine' },
+      const result = await processTestAction(
+        'stabilize the spine',
         scenarioState,
       )
 
@@ -366,13 +327,7 @@ describe('Feature: Scenario Engine Integration', () => {
       })
 
       // When
-      const result = await scenarioEngine.processAction(
-        1,
-        'test-session-id',
-        1,
-        { action: 'move closer' },
-        scenarioState,
-      )
+      const result = await processTestAction('move closer', scenarioState)
 
       // Then
       expect(result.result).toBe('success')
