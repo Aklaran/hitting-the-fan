@@ -29,6 +29,6 @@
       "@shared/*": ["../shared/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "../backend/src/engine/nlp/node-nlp.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
