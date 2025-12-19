@@ -29,7 +29,7 @@ import { performHandler } from './handlers/verbHandlers/performHandler'
 import { removeHandler } from './handlers/verbHandlers/removeHandler'
 import { surveyHandler } from './handlers/verbHandlers/surveyHandler'
 import { wearHandler } from './handlers/verbHandlers/wearHandler'
-import { getNaturalLanguageParser } from './nlp/naturalLanguageParser'
+import { parseToCommand } from './nlp/naturalLanguageParser'
 import { scenarioUtils } from './scenarioUtils'
 
 const verbHandlers: Record<Verb, VerbHandler> = {
@@ -101,9 +101,7 @@ const processAction = async (
  */
 const preprocessWithNlp = async (action: string): Promise<string> => {
   try {
-    const parser = await getNaturalLanguageParser()
-    const parseResult = await parser.parse(action)
-    const commandString = parser.toCommandString(parseResult)
+    const commandString = await parseToCommand(action)
 
     if (commandString.wasNlpParsed) {
       logger.debug(

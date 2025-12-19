@@ -3,6 +3,8 @@
  *
  * This module provides a pre-processing layer that converts natural language
  * input into exact command strings that the scenario engine can process.
+ *
+ * Uses a functional style with a singleton pattern for the trained model.
  */
 
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
@@ -42,199 +44,246 @@ export interface CommandString {
 const CONFIDENCE_THRESHOLD = 0.7
 
 /**
- * Natural Language Parser
- *
- * Converts natural language user input into exact command strings
- * that the scenario engine can process.
- *
- * @example
- * ```typescript
- * const parser = new NaturalLanguageParser()
- * await parser.train()
- *
- * const result = await parser.parse("check the patient's pulse")
- * // result.intent = "measure.pulse"
- * // result.confidence = 0.95
- *
- * const cmd = parser.toCommandString(result)
- * // cmd.command = "measure pulse"
- * ```
+ * Create a new NLP manager with default settings
  */
-export class NaturalLanguageParser {
-  private manager: NlpManager
-  private trained: boolean = false
+const createNlpManager = (): NlpManager =>
+  new NlpManager({
+    languages: ['en'],
+    forceNER: true,
+    nlu: { useNoneFeature: true },
+    autoSave: false,
+    autoLoad: false,
+  })
 
-  constructor() {
-    this.manager = new NlpManager({
-      languages: ['en'],
-      forceNER: true,
-      nlu: { useNoneFeature: true },
-      autoSave: false,
-      autoLoad: false,
-    })
+/**
+ * Add named entities to the NLP manager
+ */
+const addEntities = (manager: NlpManager): void => {
+  for (const [entityType, entityMap] of Object.entries(allEntities)) {
+    for (const [value, synonyms] of Object.entries(entityMap)) {
+      manager.addNamedEntityText(entityType, value, ['en'], [value, ...synonyms])
+    }
+  }
+}
+
+/**
+ * Add training documents to the NLP manager
+ */
+const addTrainingDocuments = (manager: NlpManager): void => {
+  for (const doc of allTrainingDocuments) {
+    for (const utterance of doc.utterances) {
+      manager.addDocument('en', utterance, doc.intent)
+    }
   }
 
-  /**
-   * Train the NLP model with intents and entities
-   */
-  async train(): Promise<void> {
-    if (this.trained) {
-      return
+  // Add a "None" intent for gibberish/unknown input
+  manager.addDocument('en', 'asdfghjkl', 'None')
+  manager.addDocument('en', 'flibbertigibbet', 'None')
+  manager.addDocument('en', 'random nonsense words', 'None')
+}
+
+/**
+ * Create and train a new NLP manager
+ */
+const trainNewManager = async (): Promise<NlpManager> => {
+  const manager = createNlpManager()
+  addEntities(manager)
+  addTrainingDocuments(manager)
+  await manager.train()
+  return manager
+}
+
+/**
+ * Parse natural language input using a trained manager
+ *
+ * @param manager - A trained NLP manager
+ * @param input - The natural language input from the user
+ * @returns ParseResult with intent, entities, and confidence
+ */
+const parseWithManager = async (
+  manager: NlpManager,
+  input: string,
+): Promise<ParseResult> => {
+  const response = await manager.process('en', input.toLowerCase())
+
+  // Extract entities from the response
+  const entities: ParseResult['entities'] = []
+  if (response.entities && Array.isArray(response.entities)) {
+    for (const entity of response.entities) {
+      entities.push({
+        entity: entity.entity,
+        value: entity.option || entity.utteranceText || '',
+        sourceText: entity.sourceText || entity.utteranceText || '',
+      })
     }
-
-    // Add named entities
-    this.addEntities()
-
-    // Add training documents
-    this.addTrainingDocuments()
-
-    // Train the model
-    await this.manager.train()
-    this.trained = true
   }
 
-  /**
-   * Parse natural language input
-   *
-   * @param input - The natural language input from the user
-   * @returns ParseResult with intent, entities, and confidence
-   */
-  async parse(input: string): Promise<ParseResult> {
-    if (!this.trained) {
-      throw new Error('Parser not trained. Call train() first.')
-    }
+  return {
+    intent: response.intent || null,
+    entities,
+    confidence: response.score || 0,
+    originalInput: input,
+  }
+}
 
-    const response = await this.manager.process('en', input.toLowerCase())
-
-    // Extract entities from the response
-    const entities: ParseResult['entities'] = []
-    if (response.entities && Array.isArray(response.entities)) {
-      for (const entity of response.entities) {
-        entities.push({
-          entity: entity.entity,
-          value: entity.option || entity.utteranceText || '',
-          sourceText: entity.sourceText || entity.utteranceText || '',
-        })
-      }
-    }
-
+/**
+ * Convert a parse result to a command string
+ *
+ * @param result - The parse result from parse()
+ * @returns CommandString with the command to pass to the scenario engine
+ */
+export const toCommandString = (result: ParseResult): CommandString => {
+  // If confidence is below threshold, fall back to original input
+  if (result.confidence < CONFIDENCE_THRESHOLD || !result.intent) {
     return {
-      intent: response.intent || null,
-      entities,
-      confidence: response.score || 0,
-      originalInput: input,
+      command: result.originalInput,
+      wasNlpParsed: false,
+      confidence: result.confidence,
     }
   }
 
-  /**
-   * Convert a parse result to a command string
-   *
-   * @param result - The parse result from parse()
-   * @returns CommandString with the command to pass to the scenario engine
-   */
-  toCommandString(result: ParseResult): CommandString {
-    // If confidence is below threshold, fall back to original input
-    if (result.confidence < CONFIDENCE_THRESHOLD || !result.intent) {
+  // Parse the intent into verb and object
+  const [verb, object] = result.intent.split('.')
+
+  // Build the command string
+  let command = verb
+
+  // Handle special cases where we need to extract from entities
+  if (object === 'bodypart') {
+    // Look for a body part entity
+    const bodyPartEntity = result.entities.find((e) => e.entity === 'bodypart')
+    if (bodyPartEntity) {
+      command = `${verb} ${bodyPartEntity.value}`
+    } else {
+      // Fall back to original if we can't find the body part
       return {
         command: result.originalInput,
         wasNlpParsed: false,
         confidence: result.confidence,
       }
     }
-
-    // Parse the intent into verb and object
-    const [verb, object] = result.intent.split('.')
-
-    // Build the command string
-    let command = verb
-
-    // Handle special cases where we need to extract from entities
-    if (object === 'bodypart') {
-      // Look for a body part entity
-      const bodyPartEntity = result.entities.find(
-        (e) => e.entity === 'bodypart',
-      )
-      if (bodyPartEntity) {
-        command = `${verb} ${bodyPartEntity.value}`
-      } else {
-        // Fall back to original if we can't find the body part
-        return {
-          command: result.originalInput,
-          wasNlpParsed: false,
-          confidence: result.confidence,
-        }
-      }
-    } else if (object) {
-      // Simple verb + object command
-      command = `${verb} ${object}`
-    }
-
-    // Add modifiers from entities
-    const modifierEntity = result.entities.find((e) => e.entity === 'modifier')
-    if (modifierEntity) {
-      command = `${command} ${modifierEntity.value}`
-    }
-
-    return {
-      command,
-      wasNlpParsed: true,
-      confidence: result.confidence,
-    }
+  } else if (object) {
+    // Simple verb + object command
+    command = `${verb} ${object}`
   }
 
-  /**
-   * Add named entities to the NLP manager
-   */
-  private addEntities(): void {
-    for (const [entityType, entityMap] of Object.entries(allEntities)) {
-      for (const [value, synonyms] of Object.entries(entityMap)) {
-        // Add the value itself as a synonym
-        this.manager.addNamedEntityText(
-          entityType,
-          value,
-          ['en'],
-          [value, ...synonyms],
-        )
-      }
-    }
+  // Add modifiers from entities
+  const modifierEntity = result.entities.find((e) => e.entity === 'modifier')
+  if (modifierEntity) {
+    command = `${command} ${modifierEntity.value}`
   }
 
-  /**
-   * Add training documents to the NLP manager
-   */
-  private addTrainingDocuments(): void {
-    for (const doc of allTrainingDocuments) {
-      for (const utterance of doc.utterances) {
-        this.manager.addDocument('en', utterance, doc.intent)
-      }
-    }
-
-    // Add a "None" intent for gibberish/unknown input
-    this.manager.addDocument('en', 'asdfghjkl', 'None')
-    this.manager.addDocument('en', 'flibbertigibbet', 'None')
-    this.manager.addDocument('en', 'random nonsense words', 'None')
+  return {
+    command,
+    wasNlpParsed: true,
+    confidence: result.confidence,
   }
 }
 
-// Singleton instance for reuse
-let parserInstance: NaturalLanguageParser | null = null
+// ============================================================================
+// Singleton Management
+// ============================================================================
+
+/** Module-level singleton for the trained NLP manager */
+let trainedManager: NlpManager | null = null
 
 /**
- * Get or create a trained NLP parser instance
+ * Get or create a trained NLP manager instance
  *
- * @returns Promise resolving to a trained NaturalLanguageParser
+ * @returns Promise resolving to a trained NLP manager
  */
-export async function getNaturalLanguageParser(): Promise<NaturalLanguageParser> {
-  if (!parserInstance) {
-    parserInstance = new NaturalLanguageParser()
-    await parserInstance.train()
+const getTrainedManager = async (): Promise<NlpManager> => {
+  if (!trainedManager) {
+    trainedManager = await trainNewManager()
   }
-  return parserInstance
+  return trainedManager
 }
 
 /**
- * Reset the parser singleton (useful for testing)
+ * Reset the singleton manager (useful for testing)
  */
-export function resetNaturalLanguageParser(): void {
-  parserInstance = null
+export const resetNaturalLanguageParser = (): void => {
+  trainedManager = null
+}
+
+// ============================================================================
+// Public API
+// ============================================================================
+
+/**
+ * Parse natural language input
+ *
+ * Uses a singleton trained model for efficiency.
+ *
+ * @param input - The natural language input from the user
+ * @returns ParseResult with intent, entities, and confidence
+ *
+ * @example
+ * ```typescript
+ * const result = await parse("check the patient's pulse")
+ * // result.intent = "measure.pulse"
+ * // result.confidence = 0.95
+ *
+ * const cmd = toCommandString(result)
+ * // cmd.command = "measure pulse"
+ * ```
+ */
+export const parse = async (input: string): Promise<ParseResult> => {
+  const manager = await getTrainedManager()
+  return parseWithManager(manager, input)
+}
+
+/**
+ * Parse input and convert directly to a command string
+ *
+ * Convenience function that combines parse() and toCommandString()
+ *
+ * @param input - The natural language input from the user
+ * @returns CommandString with the command to pass to the scenario engine
+ */
+export const parseToCommand = async (input: string): Promise<CommandString> => {
+  const result = await parse(input)
+  return toCommandString(result)
+}
+
+// ============================================================================
+// Legacy Class API (for backwards compatibility with tests)
+// ============================================================================
+
+/**
+ * NaturalLanguageParser class wrapper
+ *
+ * Provides a class-based interface for backwards compatibility.
+ * Internally uses the functional implementation.
+ *
+ * @deprecated Prefer using the functional API: parse(), toCommandString(), parseToCommand()
+ */
+export class NaturalLanguageParser {
+  private manager: NlpManager | null = null
+
+  async train(): Promise<void> {
+    this.manager = await trainNewManager()
+  }
+
+  async parse(input: string): Promise<ParseResult> {
+    if (!this.manager) {
+      throw new Error('Parser not trained. Call train() first.')
+    }
+    return parseWithManager(this.manager, input)
+  }
+
+  toCommandString(result: ParseResult): CommandString {
+    return toCommandString(result)
+  }
+}
+
+/**
+ * Get a trained NaturalLanguageParser instance
+ *
+ * @deprecated Prefer using the functional API: parse(), toCommandString(), parseToCommand()
+ */
+export const getNaturalLanguageParser = async (): Promise<NaturalLanguageParser> => {
+  const parser = new NaturalLanguageParser()
+  await parser.train()
+  return parser
 }
